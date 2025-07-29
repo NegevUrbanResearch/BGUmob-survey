@@ -234,80 +234,6 @@ def create_factor_comparison_chart(factor_stats: dict) -> go.Figure:
     
     return fig
 
-def create_response_count_chart(factor_stats: dict) -> go.Figure:
-    """Create a chart showing response counts for each factor."""
-    
-    factors = list(factor_stats.keys())
-    counts = [factor_stats[factor]['count'] for factor in factors]
-    
-    # Sort by count
-    sorted_data = sorted(zip(factors, counts), key=lambda x: x[1], reverse=True)
-    factors_sorted = [item[0] for item in sorted_data]
-    counts_sorted = [item[1] for item in sorted_data]
-    
-    # Modern vibrant color palette
-    colors = [
-        '#00d4ff',  # Cyan
-        '#ff6b6b',  # Coral
-        '#4ecdc4',  # Teal
-        '#45b7d1',  # Sky blue
-        '#96ceb4',  # Mint
-        '#ffeaa7',  # Warm yellow
-        '#dda0dd'   # Plum
-    ]
-    
-    fig = go.Figure()
-    
-    fig.add_trace(go.Bar(
-        x=factors_sorted,
-        y=counts_sorted,
-        marker=dict(
-            color=colors[:len(factors_sorted)],
-            line=dict(color='rgba(255,255,255,0.15)', width=1),
-            opacity=0.9
-        ),
-        hovertemplate='<b>%{x}</b><br>Responses: %{y}<extra></extra>'
-    ))
-    
-    fig.update_layout(
-        title={
-            'text': 'Response Rates by Route Choice Factor',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 38, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'}
-        },
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='#0a0a0a',
-        font={'color': 'white', 'size': 20, 'family': 'Inter, system-ui, sans-serif'},
-        xaxis=dict(
-            tickfont={'size': 17, 'color': 'rgba(255,255,255,0.9)'},
-            color='white',
-            showgrid=False,
-            zeroline=False,
-            showline=False
-        ),
-        yaxis=dict(
-            tickfont={'size': 17, 'color': 'rgba(255,255,255,0.8)'},
-            gridcolor='rgba(255,255,255,0.08)',
-            color='white',
-            showgrid=True,
-            gridwidth=0.5,
-            zeroline=False,
-            showline=False
-        ),
-        margin=dict(l=90, r=90, t=130, b=90),
-        autosize=True,
-        showlegend=False,
-        hoverlabel=dict(
-            bgcolor='rgba(15,15,15,0.95)',
-            bordercolor='rgba(255,255,255,0.3)',
-            font_size=18,
-            font_family='Inter, system-ui, sans-serif'
-        )
-    )
-    
-    return fig
-
 def export_figure(fig: go.Figure, filename_base: str) -> None:
     """Export figure as both HTML and PNG with proper sizing."""
     html_path = f'outputs/{filename_base}.html'
@@ -364,15 +290,11 @@ def main():
     comparison_fig = create_factor_comparison_chart(factor_stats)
     export_figure(comparison_fig, 'route_choice_comparison')
     
-    # Create response count chart
-    count_fig = create_response_count_chart(factor_stats)
-    export_figure(count_fig, 'route_choice_responses')
-    
     print("\n🎯 Route choice analysis completed!")
     print("📱 HTML files are now responsive and will fill the browser window")
     print("🖼️  PNG files exported at 1920x1080 resolution")
     
-    return spider_fig, comparison_fig, count_fig
+    return spider_fig, comparison_fig
 
 if __name__ == "__main__":
     # Create outputs directory
