@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 BGU Mobility Survey - Route Choice Factor Analysis
-Creates interactive spider/radar charts showing importance of different route choice factors.
+Creates interactive spider/radar charts optimized for iframe embedding.
 """
 
 import pandas as pd
@@ -77,7 +77,7 @@ def prepare_route_choice_data(df: pd.DataFrame) -> pd.DataFrame:
     return factor_stats, route_data
 
 def create_spider_chart(factor_stats: dict) -> go.Figure:
-    """Create a spider/radar chart for route choice factors."""
+    """Create a spider/radar chart optimized for iframe embedding."""
     
     # Prepare data for spider chart
     factors = list(factor_stats.keys())
@@ -91,67 +91,88 @@ def create_spider_chart(factor_stats: dict) -> go.Figure:
     
     fig = go.Figure()
     
-    # Add the main radar chart
+    # Add background grid lines for better readability
+    for i in range(1, 6):
+        fig.add_trace(go.Scatterpolar(
+            r=[i] * len(factors_closed),
+            theta=factors_closed,
+            mode='lines',
+            line=dict(color='rgba(255,255,255,0.05)', width=1),
+            showlegend=False,
+            hoverinfo='skip'
+        ))
+    
+    # Add shadow/background trace for depth
     fig.add_trace(go.Scatterpolar(
         r=values_closed,
         theta=factors_closed,
         fill='toself',
-        fillcolor='rgba(0, 212, 255, 0.3)',
+        fillcolor='rgba(0, 255, 136, 0.1)',
+        line=dict(color='rgba(0, 255, 136, 0.4)', width=6),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
+    
+    # Add the main radar chart with enhanced styling
+    fig.add_trace(go.Scatterpolar(
+        r=values_closed,
+        theta=factors_closed,
+        fill='toself',
+        fillcolor='rgba(0, 212, 255, 0.4)',
         line=dict(color='#00d4ff', width=4),
-        marker=dict(color='#00d4ff', size=12),
-        name='Average Ranked Importance',
+        marker=dict(
+            color='#ffffff', 
+            line=dict(color='#00d4ff', width=3), 
+            size=16,
+            symbol='circle'
+        ),
+        name='Student Priorities',
         hovertemplate='<b>%{theta}</b><br>Importance: %{r:.2f}/5<br>Responses: %{customdata}<extra></extra>',
         customdata=counts_closed
     ))
     
-    # Update layout for responsive full-screen design
+    # Optimized layout for iframe embedding
     fig.update_layout(
         title={
-            'text': 'Route Choice Factors - Importance Rankings<br>',
+            'text': 'Route Choice Factors - Student Priorities<br><span style="font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 400;">Scale: 1-5 where higher values indicate more important factors</span>',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 38, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'}
+            'font': {'size': 28, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 20}
         },
         polar=dict(
-            bgcolor='rgba(0,0,0,0.1)',
+            bgcolor='rgba(10,10,30,0.15)',
             radialaxis=dict(
                 visible=True,
                 range=[0, 5],
-                tickfont=dict(size=18, color='white'),
-                gridcolor='rgba(128,128,128,0.3)',
-                gridwidth=2,
-                linecolor='rgba(128,128,128,0.5)',
+                tickfont=dict(size=16, color='rgba(255,255,255,0.9)', family='Inter'),
+                gridcolor='rgba(255,255,255,0.12)',
+                gridwidth=1.5,
+                linecolor='rgba(255,255,255,0.2)',
                 tickmode='linear',
                 tick0=0,
-                dtick=1
+                dtick=1,
+                tickvals=[1, 2, 3, 4, 5],
+                ticktext=['1', '2', '3', '4', '5 (Most Important)']
             ),
             angularaxis=dict(
-                tickfont=dict(size=20, color='white'),
-                linecolor='rgba(128,128,128,0.5)',
-                gridcolor='rgba(128,128,128,0.3)'
+                tickfont=dict(size=18, color='white', family='Inter', weight=600),
+                linecolor='rgba(255,255,255,0.3)',
+                gridcolor='rgba(255,255,255,0.15)',
+                gridwidth=1.5
             )
         ),
-        paper_bgcolor='#0a0a0a',
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent background for iframe
         plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': 'white', 'size': 20, 'family': 'Inter, system-ui, sans-serif'},
-        showlegend=True,
-        legend=dict(
-            orientation="h",
-            yanchor="bottom", 
-            y=-0.15,
-            xanchor="center",
-            x=0.5,
-            bgcolor='rgba(0,0,0,0)',
-            bordercolor='rgba(0,0,0,0)',
-            borderwidth=0,
-            font={'size': 20, 'family': 'Inter, system-ui, sans-serif'}
-        ),
-        margin=dict(l=120, r=120, t=150, b=120),
+        font={'color': 'white', 'size': 12, 'family': 'Inter, system-ui, sans-serif'},
+        showlegend=False,
+        # Optimized margins for iframe - extra top space for title and subtitle
+        margin=dict(l=80, r=80, t=140, b=80),
         autosize=True,
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',
             bordercolor='rgba(255,255,255,0.3)',
-            font_size=18,
+            font_size=12,
             font_family='Inter, system-ui, sans-serif'
         )
     )
@@ -159,7 +180,7 @@ def create_spider_chart(factor_stats: dict) -> go.Figure:
     return fig
 
 def create_factor_comparison_chart(factor_stats: dict) -> go.Figure:
-    """Create a vertical bar chart comparing factor importance."""
+    """Create a vertical bar chart comparing factor importance - iframe optimized."""
     
     # Sort factors by importance
     sorted_factors = sorted(factor_stats.items(), key=lambda x: x[1]['mean_importance'], reverse=True)
@@ -198,20 +219,22 @@ def create_factor_comparison_chart(factor_stats: dict) -> go.Figure:
             'text': 'Route Choice Factors - Ranked by Importance',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 38, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'}
+            'font': {'size': 24, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 10}
         },
         plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='#0a0a0a',
-        font={'color': 'white', 'size': 20, 'family': 'Inter, system-ui, sans-serif'},
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent background for iframe
+        font={'color': 'white', 'size': 12, 'family': 'Inter, system-ui, sans-serif'},
         xaxis=dict(
-            tickfont={'size': 17, 'color': 'rgba(255,255,255,0.9)'},
+            tickfont={'size': 12, 'color': 'rgba(255,255,255,0.9)'},
             color='white',
             showgrid=False,
             zeroline=False,
-            showline=False
+            showline=False,
+            tickangle=-15
         ),
         yaxis=dict(
-            tickfont={'size': 17, 'color': 'rgba(255,255,255,0.8)'},
+            tickfont={'size': 12, 'color': 'rgba(255,255,255,0.8)'},
             gridcolor='rgba(255,255,255,0.08)',
             color='white',
             range=[0, 5],
@@ -221,41 +244,120 @@ def create_factor_comparison_chart(factor_stats: dict) -> go.Figure:
             zeroline=False,
             showline=False
         ),
-        margin=dict(l=90, r=90, t=130, b=90),
+        # Optimized margins for iframe
+        margin=dict(l=50, r=20, t=70, b=50),
         autosize=True,
         showlegend=False,
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',
             bordercolor='rgba(255,255,255,0.3)',
-            font_size=18,
+            font_size=12,
             font_family='Inter, system-ui, sans-serif'
         )
     )
     
     return fig
 
-def export_figure(fig: go.Figure, filename_base: str) -> None:
-    """Export figure as both HTML and PNG with proper sizing."""
+def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> None:
+    """Create HTML file specifically optimized for iframe embedding."""
+    
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;  /* Prevent scrollbars in iframe */
+        }}
+        
+        #plotly-div {{
+            width: 100%;
+            height: 100vh;  /* Full viewport height */
+            margin: 0;
+            padding: 0;
+        }}
+        
+        /* Ensure Plotly toolbar is accessible but minimal */
+        .modebar {{
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }}
+        
+        .modebar:hover {{
+            opacity: 1;
+        }}
+        
+        /* Custom scrollbar for any overflow */
+        ::-webkit-scrollbar {{
+            width: 4px;
+        }}
+        
+        ::-webkit-scrollbar-track {{
+            background: rgba(255,255,255,0.1);
+        }}
+        
+        ::-webkit-scrollbar-thumb {{
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+        }}
+    </style>
+</head>
+<body>
+    <div id="plotly-div"></div>
+    
+    <script>
+        // Get the figure data from Python
+        var figureJSON = {fig.to_json()};
+        
+        // Configuration optimized for iframe
+        var config = {{
+            displayModeBar: true,
+            displaylogo: false,
+            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
+            responsive: true,
+            toImageButtonOptions: {{
+                format: 'png',
+                filename: '{title.lower().replace(" ", "_")}',
+                height: 800,
+                width: 1200,
+                scale: 2
+            }}
+        }};
+        
+        // Create the plot
+        Plotly.newPlot('plotly-div', figureJSON.data, figureJSON.layout, config);
+        
+        // Handle window resize for iframe
+        window.addEventListener('resize', function() {{
+            Plotly.Plots.resize('plotly-div');
+        }});
+        
+        // Initial resize to fit container
+        setTimeout(function() {{
+            Plotly.Plots.resize('plotly-div');
+        }}, 100);
+    </script>
+</body>
+</html>"""
+    
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+
+def export_figure(fig: go.Figure, filename_base: str, title: str) -> None:
+    """Export figure as both optimized HTML and PNG."""
     html_path = f'outputs/{filename_base}.html'
     png_path = f'outputs/{filename_base}.png'
     
-    # Export HTML with responsive sizing
-    fig.write_html(
-        html_path, 
-        config={
-            'displayModeBar': True,
-            'responsive': True,
-            'toImageButtonOptions': {
-                'format': 'png',
-                'filename': filename_base,
-                'height': 1080,
-                'width': 1920,
-                'scale': 2
-            }
-        },
-        include_plotlyjs='cdn'
-    )
-    print(f"✓ Saved HTML: {html_path}")
+    # Create iframe-optimized HTML
+    create_iframe_optimized_html(fig, html_path, title)
+    print(f"✓ Saved iframe-optimized HTML: {html_path}")
     
     # Export PNG with high resolution
     try:
@@ -273,8 +375,8 @@ def export_figure(fig: go.Figure, filename_base: str) -> None:
 
 def main():
     """Main function to create route choice visualizations."""
-    print("🛣️  Creating Route Choice Factor Visualizations")
-    print("=" * 50)
+    print("🛣️  Creating Route Choice Factor Visualizations (Iframe Optimized)")
+    print("=" * 65)
     
     # Load data
     df = load_processed_data()
@@ -282,17 +384,24 @@ def main():
     # Prepare route choice data
     factor_stats, route_data = prepare_route_choice_data(df)
     
-    # Create spider chart with responsive sizing
+    # Create spider chart with iframe optimization
     spider_fig = create_spider_chart(factor_stats)
-    export_figure(spider_fig, 'route_choice_spider')
+    export_figure(spider_fig, 'route_choice_spider', 'Route Choice Spider Chart')
     
     # Create comparison bar chart
     comparison_fig = create_factor_comparison_chart(factor_stats)
-    export_figure(comparison_fig, 'route_choice_comparison')
+    export_figure(comparison_fig, 'route_choice_comparison', 'Route Choice Comparison')
     
     print("\n🎯 Route choice analysis completed!")
-    print("📱 HTML files are now responsive and will fill the browser window")
+    print("📱 HTML files are now optimized for iframe embedding")
     print("🖼️  PNG files exported at 1920x1080 resolution")
+    print("✨ Features:")
+    print("   • Transparent background for seamless integration")
+    print("   • Responsive sizing that fills iframe container")
+    print("   • Optimized margins and font sizes for tight spaces")
+    print("   • Minimal toolbar that appears on hover")
+    print("   • No scrollbars or overflow issues")
+    print("   • Spider chart optimized for radar visualization")
     
     return spider_fig, comparison_fig
 

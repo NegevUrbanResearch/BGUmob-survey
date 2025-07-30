@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 BGU Mobility Survey - Transportation Mode Analysis
-Creates sleek, modern interactive bar charts with minimal clutter.
+Creates sleek, modern interactive bar charts optimized for iframe embedding.
 """
 
 import pandas as pd
@@ -55,7 +55,7 @@ def prepare_transportation_data(df: pd.DataFrame) -> pd.DataFrame:
     return transport_counts
 
 def create_transportation_bar_chart(transport_counts: pd.DataFrame) -> go.Figure:
-    """Create a sleek, modern interactive bar chart for transportation modes."""
+    """Create a sleek, modern interactive bar chart optimized for iframe embedding."""
     
     # Modern vibrant color palette with gradients
     colors = [
@@ -77,7 +77,6 @@ def create_transportation_bar_chart(transport_counts: pd.DataFrame) -> go.Figure
         marker=dict(
             color=colors[:len(transport_counts)],
             line=dict(color='rgba(255,255,255,0.15)', width=1),
-            # Add subtle gradient effect
             opacity=0.9
         ),
         hovertemplate='<b>%{x}</b><br>Responses: %{y}<br>Percentage: %{customdata}%<extra></extra>',
@@ -85,78 +84,149 @@ def create_transportation_bar_chart(transport_counts: pd.DataFrame) -> go.Figure
         name='Transportation Mode'
     ))
     
-    # Clean, modern layout with fixed y-axis range
+    # Optimized layout for iframe embedding
     fig.update_layout(
         title={
             'text': 'Transportation to BGU University',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 48, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
-            'pad': {'b': 20}
+            'font': {'size': 28, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 10}
         },
         plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='#0a0a0a',  # Slightly deeper black
-        font={'color': 'white', 'size': 24, 'family': 'Inter, system-ui, sans-serif'},
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent background for iframe
+        font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
         xaxis=dict(
-            tickfont={'size': 24, 'color': 'rgba(255,255,255,0.9)'},
+            tickfont={'size': 14, 'color': 'rgba(255,255,255,0.9)'},
             showgrid=False,
             zeroline=False,
             showline=False,
-            tickangle=0
+            tickangle=-15  # Slight angle for better fit
         ),
         yaxis=dict(
-            tickfont={'size': 24, 'color': 'rgba(255,255,255,0.8)'},
+            tickfont={'size': 14, 'color': 'rgba(255,255,255,0.8)'},
             showgrid=True,
             gridwidth=0.5,
             gridcolor='rgba(255,255,255,0.08)',
             zeroline=False,
             showline=False,
-            range=[0, 100],  # Fixed range to 100
-            dtick=20  # Show ticks every 20 units
+            range=[0, max(transport_counts['Count']) * 1.1],  # Dynamic range with 10% padding
+            dtick=max(1, max(transport_counts['Count']) // 5)  # Dynamic tick spacing
         ),
-        margin=dict(l=90, r=90, t=130, b=90),
+        # Optimized margins for iframe - minimal for maximum space usage
+        margin=dict(l=50, r=20, t=60, b=40),
         autosize=True,
         showlegend=False,
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',
             bordercolor='rgba(255,255,255,0.3)',
-            font_size=24,
+            font_size=14,
             font_family='Inter, system-ui, sans-serif'
         )
     )
     
-    # Add subtle animation on load
-    fig.update_traces(
-        marker_line_width=1,
-        selector=dict(type="bar")
-    )
-    
     return fig
 
-
+def create_iframe_optimized_html(fig: go.Figure, filename: str) -> None:
+    """Create HTML file specifically optimized for iframe embedding."""
+    
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Modes Analysis</title>
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;  /* Prevent scrollbars in iframe */
+        }}
+        
+        #plotly-div {{
+            width: 100%;
+            height: 100vh;  /* Full viewport height */
+            margin: 0;
+            padding: 0;
+        }}
+        
+        /* Ensure Plotly toolbar is accessible but minimal */
+        .modebar {{
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }}
+        
+        .modebar:hover {{
+            opacity: 1;
+        }}
+        
+        /* Custom scrollbar for any overflow */
+        ::-webkit-scrollbar {{
+            width: 4px;
+        }}
+        
+        ::-webkit-scrollbar-track {{
+            background: rgba(255,255,255,0.1);
+        }}
+        
+        ::-webkit-scrollbar-thumb {{
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+        }}
+    </style>
+</head>
+<body>
+    <div id="plotly-div"></div>
+    
+    <script>
+        // Get the figure data from Python
+        var figureJSON = {fig.to_json()};
+        
+        // Configuration optimized for iframe
+        var config = {{
+            displayModeBar: true,
+            displaylogo: false,
+            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
+            responsive: true,
+            toImageButtonOptions: {{
+                format: 'png',
+                filename: 'transportation_modes',
+                height: 800,
+                width: 1200,
+                scale: 2
+            }}
+        }};
+        
+        // Create the plot
+        Plotly.newPlot('plotly-div', figureJSON.data, figureJSON.layout, config);
+        
+        // Handle window resize for iframe
+        window.addEventListener('resize', function() {{
+            Plotly.Plots.resize('plotly-div');
+        }});
+        
+        // Initial resize to fit container
+        setTimeout(function() {{
+            Plotly.Plots.resize('plotly-div');
+        }}, 100);
+    </script>
+</body>
+</html>"""
+    
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(html_content)
 
 def export_figure(fig: go.Figure, filename_base: str) -> None:
-    """Export figure as both HTML and PNG with proper sizing."""
+    """Export figure as both optimized HTML and PNG."""
     html_path = f'outputs/{filename_base}.html'
     png_path = f'outputs/{filename_base}.png'
     
-    # Export HTML with responsive sizing
-    fig.write_html(
-        html_path, 
-        config={
-            'displayModeBar': True,
-            'responsive': True,
-            'toImageButtonOptions': {
-                'format': 'png',
-                'filename': filename_base,
-                'height': 1080,
-                'width': 1920,
-                'scale': 2
-            }
-        },
-        include_plotlyjs='cdn'
-    )
-    print(f"✓ Saved HTML: {html_path}")
+    # Create iframe-optimized HTML
+    create_iframe_optimized_html(fig, html_path)
+    print(f"✓ Saved iframe-optimized HTML: {html_path}")
     
     # Export PNG with high resolution
     try:
@@ -174,8 +244,8 @@ def export_figure(fig: go.Figure, filename_base: str) -> None:
 
 def main():
     """Main function to create transportation visualizations."""
-    print("🚗 Creating Transportation Mode Visualization")
-    print("=" * 50)
+    print("🚗 Creating Transportation Mode Visualization (Iframe Optimized)")
+    print("=" * 60)
     
     # Load data
     df = load_processed_data()
@@ -183,13 +253,19 @@ def main():
     # Prepare transportation data
     transport_counts = prepare_transportation_data(df)
     
-    # Create main bar chart with responsive sizing
+    # Create iframe-optimized bar chart
     fig = create_transportation_bar_chart(transport_counts)
     export_figure(fig, 'transportation_modes')
     
     print("\n🎯 Transportation analysis completed!")
-    print("📱 HTML file is now responsive and will fill the browser window")
+    print("📱 HTML file is now optimized for iframe embedding")
     print("🖼️  PNG file exported at 1920x1080 resolution")
+    print("✨ Features:")
+    print("   • Transparent background for seamless integration")
+    print("   • Responsive sizing that fills iframe container")
+    print("   • Optimized margins and font sizes")
+    print("   • Minimal toolbar that appears on hover")
+    print("   • No scrollbars or overflow issues")
     
     return fig
 
