@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NUR Mobility Survey Analysis Dashboard - Interactive visualizations of student transportation patterns and route choices">
+    <meta name="author" content="Negev Urban Research Lab (NUR)">
+    <title>NUR Mobility Survey Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="assets/media/favicon.ico">
+    
+    <!-- Modern CSS Framework and Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link href="assets/css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="assets/media/Nur-Logo_3x-_1_.svg" alt="NUR Logo" class="navbar-logo">
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#overview" data-section="overview">
+                            <i class="fas fa-chart-line me-1"></i> Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#route-choice" data-section="route-choice">
+                            <i class="fas fa-map-marked-alt me-1"></i> Route Choice
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#transportation" data-section="transportation">
+                            <i class="fas fa-bus me-1"></i> Transportation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#poi-map" data-section="poi-map">
+                            <i class="fas fa-map-pin me-1"></i> Points of Interest
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#credits" data-section="credits">
+                            <i class="fas fa-info-circle me-1"></i> Credits
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Overview Section -->
+        <section id="overview" class="section active">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-header">
+                            <h1><i class="fas fa-chart-line me-3"></i>NUR Mobility Survey Dashboard</h1>
+                        </div>
+                    </div>
+                </div>
+                
+
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-map-marked-alt text-success"></i>
+                                    <h4>Route Choice Factors</h4>
+                                </div>
+                                <p>Key factors influencing student route selection.</p>
+                                <button class="btn btn-success" onclick="navigateToSection('route-choice')">
+                                    View Analysis <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-bus text-warning"></i>
+                                    <h4>Transportation Modes</h4>
+                                </div>
+                                <p>Student modal distribution patterns.</p>
+                                <button class="btn btn-warning" onclick="navigateToSection('transportation')">
+                                    View Analysis <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <i class="fas fa-map-pin text-info"></i>
+                                    <h4>Points of Interest</h4>
+                                </div>
+                                <p>Important locations and landmarks along students' routes.</p>
+                                <button class="btn btn-info" onclick="navigateToSection('poi-map')">
+                                    View Analysis <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Route Choice Section -->
+        <section id="route-choice" class="section">
+            <div class="visualization-container">
+                <iframe src="outputs/route_choice_spider.html" 
+                        title="Route Choice Spider Chart" 
+                        class="viz-iframe">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- Transportation Section -->
+        <section id="transportation" class="section">
+            <div class="visualization-container">
+                <iframe src="outputs/transportation_modes.html" 
+                        title="Transportation Modes Analysis" 
+                        class="viz-iframe">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- POI Map Section -->
+        <section id="poi-map" class="section">
+            <div class="visualization-container">
+                <iframe src="outputs/bgu_poi_map.html" 
+                        title="BGU Points of Interest Map" 
+                        class="viz-iframe">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- Credits Section -->
+        <section id="credits" class="section">
+            <div class="container-fluid">
+                <div class="section-header">
+                    <h2><i class="fas fa-info-circle me-3"></i>Credits & Methodology</h2>
+                    <p>Research methodology, data sources, and acknowledgments</p>
+                </div>
+                
+                <div class="credits-container">
+                    <div class="placeholder-content">
+                        <i class="fas fa-clipboard-list placeholder-icon"></i>
+                        <h4>TODO</h4>
+                        <p>Credits and methodology information will be added here.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html> 

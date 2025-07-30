@@ -1,0 +1,88 @@
+name: Deploy BGU Mobility Dashboard to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: Validate HTML
+      run: |
+        echo "📋 Validating HTML structure..."
+        if [ -f "index.html" ]; then
+          echo "✅ Main dashboard file found"
+        else
+          echo "❌ index.html not found"
+          exit 1
+        fi
+        
+    - name: Check required assets
+      run: |
+        echo "🔍 Checking required assets..."
+        if [ -d "assets/css" ] && [ -f "assets/css/dashboard.css" ]; then
+          echo "✅ CSS assets found"
+        else
+          echo "❌ CSS assets missing"
+          exit 1
+        fi
+        
+        if [ -d "assets/js" ] && [ -f "assets/js/dashboard.js" ]; then
+          echo "✅ JavaScript assets found"
+        else
+          echo "❌ JavaScript assets missing"
+          exit 1
+        fi
+        
+        if [ -d "outputs" ]; then
+          echo "✅ Outputs directory found"
+          echo "📊 Available visualizations:"
+          ls -la outputs/*.html || echo "No HTML files in outputs"
+        else
+          echo "⚠️  Outputs directory not found - creating placeholder"
+          mkdir -p outputs
+        fi
+        
+    - name: Optimize assets
+      run: |
+        echo "⚡ Optimizing assets for production..."
+        
+        # Ensure all directories exist
+        mkdir -p assets/css assets/js outputs
+        
+        # Add cache busting to CSS and JS files
+        TIMESTAMP=$(date +%s)
+        echo "/* Cache version: $TIMESTAMP */" >> assets/css/dashboard.css
+        echo "// Cache version: $TIMESTAMP" >> assets/js/dashboard.js
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: '.'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2 

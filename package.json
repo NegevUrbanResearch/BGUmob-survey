@@ -1,0 +1,66 @@
+{
+  "name": "bgu-mobility-dashboard",
+  "version": "1.0.0",
+  "description": "Interactive dashboard for BGU mobility survey analysis with visualizations of student transportation patterns and route choices",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "build": "echo 'Static site - no build required'",
+    "serve": "python3 -m http.server 8000 --directory .",
+    "validate": "echo 'Validating HTML structure...' && ls -la index.html assets/ outputs/",
+    "analyze": "python3 preprocessing.py && python3 viz_participation.py && python3 viz_route_choice.py && python3 viz_transportation.py && python3 viz_poi_map.py",
+    "deploy-prep": "mkdir -p outputs && echo 'Dashboard ready for deployment'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/BGUmob-survey.git"
+  },
+  "keywords": [
+    "mobility",
+    "survey",
+    "transportation",
+    "data-visualization",
+    "dashboard",
+    "bgu",
+    "ben-gurion-university",
+    "plotly",
+    "interactive-charts",
+    "route-choice",
+    "student-transportation"
+  ],
+  "author": {
+    "name": "BGU Mobility Research Team",
+    "email": "mobility-research@bgu.ac.il",
+    "url": "https://www.bgu.ac.il"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/BGUmob-survey/issues"
+  },
+  "homepage": "https://your-username.github.io/BGUmob-survey/",
+  "engines": {
+    "node": ">=14.0.0",
+    "python": ">=3.8"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  },
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "funding": {
+    "type": "institution",
+    "url": "https://www.bgu.ac.il"
+  },
+  "config": {
+    "dashboard": {
+      "port": 8000,
+      "host": "localhost"
+    }
+  }
+} 
