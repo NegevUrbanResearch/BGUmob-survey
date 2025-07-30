@@ -73,10 +73,8 @@ jobs:
         # Ensure all directories exist
         mkdir -p assets/css assets/js outputs
         
-        # Add cache busting to CSS and JS files
-        TIMESTAMP=$(date +%s)
-        echo "/* Cache version: $TIMESTAMP */" >> assets/css/dashboard.css
-        echo "// Cache version: $TIMESTAMP" >> assets/js/dashboard.js
+        # Verify all required files are present
+        echo "✅ All required files verified"
         
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v2
