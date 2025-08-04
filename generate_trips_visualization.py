@@ -10,7 +10,7 @@ Author: Noam Gal
 
 notes on starting local otp server: (you'll need to replace this with your own local otp server)
 cd /Users/noamgal/Downloads/NUR/otp_project
-java -Xmx8G -jar otp-2.5.0-shaded.jar --load --serve graphs`
+java -Xmx8G -jar otp-2.5.0-shaded.jar --load --serve graphs
 """
 
 
@@ -1047,6 +1047,16 @@ def create_html_visualization_integrated(trips_data: List[Dict], metadata: Dict,
                 <div class="legend-color" style="background: linear-gradient(90deg, rgb(255,255,0), rgb(200,200,0));"></div>
                 <span>Bus</span>
             </div>
+            <div class="legend-item" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+                <div style="width: 20px; height: 20px; margin-right: 14px; display: flex; align-items: center; justify-content: center;">
+                    <svg width="16" height="20" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C7.029 0 3 4.029 3 9c0 7.5 9 23 9 23s9-15.5 9-23c0-4.971-4.029-9-9-9z" fill="#888888" stroke="#FFFFFF" stroke-width="2"/>
+                        <circle cx="12" cy="9" r="4" fill="#FFFFFF"/>
+                        <circle cx="12" cy="9" r="2" fill="#888888"/>
+                    </svg>
+                </div>
+                <span>POI Stops with Comments</span>
+            </div>
         </div>
     </div>
 
@@ -1060,6 +1070,27 @@ def create_html_visualization_integrated(trips_data: List[Dict], metadata: Dict,
         const tripsData = {trips_json};
         const metadata = {metadata_json};
         debugLog(`🎯 Loaded ${{tripsData.length}} trips from embedded data`);
+
+        // Extract POI stops with comments from trips data
+        function extractPOIStops() {{
+            const poiStops = [];
+            tripsData.forEach((trip, tripIndex) => {{
+                if (trip.metadata.has_poi_stop && trip.metadata.poi_stop && trip.metadata.poi_stop.comment && trip.metadata.poi_stop.comment.trim() !== '') {{
+                    poiStops.push({{
+                        tripIndex: tripIndex,
+                        lat: trip.metadata.poi_stop.lat,
+                        lon: trip.metadata.poi_stop.lon,
+                        comment: trip.metadata.poi_stop.comment.trim(),
+                        transportation_mode: trip.metadata.transportation_mode,
+                        submission_id: trip.metadata.submission_id
+                    }});
+                }}
+            }});
+            debugLog(`📍 Extracted ${{poiStops.length}} POI stops with comments`);
+            return poiStops;
+        }}
+
+        const poiStopsData = extractPOIStops();
 
         let currentTime = 0;
         let isPlaying = false;
@@ -1078,6 +1109,11 @@ def create_html_visualization_integrated(trips_data: List[Dict], metadata: Dict,
                 '': 'Unknown'
             }};
             return translations[mode] || mode || 'Unknown';
+        }}
+
+        // Helper function to convert RGB array to CSS color
+        function rgbArrayToCss(rgbArray) {{
+            return `rgb(${{rgbArray[0]}}, ${{rgbArray[1]}}, ${{rgbArray[2]}})`;
         }}
 
         // Animation and UI state
@@ -1117,14 +1153,57 @@ def create_html_visualization_integrated(trips_data: List[Dict], metadata: Dict,
             }});
         }}
 
+        function createPOIMarkersLayer() {{
+            debugLog(`📍 Creating POI markers layer with ${{poiStopsData.length}} stops`);
+            
+            // Generate colored POI pin icons for each transportation mode
+            function createPOIIcon(color) {{
+                const svg = `
+                    <svg width="24" height="32" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C7.029 0 3 4.029 3 9c0 7.5 9 23 9 23s9-15.5 9-23c0-4.971-4.029-9-9-9z" fill="rgb(${{color[0]}},${{color[1]}},${{color[2]}})" stroke="#FFFFFF" stroke-width="2"/>
+                        <circle cx="12" cy="9" r="4" fill="#FFFFFF"/>
+                        <circle cx="12" cy="9" r="2" fill="rgb(${{color[0]}},${{color[1]}},${{color[2]}})"/>
+                    </svg>
+                `;
+                return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            }}
+            
+            // Pre-generate icons for each mode
+            const modeIcons = {{
+                'ברגל': createPOIIcon([0, 255, 0]),        // Walking - Green
+                'אופניים': createPOIIcon([0, 150, 255]),   // Bicycle - Blue  
+                'אופניים/קורקינט חשמלי': createPOIIcon([0, 100, 255]), // E-bike/Scooter - Dark blue
+                'רכב': createPOIIcon([255, 0, 0]),         // Car - Red
+                'אוטובוס': createPOIIcon([255, 255, 0]),   // Bus - Yellow
+                '': createPOIIcon([255, 140, 0])           // Default - Orange
+            }};
+            
+            return new deck.IconLayer({{
+                id: 'poi-markers-layer',
+                data: poiStopsData,
+                getPosition: d => [d.lon, d.lat],
+                getIcon: d => ({{
+                    url: modeIcons[d.transportation_mode] || modeIcons[''],
+                    width: 24,
+                    height: 32,
+                    anchorY: 32 // Anchor at the bottom of the pin
+                }}),
+                getSize: 18, // Smaller size
+                pickable: true,
+                sizeScale: 1,
+                billboard: true // Always face the camera
+            }});
+        }}
+
         function updateVisualization() {{
             if (!deckOverlay) {{
                 debugLog('❌ Deck overlay not ready');
                 return;
             }}
 
-            const layer = createTripsLayer();
-            deckOverlay.setProps({{ layers: [layer] }});
+            const tripsLayer = createTripsLayer();
+            const poiLayer = createPOIMarkersLayer();
+            deckOverlay.setProps({{ layers: [tripsLayer, poiLayer] }});
             updateTimeDisplay();
         }}
 
@@ -1198,22 +1277,54 @@ def create_html_visualization_integrated(trips_data: List[Dict], metadata: Dict,
                 // Create Deck.gl overlay
                 debugLog('🎨 Creating Deck.gl overlay...');
                 deckOverlay = new deck.MapboxOverlay({{
-                    layers: [createTripsLayer()],
-                    getTooltip: ({{object}}) => {{
+                    layers: [createTripsLayer(), createPOIMarkersLayer()],
+                    getTooltip: ({{object, layer}}) => {{
                         if (object) {{
-                            const {{metadata}} = object;
-                            return {{
-                                html: `
-                                    <div style="padding: 12px; background: rgba(20, 20, 20, 0.95); color: #ffffff; border-radius: 8px; font-size: 13px; line-height: 1.4; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #ffffff;">Route Details</div>
-                                        <div style="color: #e0e0e0; margin: 4px 0;">Mode: ${{translateModeToEnglish(metadata.transportation_mode) || 'Unknown'}}</div>
-                                        <div style="color: #e0e0e0; margin: 4px 0;">Distance: ${{metadata.distance_km.toFixed(2)}} km</div>
-                                        <div style="color: #e0e0e0; margin: 4px 0;">Duration: ${{metadata.duration_minutes.toFixed(1)}} min</div>
-                                        <div style="color: #e0e0e0; margin: 4px 0;">Gate: ${{metadata.destination.gate_name}}</div>
-                                        ${{metadata.has_poi_stop ? '<div style="color: #4CAF50; margin: 4px 0;">Has POI stop</div>' : ''}}
-                                    </div>
-                                `,
-                            }};
+                            // Handle POI marker tooltips
+                            if (layer.id === 'poi-markers-layer') {{
+                                const modeColor = getColorByMode(object.transportation_mode);
+                                const bgColor = `rgba(${{modeColor[0]}}, ${{modeColor[1]}}, ${{modeColor[2]}}, 0.95)`;
+                                const borderColor = `rgba(${{modeColor[0]}}, ${{modeColor[1]}}, ${{modeColor[2]}}, 0.3)`;
+                                
+                                return {{
+                                    html: `
+                                        <div style="padding: 15px; background: ${{bgColor}}; color: #ffffff; border-radius: 10px; font-size: 14px; line-height: 1.5; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(10px); border: 2px solid ${{borderColor}}; max-width: 280px;">
+                                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                                <div style="font-size: 20px; margin-right: 8px;">📍</div>
+                                                <div style="font-weight: 600; color: #ffffff;">POI Stop</div>
+                                            </div>
+                                            <div style="background: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 6px; margin-bottom: 8px;">
+                                                <div style="font-style: italic; color: #fff; font-size: 13px;">
+                                                    "${{object.comment}}"
+                                                </div>
+                                            </div>
+                                            <div style="color: rgba(255, 255, 255, 0.9); font-size: 12px; margin: 4px 0;">
+                                                Mode: ${{translateModeToEnglish(object.transportation_mode) || 'Unknown'}}
+                                            </div>
+                                            <div style="color: rgba(255, 255, 255, 0.9); font-size: 12px; margin: 4px 0;">
+                                                Submission: ${{object.submission_id}}
+                                            </div>
+                                        </div>
+                                    `,
+                                }};
+                            }}
+                            
+                            // Handle trip route tooltips
+                            if (layer.id === 'trips-layer') {{
+                                const {{metadata}} = object;
+                                return {{
+                                    html: `
+                                        <div style="padding: 12px; background: rgba(20, 20, 20, 0.95); color: #ffffff; border-radius: 8px; font-size: 13px; line-height: 1.4; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                            <div style="font-weight: 600; margin-bottom: 8px; color: #ffffff;">Route Details</div>
+                                            <div style="color: #e0e0e0; margin: 4px 0;">Mode: ${{translateModeToEnglish(metadata.transportation_mode) || 'Unknown'}}</div>
+                                            <div style="color: #e0e0e0; margin: 4px 0;">Distance: ${{metadata.distance_km.toFixed(2)}} km</div>
+                                            <div style="color: #e0e0e0; margin: 4px 0;">Duration: ${{metadata.duration_minutes.toFixed(1)}} min</div>
+                                            <div style="color: #e0e0e0; margin: 4px 0;">Gate: ${{metadata.destination.gate_name}}</div>
+                                            ${{metadata.has_poi_stop ? '<div style="color: #4CAF50; margin: 4px 0;">Has POI stop</div>' : ''}}
+                                        </div>
+                                    `,
+                                }};
+                            }}
                         }}
                         return null;
                     }}
@@ -1348,7 +1459,7 @@ def create_html_visualization_maplibre(trips_data: List[Dict], metadata: Dict, o
                 <div><span style="background: rgb(0,150,255); width: 20px; height: 3px; display: inline-block; margin-right: 8px;"></span>Bicycle (אופניים)</div>
                 <div><span style="background: rgb(0,100,255); width: 20px; height: 3px; display: inline-block; margin-right: 8px;"></span>E-bike/Scooter</div>
                 <div><span style="background: rgb(255,0,0); width: 20px; height: 3px; display: inline-block; margin-right: 8px;"></span>Car (רכב)</div>
-                <div><span style="background: rgb(255,255,0); width: 20px; height: 3px; display: inline-block; margin-right: 8px;"></span>Bus (אوטובוס)</div>
+                <div><span style="background: rgb(255,255,0); width: 20px; height: 3px; display: inline-block; margin-right: 8px;"></span>Bus (אוטובוס)</div>
             </div>
         </div>
     </div>
