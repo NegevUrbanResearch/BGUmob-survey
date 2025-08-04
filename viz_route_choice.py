@@ -272,7 +272,7 @@ def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> N
         body {{
             margin: 0;
             padding: 0;
-            background: transparent;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;  /* Prevent scrollbars in iframe */
         }}
