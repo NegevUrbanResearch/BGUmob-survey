@@ -1,0 +1,30 @@
+{
+  "totalPois": 180,
+  "totalRoutes": 105,
+  "poisWithComments": 166,
+  "commentPercentage": 92.2,
+  "averageDistance": 2.4,
+  "transportModes": {
+    "walking": 66,
+    "unknown": 2,
+    "bicycle": 11,
+    "bus": 12,
+    "ebike": 7,
+    "car": 7
+  },
+  "gateUsage": {
+    "North Gate 3": 52,
+    "West Gate": 22,
+    "South Gate 3": 31
+  },
+  "bounds": {
+    "north": 32.085103155384665,
+    "south": 31.24307706904205,
+    "east": 34.87872183322907,
+    "west": 34.76872712373734,
+    "center": {
+      "lat": 31.284772180162896,
+      "lng": 34.79996091406241
+    }
+  }
+}
