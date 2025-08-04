@@ -3,194 +3,645 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="NUR Mobility Survey Analysis Dashboard - Interactive visualizations of student transportation patterns and route choices">
-    <meta name="author" content="Negev Urban Research Lab (NUR)">
-    <title>NUR Mobility Survey Dashboard</title>
-    <link rel="icon" type="image/x-icon" href="assets/media/favicon.ico">
+    <title>BGU Mobility Survey - Interactive POI Map</title>
     
-    <!-- Modern CSS Framework and Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- MapLibre GL JS -->
+    <script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
+    
+    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Custom Styles -->
-    <link href="assets/css/dashboard.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f5f5;
+            color: #333333;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #map {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Glass Panel Base - Dark Mode */
+        .ui-panel {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ui-panel:hover {
+            background: rgba(0, 0, 0, 0.85);
+            transform: translateY(-2px);
+        }
+
+        /* Combined Info & Controls Panel */
+        .info-controls-panel {
+            top: 20px;
+            left: 20px;
+            max-width: 280px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .info-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #64ffda;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .filter-section {
+            margin-bottom: 16px;
+        }
+
+        .filter-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-group h3 {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.active {
+            background: rgba(100, 255, 218, 0.3);
+            border-color: #64ffda;
+            color: #ffffff;
+        }
+
+        /* Transport Menu */
+        .transport-menu {
+            position: relative;
+        }
+
+        .transport-menu-btn {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .transport-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .transport-menu-btn.active {
+            background: rgba(100, 255, 218, 0.3);
+            border-color: #64ffda;
+            color: #ffffff;
+        }
+
+        .transport-dropdown {
+            position: relative;
+        }
+
+        .transport-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 8px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .transport-options.show {
+            display: block;
+        }
+
+        .transport-option {
+            padding: 6px 12px;
+            color: #333;
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .transport-option:hover {
+            background: rgba(100, 255, 218, 0.1);
+        }
+
+        /* Gradient Legend */
+        .legend-gradient {
+            margin-bottom: 16px;
+        }
+
+        .gradient-bar {
+            height: 20px;
+            background: linear-gradient(to right, #004D00, #006400, #228B22, #32CD32, #90EE90);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .gradient-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .toggle-btn.active {
+            background: rgba(100, 255, 218, 0.3);
+            border-color: #64ffda;
+            color: #ffffff;
+        }
+
+        /* Legend Panel */
+        .legend-panel {
+            bottom: 20px;
+            right: 20px;
+            max-width: 240px;
+        }
+
+        .legend-section {
+            margin-bottom: 16px;
+        }
+
+        .legend-section h3 {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 8px;
+            border-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .legend-label {
+            flex: 1;
+        }
+
+        /* Map Controls */
+        .map-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .map-control-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .map-control-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-1px);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #64ffda;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Analysis Links */
+        .analysis-links {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .analysis-links h3 {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .analysis-btn {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            margin-bottom: 6px;
+            text-decoration: none;
+        }
+
+        .analysis-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(2px);
+        }
+
+        /* Popup Styling */
+        .poi-popup, .gate-popup, .route-popup {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            color: #333;
+            font-family: 'Inter', sans-serif;
+            max-width: 250px;
+        }
+
+        .poi-popup h4, .gate-popup h4, .route-popup h4 {
+            color: #2c3e50;
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .poi-comment {
+            color: #666;
+            font-style: italic;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .mode-pie-chart {
+            margin-top: 8px;
+        }
+
+        .mode-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+
+        .mode-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .route-mode-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+
+        .mode-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* Analysis Module Popup Fixes */
+        .maplibregl-popup-content {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 12px !important;
+            color: #333 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .maplibregl-popup-tip {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .info-controls-panel {
+                max-width: 240px;
+                padding: 16px;
+            }
+            
+            .legend-panel {
+                max-width: 200px;
+                padding: 16px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <div class="navbar-logos">
-                    <div class="navbar-logo">
-                        <img src="assets/media/Nur-Logo_3x-_1_.svg" alt="NUR Lab">
-                    </div>
-                    <div class="navbar-logo">
-                        <img src="assets/media/bgu-logo.png" alt="BGU">
-                    </div>
-                    <div class="navbar-logo clickable" onclick="window.open('https://nurlab.civilspace.io/he', '_blank')" role="button" tabindex="0">
-                        <img src="assets/media/zencity-new-logo.png" alt="Zencity">
-                    </div>
-                </div>
-            </div>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#overview" data-section="overview">
-                            <i class="fas fa-chart-line me-1"></i> Overview
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#route-choice" data-section="route-choice">
-                            <i class="fas fa-map-marked-alt me-1"></i> Route Choice
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#transportation" data-section="transportation">
-                            <i class="fas fa-bus me-1"></i> Transportation
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#poi-map" data-section="poi-map">
-                            <i class="fas fa-map-pin me-1"></i> Points of Interest
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#credits" data-section="credits">
-                            <i class="fas fa-info-circle me-1"></i> Credits
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Loading BGU Mobility Data...</h2>
+            <p>Please wait while we prepare your interactive map</p>
         </div>
-    </nav>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- IMPROVED OVERVIEW SECTION -->
-        <section id="overview" class="section active">
-            <div class="container-fluid">
-                <!-- Hero Section with Background Image -->
-                <div class="hero-section">
-                    <div class="hero-background">
-                        <img src="assets/media/transport.jpg" alt="Transportation" class="hero-bg-image">
-                        <div class="hero-overlay"></div>
-                    </div>
-                    <div class="hero-content">
-                        <h1 class="hero-title">
-                            BGU Mobility Survey
-                            <span class="gradient-text">Dashboard</span>
-                        </h1>
-                        <p class="hero-subtitle">
-                            Student transportation patterns analysis - Spring 2025
-                        </p>
-                    </div>
-                </div>
+    <!-- Map Container -->
+    <div id="map"></div>
 
-                <!-- Analysis Modules Grid -->
-                <div class="homepage-grid">
-                    <div class="modules-section">
-                        <div class="analysis-modules">
-                            <div class="analysis-card" onclick="navigateToSection('route-choice')" role="button" tabindex="0">
-                                <div class="analysis-icon">
-                                    <i class="fas fa-route"></i>
-                                </div>
-                                <div class="analysis-content">
-                                    <h4>Route Choice Analysis</h4>
-                                    <p>Spider chart analysis of route selection factors</p>
-                                </div>
-                                <div class="analysis-arrow">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="analysis-card" onclick="navigateToSection('transportation')" role="button" tabindex="0">
-                                <div class="analysis-icon">
-                                    <i class="fas fa-shuttle-van"></i>
-                                </div>
-                                <div class="analysis-content">
-                                    <h4>Transportation Modes</h4>
-                                    <p>Distribution analysis of transport methods</p>
-                                </div>
-                                <div class="analysis-arrow">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="analysis-card" onclick="navigateToSection('poi-map')" role="button" tabindex="0">
-                                <div class="analysis-icon">
-                                    <i class="fas fa-landmark"></i>
-                                </div>
-                                <div class="analysis-content">
-                                    <h4>Points of Interest</h4>
-                                    <p>Interactive map of key locations</p>
-                                </div>
-                                <div class="analysis-arrow">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                            </div>
+    <!-- Combined Info & Controls Panel -->
+    <div class="ui-panel info-controls-panel">
+        <div class="panel-title">
+            <i class="fas fa-map-marked-alt"></i>
+            BGU Mobility Survey
+        </div>
+        
+
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <h3><i class="fas fa-filter"></i>Transport Mode</h3>
+                <div class="transport-menu" id="transport-menu">
+                    <button class="transport-menu-btn active" onclick="setTransportFilter('all')">
+                        <i class="fas fa-globe"></i> All Modes
+                    </button>
+                    <div class="transport-dropdown">
+                        <button class="transport-menu-btn" onclick="toggleTransportDropdown()">
+                            <i class="fas fa-chevron-down"></i> Select Mode
+                        </button>
+                        <div class="transport-options" id="transport-options">
+                            <!-- Dynamically populated -->
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- Route Choice Section -->
-        <section id="route-choice" class="section">
-            <div class="visualization-container">
-                <iframe src="outputs/route_choice_spider.html" 
-                        title="Route Choice Spider Chart" 
-                        class="viz-iframe">
-                </iframe>
-            </div>
-        </section>
-
-        <!-- Transportation Section -->
-        <section id="transportation" class="section">
-            <div class="visualization-container">
-                <iframe src="outputs/transportation_modes.html" 
-                        title="Transportation Modes Analysis" 
-                        class="viz-iframe">
-                </iframe>
-            </div>
-        </section>
-
-        <!-- POI Map Section -->
-        <section id="poi-map" class="section">
-            <div class="visualization-container">
-                <iframe src="outputs/bgu_poi_map.html" 
-                        title="BGU Points of Interest Map" 
-                        class="viz-iframe">
-                </iframe>
-            </div>
-        </section>
-
-        <!-- Credits Section -->
-        <section id="credits" class="section">
-            <div class="container-fluid">
-                <div class="section-header">
-                    <h2><i class="fas fa-info-circle me-3"></i>Credits & Methodology</h2>
-                    <p>Research methodology, data sources, and acknowledgments</p>
+            
+            <div class="filter-group">
+                <h3><i class="fas fa-eye"></i>Display Options</h3>
+                <div class="toggle-buttons">
+                    <button class="toggle-btn active" data-filter="pois" onclick="togglePOIs()">
+                        <i class="fas fa-map-pin"></i> POIs
+                    </button>
+                    <button class="toggle-btn active" data-filter="routes" onclick="toggleRoutes()">
+                        <i class="fas fa-route"></i> Routes
+                    </button>
                 </div>
-                
-                <div class="credits-container">
-                    <div class="placeholder-content">
-                        <i class="fas fa-clipboard-list placeholder-icon"></i>
-                        <h4>TODO</h4>
-                        <p>Credits and methodology information will be added here.</p>
-                    </div>
+                <div class="toggle-buttons" style="margin-top: 8px;">
+                    <button class="toggle-btn" data-filter="comments" onclick="toggleCommentsOnly()">
+                        <i class="fas fa-comment"></i> Comments Only
+                    </button>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/dashboard.js"></script>
+        <!-- Analysis Links -->
+        <div class="analysis-links">
+            <h3><i class="fas fa-chart-bar"></i>Analysis</h3>
+            <a href="outputs/transportation_modes.html" class="analysis-btn" target="_blank">
+                <i class="fas fa-bus"></i> Transportation Modes
+            </a>
+            <a href="outputs/route_choice_spider.html" class="analysis-btn" target="_blank">
+                <i class="fas fa-spider"></i> Route Choice Spider
+            </a>
+            <a href="outputs/route_choice_comparison.html" class="analysis-btn" target="_blank">
+                <i class="fas fa-route"></i> Route Choice Analysis
+            </a>
+        </div>
+    </div>
+
+    <!-- Legend Panel -->
+    <div class="ui-panel legend-panel">
+        <div class="panel-title">
+            <i class="fas fa-layer-group"></i>
+            Map Legend
+        </div>
+        
+        <div class="legend-section">
+            <h3>Route Intensity</h3>
+            <div class="legend-gradient">
+                <div class="gradient-bar"></div>
+                <div class="gradient-labels">
+                    <span>Low</span>
+                    <span>High</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend-section">
+            <h3>Map Elements</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4CAF50;"></div>
+                    <span class="legend-label">POI Points</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #2196F3;"></div>
+                    <span class="legend-label">POI Clusters</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #F44336;"></div>
+                    <span class="legend-label">Campus Gates (Low)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF9800;"></div>
+                    <span class="legend-label">Campus Gates (Medium)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4CAF50;"></div>
+                    <span class="legend-label">Campus Gates (High)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Controls -->
+    <div class="map-controls">
+        <button class="map-control-btn" onclick="resetMap()" title="Reset Map View">
+            <i class="fas fa-home"></i>
+        </button>
+        <button class="map-control-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+
+    <!-- Map Controller Script -->
+    <script src="assets/js/map-controller.js"></script>
 </body>
 </html>
