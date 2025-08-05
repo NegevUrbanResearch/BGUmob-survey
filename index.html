@@ -9,6 +9,9 @@
     <script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
     <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
     
+    <!-- deck.gl -->
+    <script src="https://unpkg.com/deck.gl@^9.0.0/dist.min.js"></script>
+    
     <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -493,6 +496,14 @@
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
         }
 
+        /* Deck.gl Tooltip Styling */
+        .deck-tooltip {
+            font-family: 'Inter', sans-serif !important;
+            z-index: 1000 !important;
+            pointer-events: none !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .info-controls-panel {
@@ -537,7 +548,24 @@
         <!-- Filter Section -->
         <div class="filter-section">
             <div class="filter-group">
-                <h3><i class="fas fa-filter"></i>Transport Mode</h3>
+                <h3><i class="fas fa-filter"></i>Gate Destination</h3>
+                <div class="transport-menu" id="gate-menu">
+                    <button class="transport-menu-btn active" onclick="setGateFilter('all')">
+                        <i class="fas fa-globe"></i> All Gates
+                    </button>
+                    <div class="transport-dropdown">
+                        <button class="transport-menu-btn" onclick="toggleGateDropdown()">
+                            <i class="fas fa-chevron-down"></i> Select Gate
+                        </button>
+                        <div class="transport-options" id="gate-options">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h3><i class="fas fa-bus"></i>Transport Mode</h3>
                 <div class="transport-menu" id="transport-menu">
                     <button class="transport-menu-btn active" onclick="setTransportFilter('all')">
                         <i class="fas fa-globe"></i> All Modes
@@ -563,11 +591,7 @@
                         <i class="fas fa-route"></i> Routes
                     </button>
                 </div>
-                <div class="toggle-buttons" style="margin-top: 8px;">
-                    <button class="toggle-btn" data-filter="comments" onclick="toggleCommentsOnly()">
-                        <i class="fas fa-comment"></i> Comments Only
-                    </button>
-                </div>
+
             </div>
         </div>
 
@@ -594,38 +618,40 @@
         </div>
         
         <div class="legend-section">
-            <h3>Route Intensity</h3>
-            <div class="legend-gradient">
-                <div class="gradient-bar"></div>
-                <div class="gradient-labels">
-                    <span>Low</span>
-                    <span>High</span>
+            <h3>Route Destinations</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #E91E63;"></div>
+                    <span class="legend-label">South Gate</span>
                 </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9C27B0;"></div>
+                    <span class="legend-label">North Gate</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF9800;"></div>
+                    <span class="legend-label">West Gate</span>
+                </div>
+            </div>
+            <div style="margin-top: 12px; font-size: 10px; color: rgba(255, 255, 255, 0.7);">
+                Brightness = Trip Volume
             </div>
         </div>
         
         <div class="legend-section">
-            <h3>Map Elements</h3>
+            <h3>Points</h3>
             <div class="legend-items">
                 <div class="legend-item">
                     <div class="legend-color" style="background: #4CAF50;"></div>
                     <span class="legend-label">POI Points</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: #2196F3;"></div>
-                    <span class="legend-label">POI Clusters</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #F44336;"></div>
-                    <span class="legend-label">Campus Gates (Low)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #FF9800;"></div>
-                    <span class="legend-label">Campus Gates (Medium)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #4CAF50;"></div>
-                    <span class="legend-label">Campus Gates (High)</span>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #E91E63; border: 1px solid white;"></div>
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #9C27B0; border: 1px solid white;"></div>
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #FF9800; border: 1px solid white;"></div>
+                    </div>
+                    <span class="legend-label">Gates</span>
                 </div>
             </div>
         </div>
