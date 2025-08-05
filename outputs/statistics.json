@@ -13,9 +13,9 @@
     "car": 7
   },
   "gateUsage": {
-    "North Gate 3": 52,
+    "North Gate": 52,
     "West Gate": 22,
-    "South Gate 3": 31
+    "South Gate": 31
   },
   "bounds": {
     "north": 32.085103155384665,

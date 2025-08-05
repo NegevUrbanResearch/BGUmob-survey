@@ -318,8 +318,8 @@ class BGUDataExporter:
         
         # BGU Gates (from your original code)
         bgu_gates = {
-            'uni_south_3': {'lat': 31.261222, 'lng': 34.801138, 'name': "South Gate 3"},
-            'uni_north_3': {'lat': 31.263911, 'lng': 34.799290, 'name': "North Gate 3"},
+            'uni_south_3': {'lat': 31.261222, 'lng': 34.801138, 'name': "South Gate"},
+            'uni_north_3': {'lat': 31.263911, 'lng': 34.799290, 'name': "North Gate"},
             'uni_west': {'lat': 31.262500, 'lng': 34.805528, 'name': "West Gate"}
         }
         

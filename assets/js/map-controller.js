@@ -127,15 +127,15 @@ class BGUMapController {
 
         // Campus gates data with color coding
         this.gatesData = [
-            { lng: 34.801138, lat: 31.261222, name: 'South Gate 3', type: 'gate', color: '#E91E63', id: 'south' }, // Pink
-            { lng: 34.799290, lat: 31.263911, name: 'North Gate 3', type: 'gate', color: '#9C27B0', id: 'north' }, // Purple  
+            { lng: 34.801138, lat: 31.261222, name: 'South Gate', type: 'gate', color: '#E91E63', id: 'south' }, // Pink
+            { lng: 34.799290, lat: 31.263911, name: 'North Gate', type: 'gate', color: '#9C27B0', id: 'north' }, // Purple  
             { lng: 34.805528, lat: 31.262500, name: 'West Gate', type: 'gate', color: '#FF9800', id: 'west' } // Orange
         ];
         
         // Gate color mapping for route coloring
         this.gateColors = {
-            'South Gate 3': '#E91E63',
-            'North Gate 3': '#9C27B0', 
+            'South Gate': '#E91E63',
+            'North Gate': '#9C27B0', 
             'West Gate': '#FF9800',
             'south': '#E91E63',
             'north': '#9C27B0',

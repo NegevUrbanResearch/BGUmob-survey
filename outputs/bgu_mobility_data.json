@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "exportedAt": "2025-08-04T22:37:33.623614",
+    "exportedAt": "2025-08-05T23:25:42.175289",
     "source": "BGU Mobility Survey",
     "version": "2.0"
   },
@@ -19,9 +19,9 @@
       "car": 7
     },
     "gateUsage": {
-      "North Gate 3": 52,
+      "North Gate": 52,
       "West Gate": 22,
-      "South Gate 3": 31
+      "South Gate": 31
     },
     "bounds": {
       "north": 32.085103155384665,
@@ -1488,7 +1488,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -1541,7 +1541,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -3717,7 +3717,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -4118,7 +4118,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -4251,7 +4251,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -5132,7 +5132,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -5431,7 +5431,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -6430,7 +6430,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -6705,7 +6705,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -6784,7 +6784,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -6913,7 +6913,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -7238,7 +7238,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -7635,7 +7635,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -8207,7 +8207,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -8480,7 +8480,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -8637,7 +8637,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -8870,7 +8870,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -9167,7 +9167,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -9563,7 +9563,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [],
       "routePath": [
@@ -10268,7 +10268,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -10726,7 +10726,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -10839,7 +10839,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -11074,7 +11074,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -11131,7 +11131,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -11649,7 +11649,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -12071,7 +12071,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [],
       "routePath": [
@@ -12372,7 +12372,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -12658,7 +12658,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -12770,7 +12770,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -12981,7 +12981,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -13233,7 +13233,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -13702,7 +13702,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -13991,7 +13991,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -14152,7 +14152,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -14253,7 +14253,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -14358,7 +14358,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -14601,7 +14601,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -14740,7 +14740,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [],
       "routePath": [
@@ -14933,7 +14933,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -15090,7 +15090,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -15451,7 +15451,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [],
       "routePath": [
@@ -15668,7 +15668,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -15840,7 +15840,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [],
       "routePath": [
@@ -16029,7 +16029,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -17071,7 +17071,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -17274,7 +17274,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -17783,7 +17783,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -20396,7 +20396,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -20481,7 +20481,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -20721,7 +20721,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -21235,7 +21235,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -22138,7 +22138,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -22370,7 +22370,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -22706,7 +22706,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -23011,7 +23011,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -23299,7 +23299,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -23516,7 +23516,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -23946,7 +23946,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -24117,7 +24117,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -24270,7 +24270,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -24599,7 +24599,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -24988,7 +24988,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -25263,7 +25263,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -26603,7 +26603,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -26844,7 +26844,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -27175,7 +27175,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -28260,7 +28260,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -28527,7 +28527,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -28730,7 +28730,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -35204,7 +35204,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -35573,7 +35573,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -35754,7 +35754,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -35907,7 +35907,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -39780,7 +39780,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -39877,7 +39877,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -40250,7 +40250,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -40825,7 +40825,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [],
       "routePath": [
@@ -40918,7 +40918,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -41235,7 +41235,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -41330,7 +41330,7 @@
         "id": "uni_south_3",
         "lat": 31.261222,
         "lng": 34.801138,
-        "name": "South Gate 3"
+        "name": "South Gate"
       },
       "pois": [
         {
@@ -41414,7 +41414,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -41665,7 +41665,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
@@ -41925,7 +41925,7 @@
         "id": "uni_north_3",
         "lat": 31.263911,
         "lng": 34.79929,
-        "name": "North Gate 3"
+        "name": "North Gate"
       },
       "pois": [
         {
