@@ -666,21 +666,33 @@ class BGUMapController {
             const gateColor = firstFeature.gateColor;
             const transportMode = firstFeature.transportMode;
             
-            // Create popup content with gate and usage information
+            // Get transportation mode display info
+            const modeDisplayNames = {
+                'walking': '🚶 Walking',
+                'bicycle': '🚴 Bicycle',
+                'ebike': '🛴 E-bike',
+                'car': '🚗 Car',
+                'bus': '🚌 Bus',
+                'train': '🚆 Train',
+                'unknown': '❓ Unknown'
+            };
+            
+            const modeDisplay = modeDisplayNames[transportMode] || `❓ ${transportMode}`;
+            
+            // Create simplified popup content
             let popupContent = `
-                <div class="route-popup">
-                    <h4><i class="fas fa-route"></i> Route to ${destinationGate}</h4>
-                    <div style="margin: 8px 0;">
-                    <div class="route-mode-item">
-                            <span class="mode-dot" style="background: ${gateColor}; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
-                            <span><strong>${usage}</strong> trips via ${transportMode}</span>
-                        </div>
+                <div style="font-family: Inter, sans-serif; padding: 8px; min-width: 120px;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 14px;">
+                        ${modeDisplay}
                     </div>
-                    <div style="color: #888; font-size: 10px; margin-top: 8px;">
-                        Route intensity reflects trip volume
+                    <div style="color: #666; font-size: 12px; margin-bottom: 4px;">
+                        → ${destinationGate}
                     </div>
+                    <div style="color: ${gateColor}; font-weight: 600; font-size: 13px;">
+                        ${usage} trips
                     </div>
-                `;
+                </div>
+            `;
             
             new maplibregl.Popup()
                 .setLngLat(e.lngLat)
@@ -829,52 +841,40 @@ class BGUMapController {
         // Update deck.gl POI layers
         this.updateDeckGLLayers();
 
-        // Group routes by destination gate and calculate route usage
-        const routeUsage = {};
-        const gateGroups = {};
-        
-        this.routesData
+        // Filter routes based on current filters
+        const filteredRoutes = this.routesData
             .filter(route => this.currentFilters.showRoutes)
             .filter(route => this.currentFilters.gateDestination === 'all' || route.destination.name === this.currentFilters.gateDestination)
-            .filter(route => this.currentFilters.transportMode === 'all' || route.transportMode === this.currentFilters.transportMode)
-            .forEach(route => {
-                // Create a route key based on start and end coordinates
-                const routeKey = `${route.residence.lng},${route.residence.lat}-${route.destination.lng},${route.destination.lat}`;
-                
-                // Count usage for this specific route
-                if (!routeUsage[routeKey]) {
-                    routeUsage[routeKey] = {
-                        count: 0,
-                        route: route,
-                        destinationGate: route.destination.name || 'Unknown'
-                    };
-                }
-                routeUsage[routeKey].count++;
-                
-                // Group by destination gate
-                const gateName = route.destination.name || 'Unknown';
-                if (!gateGroups[gateName]) {
-                    gateGroups[gateName] = [];
-                }
-                gateGroups[gateName].push(route);
-            });
+            .filter(route => this.currentFilters.transportMode === 'all' || route.transportMode === this.currentFilters.transportMode);
+
+        // Group routes by transportation mode and destination gate for proper aggregation
+        const routeGroups = {};
         
-        // Find max route usage for intensity calculation
-        const maxUsage = Math.max(...Object.values(routeUsage).map(r => r.count));
+        filteredRoutes.forEach(route => {
+            const groupKey = `${route.transportMode || 'unknown'}_${route.destination.name || 'Unknown'}`;
+            
+            if (!routeGroups[groupKey]) {
+                routeGroups[groupKey] = {
+                    routes: [],
+                    transportMode: route.transportMode || 'unknown',
+                    destinationGate: route.destination.name || 'Unknown',
+                    gateColor: this.gateColors[route.destination.name] || this.gateColors[route.destination.id] || '#9E9E9E'
+                };
+            }
+            routeGroups[groupKey].routes.push(route);
+        });
+
+        // Find max group size for intensity calculation
+        const maxGroupSize = Math.max(...Object.values(routeGroups).map(group => group.routes.length), 1);
         
-        // Create route features with gate-based coloring and usage-based intensity
+        // Create route features from groups - aggregate similar routes
         const routeFeatures = [];
-        Object.values(routeUsage).forEach(routeData => {
-            const route = routeData.route;
-            const usage = routeData.count;
-            const gateName = routeData.destinationGate;
+        Object.values(routeGroups).forEach(group => {
+            const groupSize = group.routes.length;
+            const intensity = 0.2 + (groupSize / maxGroupSize) * 0.8;
             
-            // Calculate intensity based on usage (0.2 to 1.0)
-            const intensity = 0.2 + (usage / maxUsage) * 0.8;
-            
-            // Get gate color, default to gray if not found
-            const gateColor = this.gateColors[gateName] || '#9E9E9E';
-            
+            // For each route in the group, create a feature but with group statistics
+            group.routes.forEach(route => {
                 // Use route path if available, otherwise fall back to straight line
                 const coordinates = route.routePath || [
                     [route.residence.lng, route.residence.lat],
@@ -888,17 +888,23 @@ class BGUMapController {
                         coordinates: coordinates
                     },
                     properties: {
-                    id: route.id + '_usage_' + usage, // Unique ID including usage
-                        transportMode: route.transportMode,
+                        id: route.id,
+                        transportMode: group.transportMode,
                         distance: route.distance,
                         poiCount: route.poiCount,
-                    intensity: intensity,
-                    usage: usage,
-                    destinationGate: gateName,
-                    gateColor: gateColor
-                }
+                        intensity: intensity,
+                        usage: groupSize, // Show group size instead of individual count
+                        destinationGate: group.destinationGate,
+                        gateColor: group.gateColor,
+                        // Additional properties for debugging
+                        groupKey: `${group.transportMode}_${group.destinationGate}`,
+                        totalInGroup: groupSize
+                    }
+                });
             });
         });
+
+        console.log(`📊 Route aggregation: ${filteredRoutes.length} individual routes grouped into ${Object.keys(routeGroups).length} transport-gate combinations`);
 
         this.map.getSource('routes').setData({
             type: 'FeatureCollection',
