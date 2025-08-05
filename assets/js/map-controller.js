@@ -46,7 +46,7 @@ class BGUMapController {
             container: 'map',
             style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
             center: [34.7983, 31.2627], // BGU area
-            zoom: 12,
+            zoom: 14,
             pitch: 45,
             bearing: 0,
             antialias: true
@@ -1105,7 +1105,7 @@ class BGUMapController {
     resetMap() {
         this.map.flyTo({
             center: [34.7983, 31.2627],
-            zoom: 12,
+            zoom: 14,
             pitch: 45,
             bearing: 0
         });
