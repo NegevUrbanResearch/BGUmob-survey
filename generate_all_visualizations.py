@@ -50,7 +50,6 @@ def main():
         ("viz_gate_distribution.py", "Gate Distribution Pie Chart"),
         ("viz_transport_donut.py", "Transportation Modes Donut Chart"),
         ("viz_distance_comparison.py", "Distance Comparison Analysis"),
-        ("viz_travel_time_histogram.py", "Travel Time Histogram"),
         ("viz_route_choice.py", "Route Choice Factors (Spider & Bar Charts)")
     ]
     
