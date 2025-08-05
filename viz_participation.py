@@ -101,24 +101,24 @@ def create_participation_comparison(completed_df: pd.DataFrame) -> go.Figure:
     
     fig.update_layout(
         title={
-            'text': 'Future Research Participation Interest (Fully Completed Surveys)',
+            'text': 'Future Research Participation Interest',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 38, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'}
+            'font': {'size': 32, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'}
         },
         barmode='group',
         plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='#0a0a0a',
-        font={'color': 'white', 'size': 20, 'family': 'Inter, system-ui, sans-serif'},
+        paper_bgcolor='rgba(0,0,0,0)',
+        font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
         xaxis=dict(
-            tickfont={'size': 17, 'color': 'rgba(255,255,255,0.9)'},
+            tickfont={'size': 16, 'color': 'rgba(255,255,255,0.9)'},
             color='white',
             showgrid=False,
             zeroline=False,
             showline=False
         ),
         yaxis=dict(
-            tickfont={'size': 17, 'color': 'rgba(255,255,255,0.8)'},
+            tickfont={'size': 14, 'color': 'rgba(255,255,255,0.8)'},
             gridcolor='rgba(255,255,255,0.08)',
             color='white',
             showgrid=True,
@@ -132,12 +132,12 @@ def create_participation_comparison(completed_df: pd.DataFrame) -> go.Figure:
             y=1.02,
             xanchor="center",
             x=0.5,
-            bgcolor='rgba(0,0,0,0)',
-            bordercolor='rgba(0,0,0,0)',
-            borderwidth=0,
-            font={'size': 20, 'family': 'Inter, system-ui, sans-serif'}
+            bgcolor='rgba(255,255,255,0.1)',
+            bordercolor='rgba(255,255,255,0.3)',
+            borderwidth=2,
+            font={'size': 22, 'family': 'Inter, system-ui, sans-serif'}
         ),
-        margin=dict(l=90, r=90, t=130, b=90),
+        margin=dict(l=80, r=80, t=110, b=80),
         autosize=True,
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',

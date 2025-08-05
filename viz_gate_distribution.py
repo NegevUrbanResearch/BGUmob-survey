@@ -84,11 +84,11 @@ def create_gate_pie_chart(gate_data: dict) -> go.Figure:
             colors=colors,
             line=dict(color='rgba(255,255,255,0.8)', width=3)
         ),
-        textinfo='label+percent+value',
-        texttemplate='<b>%{label}</b><br>%{percent}<br>(%{value} trips)',
-        textposition='auto',
+        textinfo='label+percent',
+        texttemplate='<b>%{label}</b><br>%{percent}',
+        textposition='outside',
         textfont=dict(
-            size=14,
+            size=16,
             color='white',
             family='Inter, system-ui, sans-serif'
         ),
@@ -98,16 +98,16 @@ def create_gate_pie_chart(gate_data: dict) -> go.Figure:
     
     fig.update_layout(
         title={
-            'text': 'Campus Gate Distribution<br><span style="font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 400;">Student route destinations by gate</span>',
+            'text': 'Campus Gate Distribution',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 28, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
-            'pad': {'b': 20}
+            'font': {'size': 32, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 30}
         },
         paper_bgcolor='rgba(0,0,0,0)',  # Transparent background
         plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': 'white', 'size': 12, 'family': 'Inter, system-ui, sans-serif'},
-        margin=dict(l=20, r=20, t=100, b=20),
+        font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
+        margin=dict(l=80, r=180, t=120, b=40),
         autosize=True,
         showlegend=True,
         legend=dict(
@@ -115,16 +115,18 @@ def create_gate_pie_chart(gate_data: dict) -> go.Figure:
             yanchor="middle",
             y=0.5,
             xanchor="left",
-            x=1.05,
-            font=dict(size=14, color='white', family='Inter'),
-            bgcolor='rgba(255,255,255,0.05)',
-            bordercolor='rgba(255,255,255,0.2)',
-            borderwidth=1
+            x=1.01,
+            font=dict(size=24, color='white', family='Inter, system-ui, sans-serif'),
+            bgcolor='rgba(255,255,255,0.1)',
+            bordercolor='rgba(255,255,255,0.3)',
+            borderwidth=2,
+            itemsizing='constant',
+            itemwidth=60
         ),
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',
             bordercolor='rgba(255,255,255,0.3)',
-            font_size=12,
+            font_size=14,
             font_family='Inter, system-ui, sans-serif'
         )
     )
@@ -178,6 +180,7 @@ def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> N
             displaylogo: false,
             modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
             responsive: true,
+            staticPlot: false,
             toImageButtonOptions: {{
                 format: 'png',
                 filename: '{title.lower().replace(" ", "_")}',
@@ -188,6 +191,14 @@ def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> N
         }};
         
         Plotly.newPlot('plotly-div', figureJSON.data, figureJSON.layout, config);
+        
+        // Disable legend clicking to make it static
+        document.getElementById('plotly-div').on('plotly_legendclick', function() {{
+            return false;
+        }});
+        document.getElementById('plotly-div').on('plotly_legenddoubleclick', function() {{
+            return false;
+        }});
         
         window.addEventListener('resize', function() {{
             Plotly.Plots.resize('plotly-div');

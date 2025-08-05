@@ -134,18 +134,18 @@ def create_spider_chart(factor_stats: dict) -> go.Figure:
     # Optimized layout for iframe embedding
     fig.update_layout(
         title={
-            'text': 'Route Choice Factors - Student Priorities<br><span style="font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 400;">Scale: 1-5 where higher values indicate more important factors</span>',
+            'text': 'Route Choice Factors - Student Priorities',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 28, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
-            'pad': {'b': 20}
+            'font': {'size': 32, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 30}
         },
         polar=dict(
             bgcolor='rgba(10,10,30,0.15)',
             radialaxis=dict(
                 visible=True,
                 range=[0, 5],
-                tickfont=dict(size=16, color='rgba(255,255,255,0.9)', family='Inter'),
+                tickfont=dict(size=18, color='rgba(255,255,255,0.9)', family='Inter, system-ui, sans-serif'),
                 gridcolor='rgba(255,255,255,0.12)',
                 gridwidth=1.5,
                 linecolor='rgba(255,255,255,0.2)',
@@ -156,7 +156,7 @@ def create_spider_chart(factor_stats: dict) -> go.Figure:
                 ticktext=['1', '2', '3', '4', '5 (Most Important)']
             ),
             angularaxis=dict(
-                tickfont=dict(size=18, color='white', family='Inter', weight=600),
+                tickfont=dict(size=20, color='white', family='Inter, system-ui, sans-serif'),
                 linecolor='rgba(255,255,255,0.3)',
                 gridcolor='rgba(255,255,255,0.15)',
                 gridwidth=1.5
@@ -164,15 +164,15 @@ def create_spider_chart(factor_stats: dict) -> go.Figure:
         ),
         paper_bgcolor='rgba(0,0,0,0)',  # Transparent background for iframe
         plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': 'white', 'size': 12, 'family': 'Inter, system-ui, sans-serif'},
+        font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
         showlegend=False,
-        # Optimized margins for iframe - extra top space for title and subtitle
+        # Optimized margins for iframe - extra top space for title
         margin=dict(l=80, r=80, t=140, b=80),
         autosize=True,
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',
             bordercolor='rgba(255,255,255,0.3)',
-            font_size=12,
+            font_size=14,
             font_family='Inter, system-ui, sans-serif'
         )
     )
@@ -219,14 +219,14 @@ def create_factor_comparison_chart(factor_stats: dict) -> go.Figure:
             'text': 'Route Choice Factors - Ranked by Importance',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 24, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
-            'pad': {'b': 10}
+            'font': {'size': 28, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 20}
         },
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',  # Transparent background for iframe
-        font={'color': 'white', 'size': 12, 'family': 'Inter, system-ui, sans-serif'},
+        font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
         xaxis=dict(
-            tickfont={'size': 12, 'color': 'rgba(255,255,255,0.9)'},
+            tickfont={'size': 14, 'color': 'rgba(255,255,255,0.9)'},
             color='white',
             showgrid=False,
             zeroline=False,
@@ -234,7 +234,7 @@ def create_factor_comparison_chart(factor_stats: dict) -> go.Figure:
             tickangle=-15
         ),
         yaxis=dict(
-            tickfont={'size': 12, 'color': 'rgba(255,255,255,0.8)'},
+            tickfont={'size': 14, 'color': 'rgba(255,255,255,0.8)'},
             gridcolor='rgba(255,255,255,0.08)',
             color='white',
             range=[0, 5],
@@ -245,13 +245,13 @@ def create_factor_comparison_chart(factor_stats: dict) -> go.Figure:
             showline=False
         ),
         # Optimized margins for iframe
-        margin=dict(l=50, r=20, t=70, b=50),
+        margin=dict(l=50, r=20, t=100, b=50),
         autosize=True,
         showlegend=False,
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',
             bordercolor='rgba(255,255,255,0.3)',
-            font_size=12,
+            font_size=14,
             font_family='Inter, system-ui, sans-serif'
         )
     )

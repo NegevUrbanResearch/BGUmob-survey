@@ -90,8 +90,8 @@ def create_transportation_bar_chart(transport_counts: pd.DataFrame) -> go.Figure
             'text': 'Transportation to BGU University',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 28, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
-            'pad': {'b': 10}
+            'font': {'size': 32, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 30}
         },
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',  # Transparent background for iframe
@@ -113,8 +113,8 @@ def create_transportation_bar_chart(transport_counts: pd.DataFrame) -> go.Figure
             range=[0, max(transport_counts['Count']) * 1.1],  # Dynamic range with 10% padding
             dtick=max(1, max(transport_counts['Count']) // 5)  # Dynamic tick spacing
         ),
-        # Optimized margins for iframe - minimal for maximum space usage
-        margin=dict(l=50, r=20, t=60, b=40),
+        # Optimized margins for iframe
+        margin=dict(l=60, r=40, t=100, b=50),
         autosize=True,
         showlegend=False,
         hoverlabel=dict(

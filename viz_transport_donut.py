@@ -109,37 +109,43 @@ def create_transport_donut_chart(transport_data: dict) -> go.Figure:
         ),
         textinfo='label+percent',
         texttemplate='<b>%{label}</b><br>%{percent}',
-        textposition='auto',
+        textposition='outside',
         textfont=dict(
-            size=13,
+            size=16,
             color='white',
             family='Inter, system-ui, sans-serif'
         ),
         hovertemplate='<b>%{label}</b><br>Trips: %{value}<br>Percentage: %{percent}<extra></extra>',
+        hoverlabel=dict(
+            bgcolor='rgba(15,15,15,0.95)',
+            bordercolor='rgba(255,255,255,0.3)',
+            font_size=14,
+            font_family='Inter, system-ui, sans-serif'
+        ),
         sort=False  # Keep sorted order
     ))
     
     # Add center text showing total
     fig.add_annotation(
-        text=f"<b>{total}</b><br><span style='font-size: 14px; color: rgba(255,255,255,0.8);'>Total Trips</span>",
+        text=f"<b>{total}</b><br><span style='font-size: 16px; color: rgba(255,255,255,0.8);'>Total Trips</span>",
         x=0.5, y=0.5,
-        font=dict(size=24, color='white', family='Inter'),
+        font=dict(size=28, color='white', family='Inter, system-ui, sans-serif'),
         showarrow=False,
         align='center'
     )
     
     fig.update_layout(
         title={
-            'text': 'Transportation Mode Distribution<br><span style="font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 400;">How students travel to campus</span>',
+            'text': 'Transportation Mode Distribution',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 28, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
-            'pad': {'b': 20}
+            'font': {'size': 32, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
+            'pad': {'b': 30}
         },
         paper_bgcolor='rgba(0,0,0,0)',  # Transparent background
         plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': 'white', 'size': 12, 'family': 'Inter, system-ui, sans-serif'},
-        margin=dict(l=20, r=20, t=100, b=20),
+        font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
+        margin=dict(l=80, r=180, t=120, b=40),
         autosize=True,
         showlegend=True,
         legend=dict(
@@ -147,17 +153,19 @@ def create_transport_donut_chart(transport_data: dict) -> go.Figure:
             yanchor="middle",
             y=0.5,
             xanchor="left",
-            x=1.05,
-            font=dict(size=14, color='white', family='Inter'),
-            bgcolor='rgba(255,255,255,0.05)',
-            bordercolor='rgba(255,255,255,0.2)',
-            borderwidth=1,
-            traceorder='normal'
+            x=1.01,
+            font=dict(size=24, color='white', family='Inter, system-ui, sans-serif'),
+            bgcolor='rgba(255,255,255,0.1)',
+            bordercolor='rgba(255,255,255,0.3)',
+            borderwidth=2,
+            traceorder='normal',
+            itemsizing='constant',
+            itemwidth=60
         ),
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.95)',
             bordercolor='rgba(255,255,255,0.3)',
-            font_size=12,
+            font_size=14,
             font_family='Inter, system-ui, sans-serif'
         ),
         # Add subtle animation
@@ -201,10 +209,13 @@ def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> N
             opacity: 1;
         }}
         
-        /* Vega-inspired hover effects */
-        .slice:hover {{
-            transform: scale(1.05);
-            transition: transform 0.2s ease;
+        /* Smooth hover transitions without overlap */
+        .js-plotly-plot .plotly .slice {{
+            transition: opacity 0.2s ease;
+        }}
+        
+        .js-plotly-plot .plotly .slice:hover {{
+            opacity: 0.9;
         }}
     </style>
 </head>
@@ -219,6 +230,7 @@ def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> N
             displaylogo: false,
             modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
             responsive: true,
+            staticPlot: false,
             toImageButtonOptions: {{
                 format: 'png',
                 filename: '{title.lower().replace(" ", "_")}',
@@ -229,6 +241,14 @@ def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> N
         }};
         
         Plotly.newPlot('plotly-div', figureJSON.data, figureJSON.layout, config);
+        
+        // Disable legend clicking to make it static
+        document.getElementById('plotly-div').on('plotly_legendclick', function() {{
+            return false;
+        }});
+        document.getElementById('plotly-div').on('plotly_legenddoubleclick', function() {{
+            return false;
+        }});
         
         window.addEventListener('resize', function() {{
             Plotly.Plots.resize('plotly-div');

@@ -143,10 +143,10 @@ def create_distance_comparison_chart(perceived_data: Dict, actual_data: Dict, li
     
     fig.update_layout(
         title={
-            'text': 'Distance: Perception vs Reality<br><span style="font-size: 18px; color: rgba(255,255,255,0.8); font-weight: 400;">Individual student responses comparing perceived importance to actual trip distance</span>',
+            'text': 'Distance: Perception vs Reality',
             'x': 0.5,
             'xanchor': 'center',
-            'font': {'size': 32, 'color': 'white', 'family': 'Inter, system-ui, sans-serif', 'weight': 700},
+            'font': {'size': 32, 'color': 'white', 'family': 'Inter, system-ui, sans-serif'},
             'pad': {'b': 30}
         },
         xaxis=dict(
@@ -175,21 +175,21 @@ def create_distance_comparison_chart(perceived_data: Dict, actual_data: Dict, li
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(15,15,30,0.3)',
         font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
-        margin=dict(l=100, r=120, t=140, b=90),
+        margin=dict(l=120, r=160, t=140, b=90),
         autosize=True,
         legend=dict(
             orientation="v",
             yanchor="top",
             y=0.98,
             xanchor="left",
-            x=1.02,
-            font=dict(size=18, color='white', family='Inter, system-ui, sans-serif', weight=500),
-            bgcolor='rgba(255,255,255,0.08)',
+            x=1.01,
+            font=dict(size=24, color='white', family='Inter, system-ui, sans-serif'),
+            bgcolor='rgba(255,255,255,0.1)',
             bordercolor='rgba(255,255,255,0.3)',
             borderwidth=2,
             itemsizing='constant',
-            itemwidth=40,
-            tracegroupgap=10
+            itemwidth=60,
+            tracegroupgap=15
         ),
         hovermode='closest',
         hoverlabel=dict(
