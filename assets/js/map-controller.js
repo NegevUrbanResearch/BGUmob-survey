@@ -671,7 +671,7 @@ class BGUMapController {
                 <div class="route-popup">
                     <h4><i class="fas fa-route"></i> Route to ${destinationGate}</h4>
                     <div style="margin: 8px 0;">
-                        <div class="route-mode-item">
+                    <div class="route-mode-item">
                             <span class="mode-dot" style="background: ${gateColor}; width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
                             <span><strong>${usage}</strong> trips via ${transportMode}</span>
                         </div>
@@ -679,8 +679,8 @@ class BGUMapController {
                     <div style="color: #888; font-size: 10px; margin-top: 8px;">
                         Route intensity reflects trip volume
                     </div>
-                </div>
-            `;
+                    </div>
+                `;
             
             new maplibregl.Popup()
                 .setLngLat(e.lngLat)
@@ -875,23 +875,23 @@ class BGUMapController {
             // Get gate color, default to gray if not found
             const gateColor = this.gateColors[gateName] || '#9E9E9E';
             
-            // Use route path if available, otherwise fall back to straight line
-            const coordinates = route.routePath || [
-                [route.residence.lng, route.residence.lat],
-                [route.destination.lng, route.destination.lat]
-            ];
-            
-            routeFeatures.push({
-                type: 'Feature',
-                geometry: {
-                    type: 'LineString',
-                    coordinates: coordinates
-                },
-                properties: {
+                // Use route path if available, otherwise fall back to straight line
+                const coordinates = route.routePath || [
+                    [route.residence.lng, route.residence.lat],
+                    [route.destination.lng, route.destination.lat]
+                ];
+                
+                routeFeatures.push({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: coordinates
+                    },
+                    properties: {
                     id: route.id + '_usage_' + usage, // Unique ID including usage
-                    transportMode: route.transportMode,
-                    distance: route.distance,
-                    poiCount: route.poiCount,
+                        transportMode: route.transportMode,
+                        distance: route.distance,
+                        poiCount: route.poiCount,
                     intensity: intensity,
                     usage: usage,
                     destinationGate: gateName,
