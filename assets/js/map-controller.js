@@ -54,9 +54,9 @@ class BGUMapController {
 
         // Map layers and interactions will be set up after map loads
 
-        // Add navigation controls
-        this.map.addControl(new maplibregl.NavigationControl(), 'top-left');
-        this.map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+        // Add navigation controls - moved to right side to avoid UI panel conflicts
+        this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
+        this.map.addControl(new maplibregl.ScaleControl(), 'bottom-right');
         
     }
 
@@ -151,8 +151,13 @@ class BGUMapController {
             getTooltip: this.getDeckGLTooltip.bind(this)
         });
         
-        // Add the overlay to the map
-        this.map.addControl(this.deckOverlay);
+        // Add the overlay to the map - position it to appear below other controls
+        this.map.addControl(this.deckOverlay, 'top-right');
+        
+        // Add custom CSS to position deck.gl controls below MapLibre controls
+        setTimeout(() => {
+            this.styleDeckGLControls();
+        }, 500);
         
         // Listen for zoom changes to update clustering
         this.map.on('zoom', () => {
@@ -160,6 +165,37 @@ class BGUMapController {
         });
         
         console.log('✓ deck.gl overlay initialized');
+    }
+
+    styleDeckGLControls() {
+        // Find and style deck.gl control elements
+        const mapContainer = document.getElementById('map');
+        if (mapContainer) {
+            // Look for deck.gl control containers
+            const deckControls = mapContainer.querySelectorAll('.deck-widget, .deck-tooltip, [class*="deck"]');
+            deckControls.forEach(control => {
+                control.style.background = 'rgba(0, 0, 0, 0.8)';
+                control.style.backdropFilter = 'blur(20px)';
+                control.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+                control.style.borderRadius = '12px';
+                control.style.color = 'rgba(255, 255, 255, 0.95)';
+                control.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+            });
+
+            // Adjust positioning to place deck.gl controls below MapLibre controls
+            const topRightControls = mapContainer.querySelector('.maplibregl-ctrl-top-right');
+            if (topRightControls) {
+                const maplibreHeight = topRightControls.offsetHeight;
+                // Position deck.gl controls below MapLibre controls
+                deckControls.forEach(control => {
+                    if (control.style.position === 'absolute' || window.getComputedStyle(control).position === 'absolute') {
+                        control.style.top = `${100 + maplibreHeight + 10}px`;
+                        control.style.right = '20px';
+                        control.style.zIndex = '1000';
+                    }
+                });
+            }
+        }
     }
 
     getDeckGLTooltip({object, layer}) {
@@ -614,6 +650,11 @@ class BGUMapController {
         this.deckOverlay.setProps({
             layers: layers
         });
+        
+        // Re-apply styling to any new deck.gl controls
+        setTimeout(() => {
+            this.styleDeckGLControls();
+        }, 100);
         
         console.log(`✓ Updated deck.gl with ${layers.length} layers at zoom ${this.map.getZoom().toFixed(1)}`);
     }
