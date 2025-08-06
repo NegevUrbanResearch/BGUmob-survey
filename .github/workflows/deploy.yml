@@ -1,4 +1,4 @@
-name: Deploy BGU Mobility Dashboard to GitHub Pages
+name: Deploy BGU Mobility Map to GitHub Pages
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
       run: |
         echo "📋 Validating HTML structure..."
         if [ -f "index.html" ]; then
-          echo "✅ Main dashboard file found"
+          echo "✅ Main map interface file found"
         else
           echo "❌ index.html not found"
           exit 1
@@ -43,17 +43,18 @@ jobs:
     - name: Check required assets
       run: |
         echo "🔍 Checking required assets..."
-        if [ -d "assets/css" ] && [ -f "assets/css/dashboard.css" ]; then
-          echo "✅ CSS assets found"
-        else
-          echo "❌ CSS assets missing"
-          exit 1
-        fi
-        
-        if [ -d "assets/js" ] && [ -f "assets/js/dashboard.js" ]; then
+        if [ -d "assets/js" ] && [ -f "assets/js/map-controller.js" ]; then
           echo "✅ JavaScript assets found"
         else
           echo "❌ JavaScript assets missing"
+          exit 1
+        fi
+        
+        if [ -d "assets/media" ]; then
+          echo "✅ Media assets directory found"
+          ls -la assets/media/ | head -5
+        else
+          echo "❌ Media assets missing"
           exit 1
         fi
         
@@ -71,9 +72,14 @@ jobs:
         echo "⚡ Optimizing assets for production..."
         
         # Ensure all directories exist
-        mkdir -p assets/css assets/js outputs
+        mkdir -p assets/js assets/media outputs
         
         # Verify all required files are present
+        echo "📁 Project structure:"
+        echo "   - index.html (main map interface)"
+        echo "   - assets/js/map-controller.js (map functionality)"
+        echo "   - assets/media/ (logos and images)"
+        echo "   - outputs/ (analysis visualizations)"
         echo "✅ All required files verified"
         
     - name: Upload artifact
