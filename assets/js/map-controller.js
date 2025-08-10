@@ -33,6 +33,15 @@ class BGUMapController {
         ];
     }
 
+    // Convert hex color to rgba string with given alpha
+    hexToRgba(hex, alpha = 1) {
+        const clean = hex.replace('#', '');
+        const r = parseInt(clean.substring(0, 2), 16);
+        const g = parseInt(clean.substring(2, 4), 16);
+        const b = parseInt(clean.substring(4, 6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
     async initialize() {
         console.log('🗺️ Initializing BGU Mobility Map...');
         
@@ -75,7 +84,7 @@ class BGUMapController {
             data: { type: 'FeatureCollection', features: [] }
         });
 
-        // Route lines with dynamic styling
+        // Colored route lines with per-gate side-by-side offsets (zoom-aware)
         this.map.addLayer({
             id: 'routes',
             type: 'line',
@@ -85,25 +94,45 @@ class BGUMapController {
                 'line-cap': 'round'
             },
             paint: {
-                'line-color': [
-                    'case',
-                    ['>', ['get', 'overlapCount'], 0],
-                    ['get', 'blendedColor'],
-                    ['get', 'gateColor']
-                ],
+                'line-color': ['get', 'gateColor'],
+                // Zoom-aware thickness; keep low trip counts thinner for precision
                 'line-width': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'intensity'],
-                    0.2, 3,
-                    1, 10
+                    'interpolate', ['linear'], ['zoom'],
+                    10, [
+                        'interpolate', ['linear'], ['get', 'localDensity'],
+                        1, 2.0,
+                        2, 3.0,
+                        3, 4.2,
+                        5, 6.2,
+                        10, 9.0
+                    ],
+                    16, [
+                        'interpolate', ['linear'], ['get', 'localDensity'],
+                        1, 2.8,
+                        2, 4.2,
+                        3, 6.0,
+                        5, 9.0,
+                        10, 14.0
+                    ]
                 ],
-                'line-opacity': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'intensity'],
-                    0.2, 0.4,
-                    1, 0.9
+                'line-opacity': 1.0,
+                'line-blur': 0.0,
+                'line-offset': [
+                    'interpolate', ['linear'], ['zoom'],
+                    10, ['*', [
+                        'match', ['get', 'gateKey'],
+                        'south', -1,
+                        'north', 0,
+                        'west', 1,
+                        0
+                    ], 3],
+                    16, ['*', [
+                        'match', ['get', 'gateKey'],
+                        'south', -1,
+                        'north', 0,
+                        'west', 1,
+                        0
+                    ], 8]
                 ]
             }
         });
@@ -496,7 +525,11 @@ class BGUMapController {
 
     // FIXED: Compact popup for crowded locations
     showRoutePopup(e) {
-        const features = this.map.queryRenderedFeatures(e.point, { layers: ['routes'] });
+        // Expand query to a small pixel buffer to capture adjacent offset routes
+        const buffer = 10; // pixels
+        const min = [e.point.x - buffer, e.point.y - buffer];
+        const max = [e.point.x + buffer, e.point.y + buffer];
+        const features = this.map.queryRenderedFeatures([min, max], { layers: ['routes'] });
         
         console.log(`🔍 Found ${features.length} individual route segments at this location`);
         
@@ -541,38 +574,35 @@ class BGUMapController {
         // Build compact popup - show ALL routes now
         let popupContent = `
             <div style="font-family: Inter, sans-serif; padding: 10px; min-width: 180px; max-width: 240px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <div style="width: 10px; height: 10px; background: ${blendedColor}; border-radius: 50%;"></div>
-                    <span style="font-weight: 600; color: #2c3e50; font-size: 13px;">Route Junction</span>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <span style="font-weight: 600; color: #2c3e50; font-size: 13px;">Routes Here</span>
                     <span style="font-size: 11px; color: #666; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
                 </div>
+                <div style="color: #9aa0a6; font-size: 9px; margin-bottom: 6px;">Thickness = trips</div>
         `;
 
         // Show ALL routes in compact format
         sortedGroups.forEach(group => {
             const modeIcon = modeIcons[group.transportMode] || '❓';
             const gateName = group.destinationGate.replace(' Gate', '');
-            
+
             popupContent += `
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px; padding: 3px 6px; background: rgba(0,0,0,0.02); border-radius: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; padding: 4px 8px; background: ${this.hexToRgba(group.gateColor, 0.15)}; border: 1px solid ${this.hexToRgba(group.gateColor, 0.35)}; border-radius: 6px;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${group.gateColor}; display: inline-block;"></span>
                     <span style="font-size: 12px;">${modeIcon}</span>
-                    <span style="font-size: 11px; color: #666; flex: 1;">→ ${gateName}</span>
-                    <span style="font-size: 11px; font-weight: 600; color: ${group.gateColor};">${group.count}</span>
+                    <span style="font-size: 11px; color: #333; flex: 1;">→ ${gateName}</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #fff; background: ${group.gateColor}; padding: 1px 6px; border-radius: 10px;">${group.count}</span>
                 </div>
             `;
         });
 
-        popupContent += `
-                <div style="color: #888; font-size: 9px; margin-top: 6px; text-align: center; font-style: italic; border-top: 1px solid #eee; padding-top: 4px;">
-                    Each route = 1 trip
-                </div>
-            </div>
-        `;
+
 
         new maplibregl.Popup({
             maxWidth: '280px',
             closeButton: false,
-            closeOnClick: false
+            closeOnClick: false,
+            className: 'route-popup'
         })
             .setLngLat(e.lngLat)
             .setHTML(popupContent)
@@ -740,7 +770,13 @@ class BGUMapController {
         routes.forEach(route => {
             const transportMode = route.transportMode || 'unknown';
             const destinationGate = route.destination.name || route.destination.id || 'Unknown';
-            const gateColor = this.gateColors[route.destination.name] || this.gateColors[route.destination.id] || '#9E9E9E';
+            const destIdLc = (route.destination.id || '').toLowerCase();
+            const destNameLc = (route.destination.name || '').toLowerCase();
+            const gateKey = destIdLc.includes('south') || destNameLc.includes('south') ? 'south'
+                : destIdLc.includes('west') || destNameLc.includes('west') ? 'west'
+                : destIdLc.includes('north') || destNameLc.includes('north') ? 'north'
+                : 'north';
+            const gateColor = this.gateColors[route.destination.name] || this.gateColors[gateKey] || '#9E9E9E';
             
             const coordinates = route.routePath || [
                 [route.residence.lng, route.residence.lat],
@@ -753,7 +789,7 @@ class BGUMapController {
             
             // Calculate intensity based on how many routes will be at this location
             const localDensity = 1 + overlapCount; // This route + overlapping ones
-            const intensity = Math.min(0.2 + (localDensity * 0.15), 1.0); // Cap at 1.0
+            const intensity = Math.min(0.2 + (localDensity * 0.15), 1.0); // kept for backwards compat, not used in styling
             
             let blendedColor = gateColor;
             if (overlapCount > 0) {
@@ -773,8 +809,11 @@ class BGUMapController {
                     distance: route.distance,
                     poiCount: route.poiCount,
                     intensity: intensity,
+                    localDensity: localDensity,
                     usage: 1, // Each route represents exactly 1 trip
                     destinationGate: destinationGate,
+                    destinationId: route.destination.id,
+                    gateKey: gateKey,
                     gateColor: gateColor,
                     blendedColor: blendedColor,
                     overlapCount: overlapCount,
@@ -795,7 +834,7 @@ class BGUMapController {
     // Simplified overlap detection for better performance
     findOverlappingSegments(coordinates, existingFeatures) {
         const overlapping = [];
-        const tolerance = 0.0008; // Slightly increased tolerance
+        const tolerance = 50; // meters
         
         const start = coordinates[0];
         const end = coordinates[coordinates.length - 1];
