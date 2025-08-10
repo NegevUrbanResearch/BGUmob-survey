@@ -11,8 +11,6 @@ class BGUMapController {
         this.routesData = [];
         this.statistics = {};
         this.currentFilters = {
-            gateDestination: 'all',
-            transportMode: 'all',
             showPOIs: true,
             showRoutes: true
         };
@@ -635,7 +633,7 @@ class BGUMapController {
             
             const modeDisplay = modeDisplayNames[transportMode] || `❓ ${transportMode}`;
             
-            // Create simplified popup content
+            // Create popup content with volume information
             let popupContent = `
                 <div style="font-family: Inter, sans-serif; padding: 8px; min-width: 120px;">
                     <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 14px;">
@@ -646,6 +644,9 @@ class BGUMapController {
                     </div>
                     <div style="color: ${gateColor}; font-weight: 600; font-size: 13px;">
                         ${usage} trips
+                    </div>
+                    <div style="color: #888; font-size: 10px; margin-top: 6px; font-style: italic;">
+                        Brighter & Thicker = Higher Volume
                     </div>
                 </div>
             `;
@@ -799,9 +800,7 @@ class BGUMapController {
 
         // Filter routes based on current filters
         const filteredRoutes = this.routesData
-            .filter(route => this.currentFilters.showRoutes)
-            .filter(route => this.currentFilters.gateDestination === 'all' || route.destination.name === this.currentFilters.gateDestination)
-            .filter(route => this.currentFilters.transportMode === 'all' || route.transportMode === this.currentFilters.transportMode);
+            .filter(route => this.currentFilters.showRoutes);
 
         // Group routes by transportation mode and destination gate for proper aggregation
         const routeGroups = {};
@@ -869,136 +868,12 @@ class BGUMapController {
     }
 
     updateUI() {
-
-        // Create gate destination dropdown options
-        const gateOptions = document.getElementById('gate-options');
-        gateOptions.innerHTML = '';
-        
-        // Gate destination options
-        const gateRoutes = {};
-        this.routesData.forEach(route => {
-            const gateName = route.destination.name || 'Unknown';
-            gateRoutes[gateName] = (gateRoutes[gateName] || 0) + 1;
-        });
-        
-        Object.entries(gateRoutes).forEach(([gateName, count]) => {
-            if (count > 0) {
-                const gateColor = this.gateColors[gateName] || '#9E9E9E';
-                const option = document.createElement('div');
-                option.className = 'transport-option';
-                option.innerHTML = `
-                    <span style="display: inline-block; width: 8px; height: 8px; background: ${gateColor}; border-radius: 50%; margin-right: 6px;"></span>
-                    ${gateName} (${count})
-                `;
-                option.onclick = () => {
-                    this.setGateFilter(gateName);
-                    document.getElementById('gate-options').classList.remove('show');
-                };
-                gateOptions.appendChild(option);
-            }
-        });
-
-        // Create transport mode dropdown options
-        const transportOptions = document.getElementById('transport-options');
-        transportOptions.innerHTML = '';
-        
-        // Transportation mode colors
-        const modeColors = {
-            walking: '#4CAF50',
-            bicycle: '#FF9800',
-            ebike: '#9C27B0',
-            car: '#F44336',
-            bus: '#2196F3',
-            train: '#795548',
-            unknown: '#9E9E9E'
-        };
-        
-        Object.entries(this.statistics.transportModes).forEach(([mode, count]) => {
-            if (count > 0) {
-                const option = document.createElement('div');
-                option.className = 'transport-option';
-                option.innerHTML = `
-                    <span style="display: inline-block; width: 8px; height: 8px; background: ${modeColors[mode] || modeColors.unknown}; border-radius: 50%; margin-right: 6px;"></span>
-                    ${mode} (${count})
-                `;
-                option.onclick = () => {
-                    this.setTransportFilter(mode);
-                    document.getElementById('transport-options').classList.remove('show');
-                };
-                transportOptions.appendChild(option);
-            }
-        });
+        // UI is now simplified - no dropdowns needed
     }
 
-    setGateFilter(gateName) {
-        this.currentFilters.gateDestination = gateName;
-        
-        // Update button states for gate menu
-        document.querySelectorAll('#gate-menu .transport-menu-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        if (gateName === 'all') {
-            document.querySelector('#gate-menu .transport-menu-btn').classList.add('active');
-        } else {
-            // Update the dropdown button text
-            const dropdownBtn = document.querySelector('#gate-menu .transport-dropdown .transport-menu-btn');
-            const gateColor = this.gateColors[gateName] || '#9E9E9E';
-            dropdownBtn.innerHTML = `
-                <span style="display: inline-block; width: 8px; height: 8px; background: ${gateColor}; border-radius: 50%; margin-right: 6px;"></span>
-                ${gateName}
-                <i class="fas fa-chevron-down"></i>
-            `;
-            dropdownBtn.classList.add('active');
-        }
-        
-        this.updateMap();
-    }
 
-    setTransportFilter(mode) {
-        this.currentFilters.transportMode = mode;
-        
-        // Update button states for transport menu
-        document.querySelectorAll('#transport-menu .transport-menu-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        if (mode === 'all') {
-            document.querySelector('#transport-menu .transport-menu-btn').classList.add('active');
-        } else {
-            // Update the dropdown button text
-            const dropdownBtn = document.querySelector('#transport-menu .transport-dropdown .transport-menu-btn');
-            const modeColors = {
-                walking: '#4CAF50',
-                bicycle: '#FF9800',
-                ebike: '#9C27B0',
-                car: '#F44336',
-                bus: '#2196F3',
-                train: '#795548',
-                unknown: '#9E9E9E'
-            };
-            dropdownBtn.innerHTML = `
-                <span style="display: inline-block; width: 8px; height: 8px; background: ${modeColors[mode] || modeColors.unknown}; border-radius: 50%; margin-right: 6px;"></span>
-                ${mode}
-                <i class="fas fa-chevron-down"></i>
-            `;
-            dropdownBtn.classList.add('active');
-        }
-        
-        this.updateMap();
-    }
 
-    togglePOIs() {
-        this.currentFilters.showPOIs = !this.currentFilters.showPOIs;
-        document.querySelector('[data-filter="pois"]').classList.toggle('active', this.currentFilters.showPOIs);
-        this.updateMap();
-    }
 
-    toggleRoutes() {
-        this.currentFilters.showRoutes = !this.currentFilters.showRoutes;
-        document.querySelector('[data-filter="routes"]').classList.toggle('active', this.currentFilters.showRoutes);
-        this.updateMap();
-    }
 
 
 
@@ -1029,39 +904,9 @@ class BGUMapController {
     }
 
     setupEventListeners() {
-        // Make filter functions globally accessible
-        window.togglePOIs = () => this.togglePOIs();
-        window.toggleRoutes = () => this.toggleRoutes();
+        // Make functions globally accessible
         window.resetMap = () => this.resetMap();
         window.toggleFullscreen = () => this.toggleFullscreen();
-        window.setGateFilter = (gateName) => this.setGateFilter(gateName);
-        window.setTransportFilter = (mode) => this.setTransportFilter(mode);
-        
-        // Add gate dropdown functionality
-        window.toggleGateDropdown = () => {
-            const options = document.getElementById('gate-options');
-            options.classList.toggle('show');
-        };
-        
-        // Add transport dropdown functionality
-        window.toggleTransportDropdown = () => {
-            const options = document.getElementById('transport-options');
-            options.classList.toggle('show');
-        };
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.transport-dropdown')) {
-                const gateOptions = document.getElementById('gate-options');
-                const transportOptions = document.getElementById('transport-options');
-                if (gateOptions) {
-                    gateOptions.classList.remove('show');
-                }
-                if (transportOptions) {
-                    transportOptions.classList.remove('show');
-                }
-            }
-        });
     }
 
     resetMap() {

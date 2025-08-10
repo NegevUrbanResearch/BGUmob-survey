@@ -36,109 +36,7 @@
             height: 100vh;
         }
 
-        /* Logo Header Bar - Hard Lines Style */
-        .logo-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 30, 0.95));
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-bottom: 1px solid rgba(100, 255, 218, 0.3);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), 0 0 50px rgba(100, 255, 218, 0.1);
-        }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #f8f8f8;
-            border: none;
-            border-radius: 0;
-            padding: 0 20px;
-            margin: 0;
-            box-shadow: 
-                2px 0 8px rgba(0, 0, 0, 0.1),
-                0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            height: 80px;
-            width: auto;
-            min-width: fit-content;
-        }
-
-        .logo-container:hover {
-            background: #ffffff;
-            box-shadow: 
-                3px 0 12px rgba(0, 0, 0, 0.15),
-                0 3px 8px rgba(0, 0, 0, 0.08);
-            transform: none;
-        }
-
-        .logo-item {
-            display: flex;
-            align-items: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .logo-item:hover {
-            transform: scale(1.05);
-        }
-
-        .logo-item img {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-
-        .logo-item.zencity img {
-            height: 85px; /* Made larger */
-        }
-
-        .logo-item.nur img {
-            height: 45px;
-        }
-
-        .header-content {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2001;
-        }
-
-        .project-title {
-            background: linear-gradient(135deg, #64ffda, #00bcd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(100, 255, 218, 0.2);
-            position: relative;
-        }
-
-        .project-title::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #64ffda, transparent);
-            border-radius: 1px;
-        }
 
         .info-btn {
             width: 100%;
@@ -170,9 +68,9 @@
 
         #map {
             width: 100vw;
-            height: calc(100vh - 80px);
+            height: 100vh;
             position: relative;
-            top: 80px;
+            top: 0;
         }
 
         /* Glass Panel Base - Dark Mode */
@@ -194,9 +92,74 @@
             transform: translateY(-2px);
         }
 
+        /* Title Section */
+        .title-section {
+            margin-bottom: 20px;
+        }
+
+        .project-title {
+            background: linear-gradient(135deg, #64ffda, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 24px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(100, 255, 218, 0.2);
+            position: relative;
+            margin: 0;
+        }
+
+        .project-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #64ffda, transparent);
+            border-radius: 1px;
+        }
+
+        /* Logo Section in Control Panel */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .logo-section .logo-item {
+            display: flex;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logo-section .logo-item:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-section .logo-item img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-section .logo-item.nur img {
+            height: 35px;
+            filter: brightness(0) invert(1); /* Make NUR logo white */
+        }
+
+        .logo-section .logo-item.zencity img {
+            height: 45px;
+            /* Preserve ZenCity logo colors - no filter */
+        }
+
         /* Combined Info & Controls Panel */
         .info-controls-panel {
-            top: 100px;
+            top: 20px;
             left: 20px;
             max-width: 280px;
         }
@@ -246,123 +209,9 @@
             font-weight: 500;
         }
 
-        .filter-section {
-            margin-bottom: 16px;
-        }
 
-        .filter-group {
-            margin-bottom: 16px;
-        }
 
-        .filter-group h3 {
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
 
-        .filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .filter-btn {
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .filter-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-1px);
-        }
-
-        .filter-btn.active {
-            background: rgba(100, 255, 218, 0.3);
-            border-color: #64ffda;
-            color: #ffffff;
-        }
-
-        /* Transport Menu */
-        .transport-menu {
-            position: relative;
-        }
-
-        .transport-menu-btn {
-            width: 100%;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-
-        .transport-menu-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .transport-menu-btn.active {
-            background: rgba(100, 255, 218, 0.3);
-            border-color: #64ffda;
-            color: #ffffff;
-        }
-
-        .transport-dropdown {
-            position: relative;
-        }
-
-        .transport-options {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 8px;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-        }
-
-        .transport-options.show {
-            display: block;
-        }
-
-        .transport-option {
-            padding: 6px 12px;
-            color: #333;
-            font-size: 11px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .transport-option:hover {
-            background: rgba(100, 255, 218, 0.1);
-        }
 
         /* Gradient Legend */
         .legend-gradient {
@@ -384,51 +233,34 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
-        .toggle-buttons {
-            display: flex;
-            gap: 8px;
-        }
 
-        .toggle-btn {
-            flex: 1;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
 
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .toggle-btn.active {
-            background: rgba(100, 255, 218, 0.3);
-            border-color: #64ffda;
-            color: #ffffff;
-        }
-
-        /* Legend Panel */
-        .legend-panel {
-            bottom: 20px;
-            right: 20px;
-            max-width: 240px;
-        }
-
+        /* Legend Section in Control Panel */
         .legend-section {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            position: relative;
+        }
+
+        .legend-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #64ffda, transparent);
+            border-radius: 1px;
         }
 
         .legend-section h3 {
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
             color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .legend-items {
@@ -441,8 +273,9 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
         }
 
         .legend-color {
@@ -456,10 +289,12 @@
             flex: 1;
         }
 
+
+
         /* Map Controls - Improved Vertical Stack */
         .map-controls {
             position: absolute;
-            top: 100px;
+            top: 20px;
             right: 20px;
             z-index: 1001;
             display: flex;
@@ -599,15 +434,16 @@
         /* Analysis Links */
         .analysis-links {
             margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .analysis-links h3 {
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
             color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .analysis-btn {
@@ -822,95 +658,64 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .logo-header {
-                height: 70px;
-                padding: 0;
+            .project-title {
+                font-size: 22px;
             }
             
-            .logo-container {
-                gap: 10px;
-                padding: 0 16px;
-                height: 70px;
+            .logo-section .logo-item img {
+                height: 30px;
             }
             
-            .logo-item img {
-                height: 40px;
+            .logo-section .logo-item.nur img {
+                height: 25px;
             }
             
-            .logo-item.zencity img {
-                height: 70px;
-            }
-            
-            .logo-item.nur img {
+            .logo-section .logo-item.zencity img {
                 height: 35px;
             }
             
-            .project-title {
-                font-size: 20px;
-            }
-            
             #map {
-                height: calc(100vh - 70px);
-                top: 70px;
+                height: 100vh;
+                top: 0;
             }
             
             .info-controls-panel {
                 max-width: 240px;
                 padding: 16px;
-                top: 80px;
-            }
-            
-            .legend-panel {
-                max-width: 200px;
-                padding: 16px;
+                top: 20px;
             }
             
             .info-grid {
                 grid-template-columns: 1fr;
                 gap: 8px;
             }
-            
-
         }
         
         @media (max-width: 480px) {
-            .logo-header {
-                height: 60px;
-                padding: 0;
+            .project-title {
+                font-size: 20px;
             }
             
-            .logo-container {
-                gap: 8px;
-                padding: 0 14px;
-                height: 60px;
+            .logo-section .logo-item img {
+                height: 25px;
             }
             
-            .logo-item img {
-                height: 35px;
+            .logo-section .logo-item.nur img {
+                height: 20px;
             }
             
-            .logo-item.zencity img {
-                height: 65px;
-            }
-            
-            .logo-item.nur img {
+            .logo-section .logo-item.zencity img {
                 height: 30px;
             }
             
-            .project-title {
-                font-size: 18px;
-            }
-            
             #map {
-                height: calc(100vh - 60px);
-                top: 60px;
+                height: 100vh;
+                top: 0;
             }
             
             .info-controls-panel {
-                top: 70px;
+                top: 20px;
             }
-            
-
         }
     </style>
 </head>
@@ -924,76 +729,63 @@
         </div>
     </div>
 
-    <!-- Logo Header Bar -->
-    <div class="logo-header">
-        <div class="logo-container">
-            <div class="logo-item nur">
-                <img src="assets/media/Nur-Logo_3x-_1_.svg" alt="NUR Logo">
-            </div>
-            <div class="logo-item zencity">
-                <img src="assets/media/zencity-new-logo.png" alt="ZenCity Logo">
-            </div>
-        </div>
-        <div class="header-content">
-            <div class="project-title">BGU Mobility Survey</div>
-        </div>
-    </div>
+
 
     <!-- Map Container -->
     <div id="map"></div>
 
     <!-- Combined Info & Controls Panel -->
     <div class="ui-panel info-controls-panel">
-        <div class="panel-title">
-            <i class="fas fa-map-marked-alt"></i>
-            BGU Mobility Survey
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="project-title">BGU Mobility Survey</h1>
         </div>
-        
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <div class="filter-group">
-                <h3><i class="fas fa-filter"></i>Gate Destination</h3>
-                <div class="transport-menu" id="gate-menu">
-                    <button class="transport-menu-btn active" onclick="setGateFilter('all')">
-                        <i class="fas fa-globe"></i> All Gates
-                    </button>
-                    <div class="transport-dropdown">
-                        <button class="transport-menu-btn" onclick="toggleGateDropdown()">
-                            <i class="fas fa-chevron-down"></i> Select Gate
-                        </button>
-                        <div class="transport-options" id="gate-options">
-                            <!-- Dynamically populated -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+        <!-- Legend Section -->
+        <div class="legend-section">
+            <h3><i class="fas fa-layer-group"></i>Legend</h3>
             
-            <div class="filter-group">
-                <h3><i class="fas fa-bus"></i>Transport Mode</h3>
-                <div class="transport-menu" id="transport-menu">
-                    <button class="transport-menu-btn active" onclick="setTransportFilter('all')">
-                        <i class="fas fa-globe"></i> All Modes
-                    </button>
-                    <div class="transport-dropdown">
-                        <button class="transport-menu-btn" onclick="toggleTransportDropdown()">
-                            <i class="fas fa-chevron-down"></i> Select Mode
-                        </button>
-                        <div class="transport-options" id="transport-options">
-                            <!-- Dynamically populated -->
-                        </div>
-                    </div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #E91E63;"></div>
+                    <span class="legend-label">Destination South Gate</span>
                 </div>
-            </div>
-            
-            <div class="filter-group">
-                <h3><i class="fas fa-eye"></i>Display Options</h3>
-                <div class="toggle-buttons">
-                    <button class="toggle-btn active" data-filter="pois" onclick="togglePOIs()">
-                        <i class="fas fa-map-pin"></i> POIs
-                    </button>
-                    <button class="toggle-btn active" data-filter="routes" onclick="toggleRoutes()">
-                        <i class="fas fa-route"></i> Routes
-                    </button>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9C27B0;"></div>
+                    <span class="legend-label">Destination North Gate</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF9800;"></div>
+                    <span class="legend-label">Destination West Gate</span>
+                </div>
+                <div class="legend-item">
+                    <div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span class="legend-label">POI Points</span>
+                </div>
+                <div class="legend-item">
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#E91E63" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="6" stroke="#E91E63" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="2" fill="#E91E63"/>
+                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#9C27B0" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="6" stroke="#9C27B0" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="2" fill="#9C27B0"/>
+                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#FF9800" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="6" stroke="#FF9800" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="2" fill="#FF9800"/>
+                        </svg>
+                    </div>
+                    <span class="legend-label">Gates</span>
                 </div>
             </div>
         </div>
@@ -1027,71 +819,19 @@
                 <i class="fas fa-info"></i> Information
             </button>
         </div>
+        
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-item nur">
+                <img src="assets/media/Nur Logo white.svg" alt="NUR Logo">
+            </div>
+            <div class="logo-item zencity">
+                <img src="assets/media/zencity white.svg" alt="ZenCity Logo">
+            </div>
+        </div>
     </div>
+
 
-    <!-- Legend Panel -->
-    <div class="ui-panel legend-panel">
-        <div class="panel-title">
-            <i class="fas fa-layer-group"></i>
-            Map Legend
-        </div>
-        
-        <div class="legend-section">
-            <h3>Route Destinations</h3>
-            <div class="legend-items">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #E91E63;"></div>
-                    <span class="legend-label">South Gate</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #9C27B0;"></div>
-                    <span class="legend-label">North Gate</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #FF9800;"></div>
-                    <span class="legend-label">West Gate</span>
-                </div>
-            </div>
-            <div style="margin-top: 12px; font-size: 10px; color: rgba(255, 255, 255, 0.7);">
-                Brighter & Thicker = Higher Volume
-            </div>
-        </div>
-        
-        <div class="legend-section">
-            <h3>Points</h3>
-            <div class="legend-items">
-                <div class="legend-item">
-                    <div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                            <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="legend-label">POI Points</span>
-                </div>
-                <div class="legend-item">
-                    <div style="display: flex; gap: 4px; align-items: center;">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="#E91E63" stroke-width="2"/>
-                            <circle cx="12" cy="12" r="6" stroke="#E91E63" stroke-width="2"/>
-                            <circle cx="12" cy="12" r="2" fill="#E91E63"/>
-                        </svg>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="#9C27B0" stroke-width="2"/>
-                            <circle cx="12" cy="12" r="6" stroke="#9C27B0" stroke-width="2"/>
-                            <circle cx="12" cy="12" r="2" fill="#9C27B0"/>
-                        </svg>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="#FF9800" stroke-width="2"/>
-                            <circle cx="12" cy="12" r="6" stroke="#FF9800" stroke-width="2"/>
-                            <circle cx="12" cy="12" r="2" fill="#FF9800"/>
-                        </svg>
-                    </div>
-                    <span class="legend-label">Gates</span>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Map Controls - Improved Vertical Stack -->
     <div class="map-controls">
