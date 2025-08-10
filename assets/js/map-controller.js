@@ -601,8 +601,7 @@ class BGUMapController {
         new maplibregl.Popup({
             maxWidth: '280px',
             closeButton: false,
-            closeOnClick: false,
-            className: 'route-popup'
+            closeOnClick: false
         })
             .setLngLat(e.lngLat)
             .setHTML(popupContent)
