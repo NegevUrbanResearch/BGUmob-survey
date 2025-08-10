@@ -1,5 +1,5 @@
 /**
- * BGU Mobility Survey - Map Controller
+ * BGU Mobility Survey - Map Controller (Optimized)
  * Handles interactive map functionality and data visualization
  */
 
@@ -15,8 +15,22 @@ class BGUMapController {
             showRoutes: true
         };
         
-        // MapLibre configuration - no token required!
-        // Using free OpenStreetMap tiles
+        // Gate color mapping for route coloring
+        this.gateColors = {
+            'South Gate': '#22a7f0',
+            'North Gate': '#9c5dc7', 
+            'West Gate': '#e14b31',
+            'south': '#22a7f0',
+            'north': '#9c5dc7',
+            'west': '#e14b31'
+        };
+        
+        // Campus gates data
+        this.gatesData = [
+            { lng: 34.801138, lat: 31.261222, name: 'South Gate', type: 'gate', color: '#22a7f0', id: 'south' },
+            { lng: 34.799290, lat: 31.263911, name: 'North Gate', type: 'gate', color: '#9c5dc7', id: 'north' },
+            { lng: 34.805528, lat: 31.262500, name: 'West Gate', type: 'gate', color: '#e14b31', id: 'west' }
+        ];
     }
 
     async initialize() {
@@ -24,7 +38,6 @@ class BGUMapController {
         
         this.initMap();
         
-        // Wait for map to load before loading data
         await new Promise(resolve => {
             this.map.on('load', () => {
                 this.setupMapLayers();
@@ -42,30 +55,27 @@ class BGUMapController {
     initMap() {
         this.map = new maplibregl.Map({
             container: 'map',
-            style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+            style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
             center: [34.7983, 31.2627], // BGU area
             zoom: 14,
-            pitch: 0, // Top-down view
+            pitch: 0,
             bearing: 0,
             antialias: true
         });
 
-        // Map layers and interactions will be set up after map loads
-
-        // Add navigation controls - moved to right side to avoid UI panel conflicts
+        // Add navigation controls
         this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
         this.map.addControl(new maplibregl.ScaleControl(), 'bottom-right');
-        
     }
 
     setupMapLayers() {
-        // Routes source (add first so it appears under POIs)
+        // Routes source
         this.map.addSource('routes', {
             type: 'geojson',
             data: { type: 'FeatureCollection', features: [] }
         });
 
-        // Route lines with gate-based coloring and usage-based intensity
+        // Route lines with dynamic styling
         this.map.addLayer({
             id: 'routes',
             type: 'line',
@@ -75,7 +85,12 @@ class BGUMapController {
                 'line-cap': 'round'
             },
             paint: {
-                'line-color': ['get', 'gateColor'], // Use the gate color directly
+                'line-color': [
+                    'case',
+                    ['>', ['get', 'overlapCount'], 0],
+                    ['get', 'blendedColor'],
+                    ['get', 'gateColor']
+                ],
                 'line-width': [
                     'interpolate',
                     ['linear'],
@@ -89,117 +104,73 @@ class BGUMapController {
                     ['get', 'intensity'],
                     0.2, 0.4,
                     1, 0.9
-                ],
-                'line-blur': 0.5
+                ]
             }
         });
-
-        // Add a second route layer for enhanced blending effect
-        this.map.addLayer({
-            id: 'routes-blend',
-            type: 'line',
-            source: 'routes',
-            layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            paint: {
-                'line-color': ['get', 'gateColor'], // Same gate color
-                'line-width': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'intensity'],
-                    0.2, 6,
-                    1, 16
-                ],
-                'line-opacity': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'intensity'],
-                    0.2, 0.15,
-                    1, 0.35
-                ],
-                'line-blur': 3.0
-            }
-        });
-
-        // Campus gates data with color coding
-        this.gatesData = [
-            { lng: 34.801138, lat: 31.261222, name: 'South Gate', type: 'gate', color: '#E91E63', id: 'south' }, // Pink
-            { lng: 34.799290, lat: 31.263911, name: 'North Gate', type: 'gate', color: '#9C27B0', id: 'north' }, // Purple  
-            { lng: 34.805528, lat: 31.262500, name: 'West Gate', type: 'gate', color: '#FF9800', id: 'west' } // Orange
-        ];
-        
-        // Gate color mapping for route coloring
-        this.gateColors = {
-            'South Gate': '#E91E63',
-            'North Gate': '#9C27B0', 
-            'West Gate': '#FF9800',
-            'south': '#E91E63',
-            'north': '#9C27B0',
-            'west': '#FF9800'
-        };
     }
 
     initializeDeckGLOverlay() {
-        // Initialize deck.gl overlay for MapLibre
         this.deckOverlay = new deck.MapboxOverlay({
             interleaved: true,
             layers: [],
             getTooltip: this.getDeckGLTooltip.bind(this)
         });
         
-        // Add the overlay to the map - position it to appear below other controls
         this.map.addControl(this.deckOverlay, 'top-right');
         
-        // Add custom CSS to position deck.gl controls below MapLibre controls
-        setTimeout(() => {
-            this.styleDeckGLControls();
-        }, 500);
+        // Style deck.gl controls after initialization
+        setTimeout(() => this.styleDeckGLControls(), 500);
         
-        // Listen for zoom changes to update clustering
-        this.map.on('zoom', () => {
-            this.updateDeckGLLayers();
-        });
+        // Update layers on zoom
+        this.map.on('zoom', () => this.updateDeckGLLayers());
         
         console.log('✓ deck.gl overlay initialized');
     }
 
     styleDeckGLControls() {
-        // Find and style deck.gl control elements
         const mapContainer = document.getElementById('map');
-        if (mapContainer) {
-            // Look for deck.gl control containers
-            const deckControls = mapContainer.querySelectorAll('.deck-widget, .deck-tooltip, [class*="deck"]');
-            deckControls.forEach(control => {
-                control.style.background = 'rgba(0, 0, 0, 0.8)';
-                control.style.backdropFilter = 'blur(20px)';
-                control.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-                control.style.borderRadius = '12px';
-                control.style.color = 'rgba(255, 255, 255, 0.95)';
-                control.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        if (!mapContainer) return;
+        
+        const deckControls = mapContainer.querySelectorAll('.deck-widget, .deck-tooltip, [class*="deck"]');
+        deckControls.forEach(control => {
+            Object.assign(control.style, {
+                background: 'rgba(0, 0, 0, 0.8)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '12px',
+                color: 'rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
             });
+        });
 
-            // Adjust positioning to place deck.gl controls below MapLibre controls
-            const topRightControls = mapContainer.querySelector('.maplibregl-ctrl-top-right');
-            if (topRightControls) {
-                const maplibreHeight = topRightControls.offsetHeight;
-                // Position deck.gl controls below MapLibre controls
-                deckControls.forEach(control => {
-                    if (control.style.position === 'absolute' || window.getComputedStyle(control).position === 'absolute') {
-                        control.style.top = `${100 + maplibreHeight + 10}px`;
-                        control.style.right = '20px';
-                        control.style.zIndex = '1000';
-                    }
-                });
-            }
+        // Position below MapLibre controls
+        const topRightControls = mapContainer.querySelector('.maplibregl-ctrl-top-right');
+        if (topRightControls) {
+            const maplibreHeight = topRightControls.offsetHeight;
+            deckControls.forEach(control => {
+                if (control.style.position === 'absolute' || window.getComputedStyle(control).position === 'absolute') {
+                    Object.assign(control.style, {
+                        top: `${100 + maplibreHeight + 10}px`,
+                        right: '20px',
+                        zIndex: '1000'
+                    });
+                }
+            });
         }
     }
 
     getDeckGLTooltip({object, layer}) {
         if (!object) return null;
         
-        if (layer.id === 'poi-icons') {
+        const baseStyle = {
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+        };
+
+        if (layer.id === 'poi-icons' || layer.id === 'poi-individuals-in-cluster-mode') {
             return {
                 html: `
                     <div style="font-family: Inter, sans-serif; padding: 10px; max-width: 220px;">
@@ -211,13 +182,7 @@ class BGUMapController {
                         </div>
                     </div>
                 `,
-                style: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }
+                style: baseStyle
             };
         }
         
@@ -236,18 +201,11 @@ class BGUMapController {
                         </div>
                     </div>
                 `,
-                style: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }
+                style: baseStyle
             };
         }
         
         if (layer.id === 'gate-icons') {
-            // Count trips to this gate
             const tripsToGate = this.routesData.filter(route => 
                 route.destination.name === object.name
             ).length;
@@ -266,101 +224,90 @@ class BGUMapController {
                         </div>
                     </div>
                 `,
-                style: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }
-            };
-        }
-        
-        if (layer.id === 'poi-individuals-in-cluster-mode') {
-            return {
-                html: `
-                    <div style="font-family: Inter, sans-serif; padding: 10px; max-width: 220px;">
-                        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 13px;">
-                            📍 POI Location
-                        </div>
-                        <div style="color: #666; font-style: italic; font-size: 12px; line-height: 1.4;">
-                            "${object.comment || 'No specific comment provided'}"
-                        </div>
-                    </div>
-                `,
-                style: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }
+                style: baseStyle
             };
         }
         
         return null;
     }
 
-    createPOIIconLayer() {
-        // Filter POI data based on current filters
-        const filteredPOIs = this.poisData.filter(poi => this.currentFilters.showPOIs);
-
-        // Create Lucide move-down icon SVG 
-        function createPOIIcon() {
+    // Optimized icon creation functions
+    createPOIIcon() {
+        if (!this._poiIconCache) {
             const svg = `
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             `;
-            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            this._poiIconCache = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
         }
+        return this._poiIconCache;
+    }
+
+    createClusterIcon(count) {
+        if (!this._clusterIconCache) this._clusterIconCache = {};
+        if (!this._clusterIconCache[count]) {
+            const svg = `
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 22L16 28L22 22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 4V28" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <text x="16" y="20" font-family="Inter, Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="#4CAF50">${count}</text>
+                </svg>
+            `;
+            this._clusterIconCache[count] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+        return this._clusterIconCache[count];
+    }
+
+    createTargetIcon(color) {
+        if (!this._targetIconCache) this._targetIconCache = {};
+        if (!this._targetIconCache[color]) {
+            const svg = `
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="20" stroke="${color}" stroke-width="4" fill="rgba(255, 255, 255, 0.95)"/>
+                    <circle cx="24" cy="24" r="12" stroke="${color}" stroke-width="4" fill="none"/>
+                    <circle cx="24" cy="24" r="4" stroke="${color}" stroke-width="4" fill="${color}"/>
+                </svg>
+            `;
+            this._targetIconCache[color] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+        return this._targetIconCache[color];
+    }
+
+    createPOIIconLayer() {
+        const filteredPOIs = this.poisData.filter(poi => this.currentFilters.showPOIs);
 
         return new deck.IconLayer({
             id: 'poi-icons',
             data: filteredPOIs,
             getPosition: d => [d.lng, d.lat],
-            getIcon: d => ({
-                url: createPOIIcon(),
+            getIcon: () => ({
+                url: this.createPOIIcon(),
                 width: 24,
                 height: 24,
-                anchorY: 12 // Anchor at center
+                anchorY: 12
             }),
             getSize: 28,
             pickable: true,
             sizeScale: 1,
-            billboard: true // Always face the camera
+            billboard: true
         });
     }
 
     createPOIClusterLayer() {
-        // Filter POI data based on current filters
         const filteredPOIs = this.poisData.filter(poi => this.currentFilters.showPOIs);
-
-        // Create clusters from POI data
         const clusters = this.clusterPOIs(filteredPOIs);
-        
-        // Create cluster icon SVG dynamically with count - using Lucide move-down style
-        function createClusterIcon(count) {
-            const svg = `
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 22L16 28L22 22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <path d="M16 4V28" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <text x="16" y="20" font-family="Inter, Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="#4CAF50">${count}</text>
-                </svg>
-            `;
-            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-        }
         
         return new deck.IconLayer({
             id: 'poi-clusters',
-            data: clusters.filter(cluster => cluster.points.length > 1), // Only show actual clusters
+            data: clusters.filter(cluster => cluster.points.length > 1),
             getPosition: d => [d.lng, d.lat],
             getIcon: d => ({
-                url: createClusterIcon(d.points.length),
+                url: this.createClusterIcon(d.points.length),
                 width: 32,
                 height: 32,
-                anchorY: 16 // Anchor at center
+                anchorY: 16
             }),
             getSize: 36,
             pickable: true,
@@ -371,35 +318,21 @@ class BGUMapController {
     }
 
     createIndividualPOIsInClusterMode() {
-        // Filter POI data based on current filters
         const filteredPOIs = this.poisData.filter(poi => this.currentFilters.showPOIs);
-
-        // Get clusters to identify which POIs are individual
         const clusters = this.clusterPOIs(filteredPOIs);
         const individualPOIs = clusters
             .filter(cluster => cluster.points.length === 1)
             .map(cluster => cluster.points[0]);
 
-        // Create Lucide move-down icon SVG - same as individual mode
-        function createPOIIcon() {
-            const svg = `
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                </svg>
-            `;
-            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-        }
-
         return new deck.IconLayer({
             id: 'poi-individuals-in-cluster-mode',
             data: individualPOIs,
             getPosition: d => [d.lng, d.lat],
-            getIcon: d => ({
-                url: createPOIIcon(),
+            getIcon: () => ({
+                url: this.createPOIIcon(),
                 width: 24,
                 height: 24,
-                anchorY: 12 // Anchor at center
+                anchorY: 12
             }),
             getSize: 28,
             pickable: true,
@@ -409,48 +342,29 @@ class BGUMapController {
     }
 
     createGateIconLayer() {
-        const currentZoom = this.map.getZoom();
-        
-        // Only show gates at zoom 14 and above
-        if (currentZoom < 14) {
-            return null;
-        }
-
-        // Create Lucide target icon SVG for each gate with color - high resolution for crisp rendering
-        function createTargetIcon(color) {
-            const svg = `
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="24" cy="24" r="20" stroke="${color}" stroke-width="4" fill="rgba(255, 255, 255, 0.95)"/>
-                    <circle cx="24" cy="24" r="12" stroke="${color}" stroke-width="4" fill="none"/>
-                    <circle cx="24" cy="24" r="4" stroke="${color}" stroke-width="4" fill="${color}"/>
-                </svg>
-            `;
-            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-        }
-
         return new deck.IconLayer({
             id: 'gate-icons',
             data: this.gatesData,
-            getPosition: d => [d.lng, d.lat, 100], // Higher z-coordinate to ensure it's above everything
+            getPosition: d => [d.lng, d.lat, 100],
             getIcon: d => ({
-                url: createTargetIcon(d.color),
+                url: this.createTargetIcon(d.color),
                 width: 48,
                 height: 48,
-                anchorY: 24 // Anchor at center
+                anchorY: 24
             }),
-            getSize: 32, // Smaller size than before
-            sizeMinPixels: 24, // Minimum size in pixels (when zoomed out)
-            sizeMaxPixels: 48, // Maximum size in pixels (caps growth when zoomed in)
+            getSize: 32,
+            sizeMinPixels: 24,
+            sizeMaxPixels: 48,
             pickable: true,
             billboard: true,
             sizeScale: 1
         });
     }
 
+    // Optimized clustering algorithm
     clusterPOIs(pois) {
-        // Dynamic cluster radius based on zoom level
         const currentZoom = this.map.getZoom();
-        const clusterRadius = Math.max(30, 100 - (currentZoom * 8)); // Smaller radius at higher zoom
+        const clusterRadius = Math.max(30, 100 - (currentZoom * 8));
         
         const clusters = [];
         const clustered = new Set();
@@ -466,22 +380,23 @@ class BGUMapController {
             
             clustered.add(index);
             
-            // Find nearby POIs to cluster
+            // Find nearby POIs efficiently
             pois.forEach((otherPoi, otherIndex) => {
                 if (clustered.has(otherIndex) || index === otherIndex) return;
                 
                 const distance = this.getDistance(poi.lat, poi.lng, otherPoi.lat, otherPoi.lng);
                 
-                // Cluster if within radius (in meters)
                 if (distance < clusterRadius) {
                     cluster.points.push(otherPoi);
                     clustered.add(otherIndex);
-                    
-                    // Update cluster center to average position
-                    cluster.lng = cluster.points.reduce((sum, p) => sum + p.lng, 0) / cluster.points.length;
-                    cluster.lat = cluster.points.reduce((sum, p) => sum + p.lat, 0) / cluster.points.length;
                 }
             });
+            
+            // Update cluster center to average position
+            if (cluster.points.length > 1) {
+                cluster.lng = cluster.points.reduce((sum, p) => sum + p.lng, 0) / cluster.points.length;
+                cluster.lat = cluster.points.reduce((sum, p) => sum + p.lat, 0) / cluster.points.length;
+            }
             
             clusters.push(cluster);
         });
@@ -489,8 +404,8 @@ class BGUMapController {
         return clusters;
     }
 
+    // Optimized distance calculation
     getDistance(lat1, lng1, lat2, lng2) {
-        // Haversine formula to calculate distance between two points
         const R = 6371000; // Earth's radius in meters
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLng = (lng2 - lng1) * Math.PI / 180;
@@ -503,7 +418,6 @@ class BGUMapController {
 
     handleClusterClick(info) {
         if (info.object && info.object.points.length > 1) {
-            // Zoom into the cluster to show individual POIs
             const cluster = info.object;
             const bounds = this.calculateClusterBounds(cluster.points);
             
@@ -512,7 +426,7 @@ class BGUMapController {
                 [bounds.maxLng, bounds.maxLat]
             ], {
                 padding: 100,
-                maxZoom: 17 // Zoom high enough to show individual pins
+                maxZoom: 17
             });
         }
     }
@@ -529,8 +443,6 @@ class BGUMapController {
         };
     }
 
-
-
     updateDeckGLLayers() {
         if (!this.deckOverlay) {
             console.log('⚠️ Deck overlay not ready yet');
@@ -539,150 +451,162 @@ class BGUMapController {
 
         const layers = [];
         
-        // Add POI layers (clustered or individual based on zoom) - bottom layer
+        // Add POI layers based on zoom level
         if (this.currentFilters.showPOIs) {
             const currentZoom = this.map.getZoom();
             
-            // Show clusters at lower zoom levels, individual icons at higher zoom
             if (currentZoom < 15) {
                 layers.push(this.createPOIClusterLayer());
-                // Add individual POIs that aren't clustered
                 layers.push(this.createIndividualPOIsInClusterMode());
             } else {
                 layers.push(this.createPOIIconLayer());
             }
         }
         
-        // Always show campus gates on top - added last so they appear above all other layers (only if zoom >= 13)
-        const gateLayer = this.createGateIconLayer();
-        if (gateLayer) {
-            layers.push(gateLayer);
-        }
+        // Always show campus gates on top
+        layers.push(this.createGateIconLayer());
         
-        // Update the overlay with new layers
-        this.deckOverlay.setProps({
-            layers: layers
-        });
+        this.deckOverlay.setProps({ layers });
         
-        // Re-apply styling to any new deck.gl controls
-        setTimeout(() => {
-            this.styleDeckGLControls();
-        }, 100);
+        setTimeout(() => this.styleDeckGLControls(), 100);
         
         console.log(`✓ Updated deck.gl with ${layers.length} layers at zoom ${this.map.getZoom().toFixed(1)}`);
     }
 
     setupMapInteractions() {
-
-        // Route hover handler with combined data for overlapping routes
+        // Route hover handlers
         this.map.on('mouseenter', 'routes', (e) => {
-            this.map.getCanvas().style.cursor = 'pointer';
-            this.showRoutePopup(e);
-        });
-
-        this.map.on('mouseenter', 'routes-blend', (e) => {
             this.map.getCanvas().style.cursor = 'pointer';
             this.showRoutePopup(e);
         });
 
         this.map.on('mouseleave', 'routes', () => {
             this.map.getCanvas().style.cursor = '';
-            // Remove popup when mouse leaves
-            const popups = document.querySelectorAll('.maplibregl-popup');
-            popups.forEach(popup => popup.remove());
+            document.querySelectorAll('.maplibregl-popup').forEach(popup => popup.remove());
         });
-
-        this.map.on('mouseleave', 'routes-blend', () => {
-            this.map.getCanvas().style.cursor = '';
-            // Remove popup when mouse leaves
-            const popups = document.querySelectorAll('.maplibregl-popup');
-            popups.forEach(popup => popup.remove());
-        });
-
 
         this.map.on('mouseenter', 'gates', () => {
             this.map.getCanvas().style.cursor = 'pointer';
         });
+        
         this.map.on('mouseleave', 'gates', () => {
             this.map.getCanvas().style.cursor = '';
         });
     }
 
+    // FIXED: Show trips for specific route segments - each segment = 1 trip
     showRoutePopup(e) {
-        // Get all features at this point to handle overlapping routes
-        const features = this.map.queryRenderedFeatures(e.point, { layers: ['routes', 'routes-blend'] });
+        const features = this.map.queryRenderedFeatures(e.point, { layers: ['routes'] });
         
-        if (features.length > 0) {
-            // Get route information from the first feature
-            const firstFeature = features[0].properties;
-            const usage = firstFeature.usage;
-            const destinationGate = firstFeature.destinationGate;
-            const gateColor = firstFeature.gateColor;
-            const transportMode = firstFeature.transportMode;
+        console.log(`🔍 Found ${features.length} individual route segments at this location`);
+        
+        if (features.length === 0) return;
+
+        // Each feature represents 1 trip - group by transport mode + destination for display
+        const segmentGroups = new Map();
+        
+        features.forEach(feature => {
+            const props = feature.properties;
+            const groupKey = `${props.transportMode}_${props.destinationGate}`;
             
-            // Get transportation mode display info
-            const modeDisplayNames = {
-                'walking': '🚶 Walking',
-                'bicycle': '🚴 Bicycle',
-                'ebike': '🛴 E-bike',
-                'car': '🚗 Car',
-                'bus': '🚌 Bus',
-                'train': '🚆 Train',
-                'unknown': '❓ Unknown'
-            };
+            if (!segmentGroups.has(groupKey)) {
+                segmentGroups.set(groupKey, {
+                    transportMode: props.transportMode,
+                    destinationGate: props.destinationGate,
+                    gateColor: props.gateColor,
+                    segments: []
+                });
+            }
             
-            const modeDisplay = modeDisplayNames[transportMode] || `❓ ${transportMode}`;
+            segmentGroups.get(groupKey).segments.push({
+                id: props.id,
+                trips: props.usage, // Should be 1 for each individual route
+                distance: props.routeInfo?.distance || 'Unknown',
+                intensity: props.intensity
+            });
+        });
+
+        const totalTripsAtLocation = features.length; // Each feature = 1 trip
+        const uniqueColors = [...new Set(features.map(f => f.properties.gateColor))];
+        const blendedColor = this.blendColors(uniqueColors);
+
+        const modeDisplayNames = {
+            'walking': '🚶 Walking',
+            'bicycle': '🚴 Bicycle', 
+            'ebike': '🛴 E-bike',
+            'car': '🚗 Car',
+            'bus': '🚌 Bus',
+            'train': '🚆 Train',
+            'unknown': '❓ Unknown'
+        };
+
+        // Build popup content
+        let popupContent = `
+            <div style="font-family: Inter, sans-serif; padding: 12px; min-width: 200px; max-width: 280px;">
+                <div style="font-weight: 600; color: #2c3e50; margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 12px; height: 12px; background: ${blendedColor}; border-radius: 2px; ${segmentGroups.size > 1 ? 'box-shadow: 0 0 0 2px rgba(0,0,0,0.1);' : ''}"></div>
+                    Route Segments at This Location
+                    <span style="font-size: 11px; color: #666; margin-left: auto;">${totalTripsAtLocation} trips</span>
+                </div>
+        `;
+
+        // Sort groups by number of segments (highest first)
+        const sortedGroups = Array.from(segmentGroups.values()).sort((a, b) => b.segments.length - a.segments.length);
+
+        // Add each group
+        sortedGroups.forEach((group, index) => {
+            const modeDisplay = modeDisplayNames[group.transportMode] || `❓ ${group.transportMode}`;
+            const segmentCount = group.segments.length;
             
-            // Create popup content with volume information
-            let popupContent = `
-                <div style="font-family: Inter, sans-serif; padding: 8px; min-width: 120px;">
-                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 14px;">
+            popupContent += `
+                <div style="margin-bottom: ${index < sortedGroups.length - 1 ? '8px' : '0'}; padding: 6px; background: rgba(0,0,0,0.03); border-radius: 4px; border-left: 3px solid ${group.gateColor};">
+                    <div style="font-weight: 500; color: #2c3e50; font-size: 13px;">
                         ${modeDisplay}
                     </div>
-                    <div style="color: #666; font-size: 12px; margin-bottom: 4px;">
-                        → ${destinationGate}
+                    <div style="color: #666; font-size: 11px; margin-bottom: 2px;">
+                        → ${group.destinationGate}
                     </div>
-                    <div style="color: ${gateColor}; font-weight: 600; font-size: 13px;">
-                        ${usage} trips
+                    <div style="color: ${group.gateColor}; font-weight: 600; font-size: 12px;">
+                        ${segmentCount} trip${segmentCount !== 1 ? 's' : ''} (${segmentCount} route${segmentCount !== 1 ? 's' : ''})
                     </div>
-                    <div style="color: #888; font-size: 10px; margin-top: 6px; font-style: italic;">
-                        Brighter & Thicker = Higher Volume
-                    </div>
-                </div>
-            `;
-            
-            new maplibregl.Popup()
-                .setLngLat(e.lngLat)
-                .setHTML(popupContent)
-                .addTo(this.map);
-        }
-    }
-
-    generateModePieChart(modeCounts) {
-        const total = Object.values(modeCounts).reduce((sum, count) => sum + count, 0);
-        const colors = {
-            'walking': '#4CAF50',
-            'bicycle': '#FF9800',
-            'ebike': '#9C27B0',
-            'car': '#F44336',
-            'bus': '#2196F3',
-            'train': '#795548',
-            'unknown': '#9E9E9E'
-        };
-        
-        let chartHTML = '<div class="mode-pie-chart">';
-        Object.entries(modeCounts).forEach(([mode, count]) => {
-            const percentage = (count / total * 100).toFixed(1);
-            const color = colors[mode] || '#9E9E9E';
-            chartHTML += `
-                <div class="mode-item">
-                    <div class="mode-color" style="background: ${color}"></div>
-                    <span>${mode}: ${count} (${percentage}%)</span>
                 </div>
             `;
         });
-        chartHTML += '</div>';
-        return chartHTML;
+
+        popupContent += `
+                <div style="color: #888; font-size: 10px; margin-top: 8px; font-style: italic; text-align: center; padding-top: 6px; border-top: 1px solid #eee;">
+                    Each route segment = 1 trip
+                </div>
+            </div>
+        `;
+
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(popupContent)
+            .addTo(this.map);
+    }
+
+    // Optimized color blending
+    blendColors(colors) {
+        if (colors.length === 0) return '#9E9E9E';
+        if (colors.length === 1) return colors[0];
+        
+        const rgbColors = colors.map(color => {
+            const hex = color.replace('#', '');
+            return [
+                parseInt(hex.substr(0, 2), 16),
+                parseInt(hex.substr(2, 2), 16),
+                parseInt(hex.substr(4, 2), 16)
+            ];
+        });
+        
+        const blended = rgbColors.reduce((acc, rgb) => [
+            acc[0] + rgb[0],
+            acc[1] + rgb[1], 
+            acc[2] + rgb[2]
+        ], [0, 0, 0]).map(sum => Math.round(sum / rgbColors.length));
+        
+        return `#${blended.map(c => c.toString(16).padStart(2, '0')).join('')}`;
     }
 
     async loadData() {
@@ -698,7 +622,6 @@ class BGUMapController {
             console.log(`✓ Loaded ${this.poisData.length} POIs and ${this.routesData.length} routes`);
             
             this.updateUI();
-            // Small delay to ensure map sources are ready
             setTimeout(() => {
                 this.updateMap();
                 this.updateDeckGLLayers();
@@ -717,7 +640,6 @@ class BGUMapController {
         this.statistics = this.calculateStatistics();
         
         this.updateUI();
-        // Small delay to ensure map sources are ready
         setTimeout(() => {
             this.updateMap();
             this.updateDeckGLLayers();
@@ -730,7 +652,7 @@ class BGUMapController {
         const center = [34.7983, 31.2627];
         const comments = [
             "Great coffee shop for studying",
-            "Quiet library spot",
+            "Quiet library spot", 
             "Best falafel in town",
             "Convenient bus stop",
             "Nice park for breaks",
@@ -757,12 +679,21 @@ class BGUMapController {
         const samples = [];
         
         for (let i = 0; i < 30; i++) {
+            const gate = this.gatesData[Math.floor(Math.random() * this.gatesData.length)];
             samples.push({
                 id: `route_${i}`,
                 transportMode: modes[Math.floor(Math.random() * modes.length)],
                 distance: Math.random() * 5 + 1,
-                residence: { lat: 31.2627 + (Math.random() - 0.5) * 0.02, lng: 34.7983 + (Math.random() - 0.5) * 0.02 },
-                destination: { lat: 31.261222, lng: 34.801138 }
+                residence: { 
+                    lat: 31.2627 + (Math.random() - 0.5) * 0.02, 
+                    lng: 34.7983 + (Math.random() - 0.5) * 0.02 
+                },
+                destination: { 
+                    lat: gate.lat, 
+                    lng: gate.lng,
+                    name: gate.name,
+                    id: gate.id
+                }
             });
         }
         return samples;
@@ -770,13 +701,14 @@ class BGUMapController {
 
     calculateStatistics() {
         const poisWithComments = this.poisData.filter(poi => poi.hasComment).length;
-        const avgDistance = this.routesData.reduce((sum, route) => sum + route.distance, 0) / this.routesData.length;
+        const avgDistance = this.routesData.length > 0 ? 
+            this.routesData.reduce((sum, route) => sum + route.distance, 0) / this.routesData.length : 0;
         
         return {
             totalPois: this.poisData.length,
             totalRoutes: this.routesData.length,
             poisWithComments: poisWithComments,
-            commentPercentage: Math.round((poisWithComments / this.poisData.length) * 100),
+            commentPercentage: this.poisData.length > 0 ? Math.round((poisWithComments / this.poisData.length) * 100) : 0,
             averageDistance: avgDistance.toFixed(1),
             transportModes: {
                 walking: this.routesData.filter(r => r.transportMode === 'walking').length,
@@ -789,106 +721,138 @@ class BGUMapController {
     }
 
     updateMap() {
-        // Check if map sources exist before updating routes
         if (!this.map.getSource('routes')) {
             console.log('⚠️ Map sources not ready yet, skipping update');
             return;
         }
 
-        // Update deck.gl POI layers
         this.updateDeckGLLayers();
 
-        // Filter routes based on current filters
-        const filteredRoutes = this.routesData
-            .filter(route => this.currentFilters.showRoutes);
-
-        // Group routes by transportation mode and destination gate for proper aggregation
-        const routeGroups = {};
+        const filteredRoutes = this.routesData.filter(route => this.currentFilters.showRoutes);
+        const routeSegments = this.createRouteSegments(filteredRoutes);
         
-        filteredRoutes.forEach(route => {
-            const groupKey = `${route.transportMode || 'unknown'}_${route.destination.name || 'Unknown'}`;
-            
-            if (!routeGroups[groupKey]) {
-                routeGroups[groupKey] = {
-                    routes: [],
-                    transportMode: route.transportMode || 'unknown',
-                    destinationGate: route.destination.name || 'Unknown',
-                    gateColor: this.gateColors[route.destination.name] || this.gateColors[route.destination.id] || '#9E9E9E'
-                };
-            }
-            routeGroups[groupKey].routes.push(route);
-        });
-
-        // Find max group size for intensity calculation
-        const maxGroupSize = Math.max(...Object.values(routeGroups).map(group => group.routes.length), 1);
-        
-        // Create route features from groups - aggregate similar routes
-        const routeFeatures = [];
-        Object.values(routeGroups).forEach(group => {
-            const groupSize = group.routes.length;
-            const intensity = 0.2 + (groupSize / maxGroupSize) * 0.8;
-            
-            // For each route in the group, create a feature but with group statistics
-            group.routes.forEach(route => {
-                // Use route path if available, otherwise fall back to straight line
-                const coordinates = route.routePath || [
-                    [route.residence.lng, route.residence.lat],
-                    [route.destination.lng, route.destination.lat]
-                ];
-                
-                routeFeatures.push({
-                    type: 'Feature',
-                    geometry: {
-                        type: 'LineString',
-                        coordinates: coordinates
-                    },
-                    properties: {
-                        id: route.id,
-                        transportMode: group.transportMode,
-                        distance: route.distance,
-                        poiCount: route.poiCount,
-                        intensity: intensity,
-                        usage: groupSize, // Show group size instead of individual count
-                        destinationGate: group.destinationGate,
-                        gateColor: group.gateColor,
-                        // Additional properties for debugging
-                        groupKey: `${group.transportMode}_${group.destinationGate}`,
-                        totalInGroup: groupSize
-                    }
-                });
-            });
-        });
-
-        console.log(`📊 Route aggregation: ${filteredRoutes.length} individual routes grouped into ${Object.keys(routeGroups).length} transport-gate combinations`);
+        console.log(`📊 Processed ${filteredRoutes.length} routes into ${routeSegments.length} segments`);
 
         this.map.getSource('routes').setData({
             type: 'FeatureCollection',
-            features: routeFeatures
+            features: routeSegments
         });
+    }
+    
+    // Fixed route segment creation - each route = 1 trip
+    createRouteSegments(routes) {
+        const routeFeatures = [];
+        
+        // Create individual segments for each route (each route = 1 trip)
+        routes.forEach(route => {
+            const transportMode = route.transportMode || 'unknown';
+            const destinationGate = route.destination.name || route.destination.id || 'Unknown';
+            const gateColor = this.gateColors[route.destination.name] || this.gateColors[route.destination.id] || '#9E9E9E';
+            
+            const coordinates = route.routePath || [
+                [route.residence.lng, route.residence.lat],
+                [route.destination.lng, route.destination.lat]
+            ];
+            
+            // Check for overlapping segments at this location
+            const overlappingSegments = this.findOverlappingSegments(coordinates, routeFeatures);
+            const overlapCount = overlappingSegments.length;
+            
+            // Calculate intensity based on how many routes will be at this location
+            const localDensity = 1 + overlapCount; // This route + overlapping ones
+            const intensity = Math.min(0.2 + (localDensity * 0.15), 1.0); // Cap at 1.0
+            
+            let blendedColor = gateColor;
+            if (overlapCount > 0) {
+                const overlapColors = [gateColor, ...overlappingSegments.map(s => s.properties.gateColor)];
+                blendedColor = this.blendColors(overlapColors);
+            }
+            
+            routeFeatures.push({
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                    coordinates: coordinates
+                },
+                properties: {
+                    id: route.id,
+                    transportMode: transportMode,
+                    distance: route.distance,
+                    poiCount: route.poiCount,
+                    intensity: intensity,
+                    usage: 1, // Each route represents exactly 1 trip
+                    destinationGate: destinationGate,
+                    gateColor: gateColor,
+                    blendedColor: blendedColor,
+                    overlapCount: overlapCount,
+                    // Store additional route info for popup
+                    routeInfo: {
+                        startPoint: `${route.residence.lat.toFixed(4)}, ${route.residence.lng.toFixed(4)}`,
+                        endPoint: `${route.destination.lat.toFixed(4)}, ${route.destination.lng.toFixed(4)}`,
+                        distance: route.distance ? `${route.distance.toFixed(1)}km` : 'Unknown'
+                    }
+                }
+            });
+        });
+
+        console.log(`📊 Created ${routeFeatures.length} individual route segments (1 trip each)`);
+        return routeFeatures;
+    }
+    
+    // Simplified overlap detection for better performance
+    findOverlappingSegments(coordinates, existingFeatures) {
+        const overlapping = [];
+        const tolerance = 0.0008; // Slightly increased tolerance
+        
+        const start = coordinates[0];
+        const end = coordinates[coordinates.length - 1];
+        
+        existingFeatures.forEach(feature => {
+            const existingCoords = feature.geometry.coordinates;
+            const existingStart = existingCoords[0];
+            const existingEnd = existingCoords[existingCoords.length - 1];
+            
+            // Quick check: are start and end points close?
+            const startDist = this.getDistance(start[1], start[0], existingStart[1], existingStart[0]);
+            const endDist = this.getDistance(end[1], end[0], existingEnd[1], existingEnd[0]);
+            
+            if (startDist < tolerance && endDist < tolerance) {
+                overlapping.push(feature);
+            }
+        });
+        
+        return overlapping;
     }
 
     updateUI() {
-        // UI is now simplified - no dropdowns needed
+        // Update statistics display if elements exist
+        const elements = {
+            'total-pois': this.statistics.totalPois,
+            'total-routes': this.statistics.totalRoutes,
+            'comment-percentage': this.statistics.commentPercentage,
+            'average-distance': this.statistics.averageDistance
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        });
     }
-
-
-
-
-
-
 
     hideLoading() {
         const loading = document.getElementById('loading');
-        loading.style.opacity = '0';
-        setTimeout(() => {
-            loading.style.display = 'none';
-        }, 500);
+        if (loading) {
+            loading.style.opacity = '0';
+            setTimeout(() => loading.style.display = 'none', 500);
+        }
     }
 
     animateStatistics() {
         const counters = document.querySelectorAll('.stat-number');
         counters.forEach(counter => {
             const target = parseFloat(counter.textContent);
+            if (isNaN(target)) return;
+            
             let current = 0;
             const increment = target / 60;
             const timer = setInterval(() => {
@@ -913,7 +877,7 @@ class BGUMapController {
         this.map.flyTo({
             center: [34.7983, 31.2627],
             zoom: 14,
-            pitch: 0, // Top-down view
+            pitch: 0,
             bearing: 0
         });
     }
@@ -925,12 +889,10 @@ class BGUMapController {
             document.exitFullscreen();
         }
     }
-
-    // Mode-based intensity calculation (same as original viz_poi_map.py)
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const mapController = new BGUMapController();
     mapController.initialize();
-}); 
+});
