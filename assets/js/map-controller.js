@@ -494,7 +494,7 @@ class BGUMapController {
         });
     }
 
-    // FIXED: Show trips for specific route segments - each segment = 1 trip
+    // FIXED: Compact popup for crowded locations
     showRoutePopup(e) {
         const features = this.map.queryRenderedFeatures(e.point, { layers: ['routes'] });
         
@@ -502,7 +502,7 @@ class BGUMapController {
         
         if (features.length === 0) return;
 
-        // Each feature represents 1 trip - group by transport mode + destination for display
+        // Group by transport mode + destination
         const segmentGroups = new Map();
         
         features.forEach(feature => {
@@ -514,73 +514,66 @@ class BGUMapController {
                     transportMode: props.transportMode,
                     destinationGate: props.destinationGate,
                     gateColor: props.gateColor,
-                    segments: []
+                    count: 0
                 });
             }
             
-            segmentGroups.get(groupKey).segments.push({
-                id: props.id,
-                trips: props.usage, // Should be 1 for each individual route
-                distance: props.routeInfo?.distance || 'Unknown',
-                intensity: props.intensity
-            });
+            segmentGroups.get(groupKey).count++;
         });
 
-        const totalTripsAtLocation = features.length; // Each feature = 1 trip
+        const totalTrips = features.length;
         const uniqueColors = [...new Set(features.map(f => f.properties.gateColor))];
         const blendedColor = this.blendColors(uniqueColors);
 
-        const modeDisplayNames = {
-            'walking': '🚶 Walking',
-            'bicycle': '🚴 Bicycle', 
-            'ebike': '🛴 E-bike',
-            'car': '🚗 Car',
-            'bus': '🚌 Bus',
-            'train': '🚆 Train',
-            'unknown': '❓ Unknown'
+        const modeIcons = {
+            'walking': '🚶',
+            'bicycle': '🚴', 
+            'ebike': '🛴',
+            'car': '🚗',
+            'bus': '🚌',
+            'train': '🚆',
+            'unknown': '❓'
         };
 
-        // Build popup content
+        // Sort groups by count (highest first)
+        const sortedGroups = Array.from(segmentGroups.values()).sort((a, b) => b.count - a.count);
+
+        // Build compact popup - show ALL routes now
         let popupContent = `
-            <div style="font-family: Inter, sans-serif; padding: 12px; min-width: 200px; max-width: 280px;">
-                <div style="font-weight: 600; color: #2c3e50; margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; gap: 6px;">
-                    <div style="width: 12px; height: 12px; background: ${blendedColor}; border-radius: 2px; ${segmentGroups.size > 1 ? 'box-shadow: 0 0 0 2px rgba(0,0,0,0.1);' : ''}"></div>
-                    Route Segments at This Location
-                    <span style="font-size: 11px; color: #666; margin-left: auto;">${totalTripsAtLocation} trips</span>
+            <div style="font-family: Inter, sans-serif; padding: 10px; min-width: 180px; max-width: 240px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <div style="width: 10px; height: 10px; background: ${blendedColor}; border-radius: 50%;"></div>
+                    <span style="font-weight: 600; color: #2c3e50; font-size: 13px;">Route Junction</span>
+                    <span style="font-size: 11px; color: #666; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
                 </div>
         `;
 
-        // Sort groups by number of segments (highest first)
-        const sortedGroups = Array.from(segmentGroups.values()).sort((a, b) => b.segments.length - a.segments.length);
-
-        // Add each group
-        sortedGroups.forEach((group, index) => {
-            const modeDisplay = modeDisplayNames[group.transportMode] || `❓ ${group.transportMode}`;
-            const segmentCount = group.segments.length;
+        // Show ALL routes in compact format
+        sortedGroups.forEach(group => {
+            const modeIcon = modeIcons[group.transportMode] || '❓';
+            const gateName = group.destinationGate.replace(' Gate', '');
             
             popupContent += `
-                <div style="margin-bottom: ${index < sortedGroups.length - 1 ? '8px' : '0'}; padding: 6px; background: rgba(0,0,0,0.03); border-radius: 4px; border-left: 3px solid ${group.gateColor};">
-                    <div style="font-weight: 500; color: #2c3e50; font-size: 13px;">
-                        ${modeDisplay}
-                    </div>
-                    <div style="color: #666; font-size: 11px; margin-bottom: 2px;">
-                        → ${group.destinationGate}
-                    </div>
-                    <div style="color: ${group.gateColor}; font-weight: 600; font-size: 12px;">
-                        ${segmentCount} trip${segmentCount !== 1 ? 's' : ''} (${segmentCount} route${segmentCount !== 1 ? 's' : ''})
-                    </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px; padding: 3px 6px; background: rgba(0,0,0,0.02); border-radius: 4px;">
+                    <span style="font-size: 12px;">${modeIcon}</span>
+                    <span style="font-size: 11px; color: #666; flex: 1;">→ ${gateName}</span>
+                    <span style="font-size: 11px; font-weight: 600; color: ${group.gateColor};">${group.count}</span>
                 </div>
             `;
         });
 
         popupContent += `
-                <div style="color: #888; font-size: 10px; margin-top: 8px; font-style: italic; text-align: center; padding-top: 6px; border-top: 1px solid #eee;">
-                    Each route segment = 1 trip
+                <div style="color: #888; font-size: 9px; margin-top: 6px; text-align: center; font-style: italic; border-top: 1px solid #eee; padding-top: 4px;">
+                    Each route = 1 trip
                 </div>
             </div>
         `;
 
-        new maplibregl.Popup()
+        new maplibregl.Popup({
+            maxWidth: '280px',
+            closeButton: false,
+            closeOnClick: false
+        })
             .setLngLat(e.lngLat)
             .setHTML(popupContent)
             .addTo(this.map);
