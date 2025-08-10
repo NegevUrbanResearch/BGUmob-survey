@@ -307,14 +307,12 @@ class BGUMapController {
         // Filter POI data based on current filters
         const filteredPOIs = this.poisData.filter(poi => this.currentFilters.showPOIs);
 
-        // Create POI icon SVG dynamically - all same color
+        // Create Lucide move-down icon SVG 
         function createPOIIcon() {
             const svg = `
-                <svg width="24" height="32" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 0C7.029 0 3 4.029 3 9c0 7.5 9 23 9 23s9-15.5 9-23c0-4.971-4.029-9-9-9z" 
-                          fill="#4CAF50" stroke="#FFFFFF" stroke-width="2"/>
-                    <circle cx="12" cy="9" r="4" fill="#FFFFFF"/>
-                    <circle cx="12" cy="9" r="2" fill="#4CAF50"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                 </svg>
             `;
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
@@ -327,10 +325,10 @@ class BGUMapController {
             getIcon: d => ({
                 url: createPOIIcon(),
                 width: 24,
-                height: 32,
-                anchorY: 32 // Anchor at the bottom of the pin
+                height: 24,
+                anchorY: 12 // Anchor at center
             }),
-            getSize: 32,
+            getSize: 28,
             pickable: true,
             sizeScale: 1,
             billboard: true // Always face the camera
@@ -344,14 +342,13 @@ class BGUMapController {
         // Create clusters from POI data
         const clusters = this.clusterPOIs(filteredPOIs);
         
-        // Create cluster icon SVG dynamically with count - green like individual POIs
+        // Create cluster icon SVG dynamically with count - using Lucide move-down style
         function createClusterIcon(count) {
             const svg = `
-                <svg width="32" height="42" viewBox="0 0 32 42" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M16 0C10.372 0 5.786 4.586 5.786 10.214c0 9.643 10.214 29.571 10.214 29.571s10.214-19.928 10.214-29.571C26.214 4.586 21.628 0 16 0z" 
-                          fill="#4CAF50" stroke="#FFFFFF" stroke-width="2"/>
-                    <circle cx="16" cy="10.214" r="7" fill="#FFFFFF"/>
-                    <text x="16" y="15" font-family="Inter, Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="#4CAF50">${count}</text>
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 22L16 28L22 22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M16 4V28" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <text x="16" y="20" font-family="Inter, Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="#4CAF50">${count}</text>
                 </svg>
             `;
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
@@ -364,10 +361,10 @@ class BGUMapController {
             getIcon: d => ({
                 url: createClusterIcon(d.points.length),
                 width: 32,
-                height: 42,
-                anchorY: 42 // Anchor at the bottom of the pin
+                height: 32,
+                anchorY: 16 // Anchor at center
             }),
-            getSize: 40,
+            getSize: 36,
             pickable: true,
             sizeScale: 1,
             billboard: true,
@@ -385,14 +382,12 @@ class BGUMapController {
             .filter(cluster => cluster.points.length === 1)
             .map(cluster => cluster.points[0]);
 
-        // Create POI icon SVG dynamically - same as individual mode
+        // Create Lucide move-down icon SVG - same as individual mode
         function createPOIIcon() {
             const svg = `
-                <svg width="24" height="32" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 0C7.029 0 3 4.029 3 9c0 7.5 9 23 9 23s9-15.5 9-23c0-4.971-4.029-9-9-9z" 
-                          fill="#4CAF50" stroke="#FFFFFF" stroke-width="2"/>
-                    <circle cx="12" cy="9" r="4" fill="#FFFFFF"/>
-                    <circle cx="12" cy="9" r="2" fill="#4CAF50"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                 </svg>
             `;
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
@@ -405,10 +400,10 @@ class BGUMapController {
             getIcon: d => ({
                 url: createPOIIcon(),
                 width: 24,
-                height: 32,
-                anchorY: 32 // Anchor at the bottom of the pin
+                height: 24,
+                anchorY: 12 // Anchor at center
             }),
-            getSize: 32,
+            getSize: 28,
             pickable: true,
             sizeScale: 1,
             billboard: true
@@ -423,114 +418,34 @@ class BGUMapController {
             return null;
         }
 
-        // Pre-generate high-resolution icons for each gate color
-        const iconMapping = {};
-        const atlasSize = 256; // Much higher resolution for crisp rendering
-        const canvas = document.createElement('canvas');
-        canvas.width = atlasSize * this.gatesData.length;
-        canvas.height = atlasSize;
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
-
-        this.gatesData.forEach((gate, index) => {
-            const iconCanvas = document.createElement('canvas');
-            iconCanvas.width = atlasSize;
-            iconCanvas.height = atlasSize;
-            const iconCtx = iconCanvas.getContext('2d');
-            iconCtx.imageSmoothingEnabled = false;
-            
-            const center = atlasSize / 2;
-            const radius = atlasSize * 0.45; // 45% of canvas size
-            
-            // White background circle with shadow
-            iconCtx.fillStyle = 'rgba(255, 255, 255, 0.98)';
-            iconCtx.beginPath();
-            iconCtx.arc(center, center, radius, 0, 2 * Math.PI);
-            iconCtx.fill();
-            
-            // Colored border (thicker for visibility)
-            iconCtx.strokeStyle = gate.color;
-            iconCtx.lineWidth = 8;
-            iconCtx.stroke();
-            
-            // University building (larger and more detailed)
-            iconCtx.fillStyle = gate.color;
-            
-            // Main building base
-            const buildingWidth = atlasSize * 0.5;
-            const buildingHeight = atlasSize * 0.3;
-            const buildingX = center - buildingWidth / 2;
-            const buildingY = center - buildingHeight / 2 + atlasSize * 0.1;
-            
-            iconCtx.fillRect(buildingX, buildingY, buildingWidth, buildingHeight);
-            
-            // Roof triangle (more pronounced)
-            iconCtx.beginPath();
-            iconCtx.moveTo(buildingX - atlasSize * 0.1, buildingY);
-            iconCtx.lineTo(center, buildingY - atlasSize * 0.15);
-            iconCtx.lineTo(buildingX + buildingWidth + atlasSize * 0.1, buildingY);
-            iconCtx.closePath();
-            iconCtx.fill();
-            
-            // White details (larger and more visible)
-            iconCtx.fillStyle = 'white';
-            
-            // Door (centered and larger)
-            const doorWidth = atlasSize * 0.1;
-            const doorHeight = atlasSize * 0.15;
-            iconCtx.fillRect(center - doorWidth / 2, buildingY + buildingHeight - doorHeight, doorWidth, doorHeight);
-            
-            // Windows (larger and better positioned)
-            const windowSize = atlasSize * 0.06;
-            iconCtx.fillRect(buildingX + atlasSize * 0.08, buildingY + atlasSize * 0.05, windowSize, windowSize);
-            iconCtx.fillRect(buildingX + buildingWidth - atlasSize * 0.08 - windowSize, buildingY + atlasSize * 0.05, windowSize, windowSize);
-            
-            // Flag pole (more visible)
-            iconCtx.strokeStyle = gate.color;
-            iconCtx.lineWidth = 4;
-            iconCtx.beginPath();
-            iconCtx.moveTo(center, buildingY - atlasSize * 0.15);
-            iconCtx.lineTo(center, buildingY - atlasSize * 0.25);
-            iconCtx.stroke();
-            
-            // Flag
-            iconCtx.fillStyle = gate.color;
-            iconCtx.fillRect(center, buildingY - atlasSize * 0.25, atlasSize * 0.08, atlasSize * 0.05);
-            
-            // Draw to atlas
-            ctx.drawImage(iconCanvas, index * atlasSize, 0);
-            
-            // Add to mapping
-            iconMapping[gate.id] = {
-                x: index * atlasSize,
-                y: 0,
-                width: atlasSize,
-                height: atlasSize,
-                anchorY: atlasSize / 2
-            };
-        });
+        // Create Lucide target icon SVG for each gate with color - high resolution for crisp rendering
+        function createTargetIcon(color) {
+            const svg = `
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="20" stroke="${color}" stroke-width="4" fill="rgba(255, 255, 255, 0.95)"/>
+                    <circle cx="24" cy="24" r="12" stroke="${color}" stroke-width="4" fill="none"/>
+                    <circle cx="24" cy="24" r="4" stroke="${color}" stroke-width="4" fill="${color}"/>
+                </svg>
+            `;
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
 
         return new deck.IconLayer({
             id: 'gate-icons',
             data: this.gatesData,
-            getPosition: d => [d.lng, d.lat, 100], // Much higher z-coordinate to ensure it's above everything
-            getIcon: d => d.id,
-            getSize: 120, // Base size for visibility
-            sizeUnits: 'meters', // Use meters instead of pixels for consistent real-world size
-            sizeScale: 50, // Scale factor in meters - gates will be ~6000m across (50 * 120)
-            sizeMinPixels: 40, // Minimum size in pixels (when zoomed out)
-            sizeMaxPixels: 80, // Maximum size in pixels (caps growth when zoomed in)
+            getPosition: d => [d.lng, d.lat, 100], // Higher z-coordinate to ensure it's above everything
+            getIcon: d => ({
+                url: createTargetIcon(d.color),
+                width: 48,
+                height: 48,
+                anchorY: 24 // Anchor at center
+            }),
+            getSize: 32, // Smaller size than before
+            sizeMinPixels: 24, // Minimum size in pixels (when zoomed out)
+            sizeMaxPixels: 48, // Maximum size in pixels (caps growth when zoomed in)
             pickable: true,
             billboard: true,
-            iconAtlas: canvas.toDataURL(),
-            iconMapping: iconMapping,
-            // Texture parameters for crisp rendering
-            textureParameters: {
-                minFilter: 'linear',
-                magFilter: 'linear',
-                addressModeU: 'clamp-to-edge',
-                addressModeV: 'clamp-to-edge'
-            }
+            sizeScale: 1
         });
     }
 

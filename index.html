@@ -18,6 +18,9 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Lucide Icons -->
+    <script src='https://unpkg.com/lucide@latest/dist/umd/lucide.js'></script>
+    
     <style>
         * {
             margin: 0;
@@ -1058,14 +1061,31 @@
             <h3>Points</h3>
             <div class="legend-items">
                 <div class="legend-item">
-                    <div class="legend-color" style="background: #4CAF50;"></div>
+                    <div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <span class="legend-label">POI Points</span>
                 </div>
                 <div class="legend-item">
                     <div style="display: flex; gap: 4px; align-items: center;">
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #E91E63; border: 1px solid white;"></div>
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #9C27B0; border: 1px solid white;"></div>
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #FF9800; border: 1px solid white;"></div>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#E91E63" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="6" stroke="#E91E63" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="2" fill="#E91E63"/>
+                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#9C27B0" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="6" stroke="#9C27B0" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="2" fill="#9C27B0"/>
+                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#FF9800" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="6" stroke="#FF9800" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="2" fill="#FF9800"/>
+                        </svg>
                     </div>
                     <span class="legend-label">Gates</span>
                 </div>
