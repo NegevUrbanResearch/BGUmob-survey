@@ -503,6 +503,14 @@
             border-bottom-color: #ffffff;
         }
 
+        /* Add spacing between narrative bullet points */
+        .analysis-narrative li {
+            margin-bottom: 10px;
+        }
+        .analysis-narrative li:last-child {
+            margin-bottom: 0;
+        }
+
         /* Info Modal */
         .info-modal {
             position: fixed;
@@ -827,10 +835,21 @@
 
         <!-- Analysis Links -->
         <div class="analysis-links">
-            <h3><i class="fas fa-chart-bar"></i>Analysis</h3>
-            <p class="analysis-narrative">
-                In terms of <a href="outputs/transport_modes_donut.html" target="_blank">mode of travel</a>, almost two-thirds of students walk to BGU and only 5% drive. Our analysis of <a href="outputs/gate_distribution.html" target="_blank">routes to the three gates</a> showed that half the students enter via the northern Rager gate while 25% go to each of the south and east gates. The most important <a href="outputs/route_choice_spider.html" target="_blank">factor in choosing</a> a walking route was distance/time followed by shade. In terms of distance, many students <a href="outputs/distance_comparison.html" target="_blank">report feeling far from campus</a> even when living only a few hundred meters away! 
-            </p>
+            <h3><i class="fas fa-chart-bar"></i>Findings</h3>
+            <ul class="analysis-narrative">
+                <li>
+                    For <a href="outputs/transport_modes_donut.html" target="_blank">mode of travel</a>, almost two-thirds of students walk to BGU and only 5% drive.
+                </li>
+                <li>
+                    Our analysis of <a href="outputs/gate_distribution.html" target="_blank">routes to the three gates</a> showed that half the students enter via the northern Rager gate while 25% go to each of the south and east gates.
+                </li>
+                <li>
+                    The most important <a href="outputs/route_choice_spider.html" target="_blank">factor in choosing</a> a walking route was distance followed by shade.
+                </li>
+                <li>
+                    Many students <a href="outputs/distance_comparison.html" target="_blank">report feeling far from campus</a> even when living only a few hundred meters away!
+                </li>
+            </ul>
             
             <button class="info-btn" onclick="toggleInfoModal()" title="Information">
                 <i class="fas fa-info"></i> Information
