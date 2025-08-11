@@ -483,6 +483,26 @@
             transform: translateX(2px);
         }
 
+        /* Narrative style for Analysis section */
+        .analysis-narrative {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.92);
+            line-height: 1.6;
+        }
+
+        .analysis-narrative a {
+            color: #64ffda;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(100, 255, 218, 0.6);
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .analysis-narrative a:hover {
+            color: #ffffff;
+            border-bottom-color: #ffffff;
+        }
+
         /* Info Modal */
         .info-modal {
             position: fixed;
@@ -808,27 +828,9 @@
         <!-- Analysis Links -->
         <div class="analysis-links">
             <h3><i class="fas fa-chart-bar"></i>Analysis</h3>
-            
-            <!-- Distribution Charts -->
-            <a href="outputs/gate_distribution.html" class="analysis-btn" target="_blank">
-                <i class="fas fa-door-open"></i> Gate Distribution
-            </a>
-            <a href="outputs/transport_modes_donut.html" class="analysis-btn" target="_blank">
-                <i class="fas fa-chart-pie"></i> Transportation Modes
-            </a>
-            
-            <!-- Comparative Analysis -->
-            <a href="outputs/distance_comparison.html" class="analysis-btn" target="_blank">
-                <i class="fas fa-ruler"></i> Distance Analysis
-            </a>
-            
-            <!-- Route Choice Analysis -->
-            <a href="outputs/route_choice_spider.html" class="analysis-btn" target="_blank">
-                <i class="fas fa-spider"></i> Route Choice Spider
-            </a>
-            <a href="outputs/route_choice_comparison.html" class="analysis-btn" target="_blank">
-                <i class="fas fa-chart-bar"></i> Route Choice Ranking
-            </a>
+            <p class="analysis-narrative">
+                In terms of <a href="outputs/transport_modes_donut.html" target="_blank">mode of travel</a>, almost two-thirds of students walk to BGU and only 5% drive. Our analysis of <a href="outputs/gate_distribution.html" target="_blank">routes to the three gates</a> showed that half the students enter via the northern Rager gate while 25% go to each of the south and east gates. The most important <a href="outputs/route_choice_spider.html" target="_blank">factor in choosing</a> a walking route was distance/time followed by shade. In terms of distance, many students <a href="outputs/distance_comparison.html" target="_blank">report feeling far from campus</a> even when living only a few hundred meters away! 
+            </p>
             
             <button class="info-btn" onclick="toggleInfoModal()" title="Information">
                 <i class="fas fa-info"></i> Information
