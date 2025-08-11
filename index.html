@@ -704,63 +704,95 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .project-title {
-                font-size: 22px;
+                font-size: 18px;
+                letter-spacing: 0.3px;
             }
-            
-            .logo-section .logo-item img {
-                height: 30px;
+
+            .ui-panel {
+                border-radius: 14px;
+                padding: 12px;
             }
-            
-            .logo-section .logo-item.nur img {
-                height: 25px;
-            }
-            
-            .logo-section .logo-item.zencity img {
-                height: 35px;
-            }
-            
-            #map {
-                height: 100vh;
-                top: 0;
-            }
-            
+
             .info-controls-panel {
-                max-width: 240px;
-                padding: 16px;
-                top: 20px;
+                top: 12px;
+                left: 12px;
+                max-width: 200px;
+                max-height: 45vh;
+                overflow-y: auto;
             }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
+
+            .legend-section h3,
+            .panel-title {
+                font-size: 14px;
+                margin-bottom: 10px;
             }
+
+            .legend-items { gap: 4px; }
+            .legend-item { font-size: 11px; gap: 6px; }
+            .legend-color { width: 12px; height: 6px; }
+            .gradient-bar { height: 14px; }
+            .gradient-labels { font-size: 9px; }
+
+            .analysis-links h3 { font-size: 14px; }
+            .analysis-narrative { font-size: 11px; }
+            .analysis-btn { font-size: 10px; padding: 6px 10px; }
+
+            .info-btn { height: 34px; font-size: 12px; border-radius: 10px; margin-top: 12px; }
+
+            .logo-section { margin-top: 12px; gap: 8px; }
+            .logo-section .logo-item img { height: 24px; }
+            .logo-section .logo-item.nur img { height: 20px; }
+            .logo-section .logo-item.zencity img { height: 26px; }
+
+            .info-item { padding: 10px; }
+            .info-number { font-size: 16px; }
+            .info-label { font-size: 10px; }
+            .info-grid { grid-template-columns: 1fr; gap: 6px; }
+
+            .map-controls { top: 12px; right: 12px; gap: 6px; }
+            .map-control-btn { width: 34px; height: 34px; font-size: 14px; border-radius: 10px; }
+
+            .maplibregl-ctrl-group { width: 34px !important; border-radius: 10px !important; }
+            .maplibregl-ctrl-group button { width: 34px !important; height: 34px !important; }
+            .maplibregl-ctrl-scale { font-size: 10px !important; padding: 3px 6px !important; }
+
+            #map { height: 100vh; top: 0; }
         }
-        
+
         @media (max-width: 480px) {
-            .project-title {
-                font-size: 20px;
-            }
-            
-            .logo-section .logo-item img {
-                height: 25px;
-            }
-            
-            .logo-section .logo-item.nur img {
-                height: 20px;
-            }
-            
-            .logo-section .logo-item.zencity img {
-                height: 30px;
-            }
-            
-            #map {
-                height: 100vh;
-                top: 0;
-            }
-            
+            .project-title { font-size: 16px; }
+
             .info-controls-panel {
-                top: 20px;
+                top: 10px;
+                left: 10px;
+                max-width: 180px;
+                max-height: 40vh;
             }
+
+            .legend-item { font-size: 10px; }
+            .legend-color { width: 10px; height: 5px; }
+            .gradient-bar { height: 12px; }
+            .gradient-labels { font-size: 8px; }
+
+            /* Keep findings visible on all screens; rely on panel scroll */
+
+            .info-btn { height: 30px; font-size: 11px; margin-top: 8px; }
+
+            .logo-section .logo-item img { height: 20px; }
+            .logo-section .logo-item.nur img { height: 16px; }
+            .logo-section .logo-item.zencity img { height: 22px; }
+
+            .map-controls { top: 10px; right: 10px; gap: 6px; }
+            .map-control-btn { width: 32px; height: 32px; font-size: 13px; border-radius: 10px; }
+            .maplibregl-ctrl-group { width: 32px !important; }
+            .maplibregl-ctrl-group button { width: 32px !important; height: 32px !important; }
+            .maplibregl-ctrl-scale { font-size: 9px !important; padding: 2px 5px !important; }
+
+            .info-modal-content { padding: 20px; max-width: 90vw; }
+            .info-modal h2 { font-size: 20px; }
+            .info-modal p { font-size: 14px; }
+
+            #map { height: 100vh; top: 0; }
         }
     </style>
 </head>
