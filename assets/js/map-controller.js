@@ -73,8 +73,28 @@ class BGUMapController {
         });
 
         // Add navigation controls
-        this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
+        // Top-right: Zoom only (compass separated)
+        this.map.addControl(new maplibregl.NavigationControl({ showZoom: true, showCompass: false }), 'top-right');
+        // Bottom-right: Compass only (should appear above the scale bar)
+        this.map.addControl(new maplibregl.NavigationControl({ showZoom: false, showCompass: true }), 'bottom-right');
+        // Bottom-right: Scale bar
         this.map.addControl(new maplibregl.ScaleControl(), 'bottom-right');
+
+        // Ensure compass is above scale in the DOM and highlight its group
+        setTimeout(() => {
+            const mapContainer = this.map.getContainer();
+            const br = mapContainer.querySelector('.maplibregl-ctrl-bottom-right');
+            if (!br) return;
+            const compassGroup = Array.from(br.querySelectorAll('.maplibregl-ctrl-group'))
+                .find(g => g.querySelector('.maplibregl-ctrl-compass'));
+            const scaleEl = br.querySelector('.maplibregl-ctrl-scale');
+            if (compassGroup) {
+                compassGroup.classList.add('compass-group');
+            }
+            if (compassGroup && scaleEl && compassGroup.nextSibling !== scaleEl) {
+                br.insertBefore(compassGroup, scaleEl);
+            }
+        }, 0);
     }
 
     setupMapLayers() {

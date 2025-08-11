@@ -76,20 +76,22 @@
         /* Glass Panel Base - Dark Mode */
         .ui-panel {
             position: absolute;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(15, 18, 20, 0.6), rgba(20, 22, 24, 0.35));
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 18px;
             padding: 20px;
             z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         .ui-panel:hover {
-            background: rgba(0, 0, 0, 0.85);
+            background: linear-gradient(135deg, rgba(15, 18, 20, 0.68), rgba(20, 22, 24, 0.42));
             transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 14px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
         /* Title Section */
@@ -186,8 +188,8 @@
         }
 
         .info-item {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 12px;
             padding: 12px;
             text-align: center;
@@ -364,6 +366,19 @@
             background: rgba(255, 255, 255, 0.1) !important;
             color: #ffffff !important;
             transform: translateY(-1px) !important;
+        }
+
+        /* Enhance compass visibility on dark background */
+        .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group.compass-group {
+            background: rgba(0, 0, 0, 0.9) !important;
+            border: 1px solid rgba(100, 255, 218, 0.35) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(100, 255, 218, 0.1) inset !important;
+        }
+        .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group.compass-group .maplibregl-ctrl-icon {
+            filter: invert(1) brightness(1.4) drop-shadow(0 0 4px rgba(100, 255, 218, 0.45)) !important;
+        }
+        .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group.compass-group button:hover {
+            background: rgba(100, 255, 218, 0.12) !important;
         }
 
         /* Simple filter approach for MapLibre control icons - inverts them to white */
