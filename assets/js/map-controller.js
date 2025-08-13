@@ -64,8 +64,29 @@ class BGUMapController {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 
+  // Setup RTL text plugin for Hebrew text support
+  async setupRTLTextPlugin() {
+    try {
+      console.log("🔤 Setting up RTL text plugin for Hebrew support...");
+
+      // Set the RTL text plugin with lazy loading
+      await maplibregl.setRTLTextPlugin(
+        "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js",
+        true // lazy load - only load when RTL text is encountered
+      );
+
+      console.log("✓ RTL text plugin configured successfully");
+    } catch (error) {
+      console.warn("⚠️ Failed to load RTL text plugin:", error);
+      console.log("Hebrew text may not display correctly");
+    }
+  }
+
   async initialize() {
     console.log("🗺️ Initializing BGU Mobility Map...");
+
+    // Configure RTL text plugin for Hebrew support
+    await this.setupRTLTextPlugin();
 
     this.initMap();
 
