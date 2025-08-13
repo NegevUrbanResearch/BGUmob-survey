@@ -13,6 +13,7 @@ class BGUMapController {
     this.currentFilters = {
       showPOIs: true,
       showRoutes: true,
+      showUniversity: true,
     };
 
     // Gate color mapping for route coloring
@@ -396,6 +397,43 @@ class BGUMapController {
             3.5, // Reduced max multiplier
           ],
         ],
+      },
+    });
+
+    // University polygon source
+    this.map.addSource("university", {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+
+    // University polygon fill layer
+    this.map.addLayer({
+      id: "university-fill",
+      type: "fill",
+      source: "university",
+      paint: {
+        "fill-color": "#4CAF50",
+        "fill-opacity": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          10,
+          0.1,
+          16,
+          0.15,
+        ],
+      },
+    });
+
+    // University polygon outline layer
+    this.map.addLayer({
+      id: "university-outline",
+      type: "line",
+      source: "university",
+      paint: {
+        "line-color": "#2E7D32",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 16, 4],
+        "line-opacity": 0.8,
       },
     });
   }
@@ -967,16 +1005,37 @@ class BGUMapController {
   async loadData() {
     try {
       console.log("📊 Loading mobility data...");
-      const response = await fetch("outputs/bgu_mobility_data.json");
-      const data = await response.json();
 
-      this.poisData = data.pois || [];
-      this.routesData = data.routes || [];
-      this.statistics = data.statistics || {};
+      // Load main data and university polygon in parallel
+      const [dataResponse, universityResponse] = await Promise.all([
+        fetch("outputs/bgu_mobility_data.json").catch(() => null),
+        fetch("outputs/university_polygon.json").catch(() => null),
+      ]);
 
-      console.log(
-        `✓ Loaded ${this.poisData.length} POIs and ${this.routesData.length} routes`
-      );
+      // Process main mobility data
+      if (dataResponse && dataResponse.ok) {
+        const data = await dataResponse.json();
+        this.poisData = data.pois || [];
+        this.routesData = data.routes || [];
+        this.statistics = data.statistics || {};
+        console.log(
+          `✓ Loaded ${this.poisData.length} POIs and ${this.routesData.length} routes`
+        );
+      } else {
+        console.log("⚠️ Main data file not found, using sample data");
+        this.poisData = this.generateSamplePOIs();
+        this.routesData = this.generateSampleRoutes();
+        this.statistics = this.calculateStatistics();
+      }
+
+      // Process University Polygon
+      if (universityResponse && universityResponse.ok) {
+        this.universityPolygon = await universityResponse.json();
+        console.log("✓ Loaded university polygon");
+      } else {
+        console.log("⚠️ University polygon file not found");
+        this.universityPolygon = null;
+      }
 
       this.updateUI();
       setTimeout(() => {
@@ -1119,6 +1178,23 @@ class BGUMapController {
       type: "FeatureCollection",
       features: routeSegments,
     });
+
+    // Update university polygon if available
+    if (this.universityPolygon && this.map.getSource("university")) {
+      if (this.currentFilters.showUniversity) {
+        this.map.getSource("university").setData(this.universityPolygon);
+        this.map.setLayoutProperty("university-fill", "visibility", "visible");
+        this.map.setLayoutProperty(
+          "university-outline",
+          "visibility",
+          "visible"
+        );
+        console.log("✓ Updated university polygon on map");
+      } else {
+        this.map.setLayoutProperty("university-fill", "visibility", "none");
+        this.map.setLayoutProperty("university-outline", "visibility", "none");
+      }
+    }
 
     // Fade lines back in smoothly
     setTimeout(() => {
@@ -1332,6 +1408,7 @@ class BGUMapController {
     // Make functions globally accessible
     window.resetMap = () => this.resetMap();
     window.toggleFullscreen = () => this.toggleFullscreen();
+    window.toggleUniversityBoundary = () => this.toggleUniversityBoundary();
   }
 
   resetMap() {
