@@ -94,6 +94,25 @@
         top: 0;
       }
 
+      /* Smooth transitions for map layers */
+      .maplibregl-map .maplibregl-canvas {
+        transition: filter 0.2s ease;
+      }
+
+      /* Enhanced rendering for smooth overlapping lines */
+      .maplibregl-map {
+        image-rendering: auto;
+        image-rendering: -webkit-optimize-contrast;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Force hardware acceleration for smoother rendering */
+      .maplibregl-canvas {
+        will-change: transform;
+        transform: translateZ(0);
+      }
+
       /* Glass Panel Base - Dark Mode */
       .ui-panel {
         position: absolute;
