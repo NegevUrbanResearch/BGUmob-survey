@@ -406,34 +406,36 @@ class BGUMapController {
       data: { type: "FeatureCollection", features: [] },
     });
 
-    // University polygon fill layer
-    this.map.addLayer({
-      id: "university-fill",
-      type: "fill",
-      source: "university",
-      paint: {
-        "fill-color": "#4CAF50",
-        "fill-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          10,
-          0.1,
-          16,
-          0.15,
-        ],
-      },
-    });
-
-    // University polygon outline layer
+    // University polygon outline layer (bright yellow, no fill)
     this.map.addLayer({
       id: "university-outline",
       type: "line",
       source: "university",
       paint: {
-        "line-color": "#2E7D32",
-        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 16, 4],
-        "line-opacity": 0.8,
+        "line-color": "#FFD700", // Bright yellow
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 3, 16, 5],
+        "line-opacity": 0.9,
+      },
+    });
+
+    // University label layer (white "BGU" text)
+    this.map.addLayer({
+      id: "university-label",
+      type: "symbol",
+      source: "university",
+      layout: {
+        "text-field": "BGU",
+        "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 10, 16, 16, 24],
+        "text-anchor": "center",
+        "text-justify": "center",
+        "symbol-placement": "point",
+      },
+      paint: {
+        "text-color": "#FFFFFF", // White text
+        "text-halo-color": "#000000", // Black outline for better visibility
+        "text-halo-width": 2,
+        "text-opacity": 0.9,
       },
     });
   }
@@ -1183,16 +1185,16 @@ class BGUMapController {
     if (this.universityPolygon && this.map.getSource("university")) {
       if (this.currentFilters.showUniversity) {
         this.map.getSource("university").setData(this.universityPolygon);
-        this.map.setLayoutProperty("university-fill", "visibility", "visible");
         this.map.setLayoutProperty(
           "university-outline",
           "visibility",
           "visible"
         );
+        this.map.setLayoutProperty("university-label", "visibility", "visible");
         console.log("✓ Updated university polygon on map");
       } else {
-        this.map.setLayoutProperty("university-fill", "visibility", "none");
         this.map.setLayoutProperty("university-outline", "visibility", "none");
+        this.map.setLayoutProperty("university-label", "visibility", "none");
       }
     }
 
