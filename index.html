@@ -1021,21 +1021,17 @@
                 justify-content: center;
               "
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M8 18L12 22L16 18"
-                  stroke="#4CAF50"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M12 2V22"
-                  stroke="#4CAF50"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
+              <svg width="14" height="16" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.35)"/>
+                  </filter>
+                </defs>
+                <g filter="url(#shadow)">
+                  <path d="M32 6c-8.8 0-16 7.2-16 16 0 11.046 16 30 16 30s16-18.954 16-30c0-8.8-7.2-16-16-16z" fill="#4CAF50" stroke="#1B5E20" stroke-width="2"/>
+                  <circle cx="32" cy="22" r="7" fill="#FFFFFF"/>
+                  <path d="M26 16c2-3 7-4 10-2" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                </g>
               </svg>
             </div>
             <span class="legend-label">POI Points</span>

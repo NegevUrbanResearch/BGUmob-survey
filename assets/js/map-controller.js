@@ -522,46 +522,25 @@ class BGUMapController {
     if (!object) return null;
 
     const baseStyle = {
-      backgroundColor: "rgba(255, 255, 255, 0.95)",
+      backgroundColor: "rgba(0, 0, 0, 0.92)",
+      color: "rgba(255, 255, 255, 0.95)",
       backdropFilter: "blur(10px)",
       border: "1px solid rgba(255, 255, 255, 0.2)",
       borderRadius: "8px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.35)",
     };
 
-    if (
-      layer.id === "poi-icons" ||
-      layer.id === "poi-individuals-in-cluster-mode"
-    ) {
+    if (layer.id === "poi-icons") {
       return {
         html: `
                     <div style="font-family: Inter, sans-serif; padding: 10px; max-width: 220px;">
-                        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 13px;">
+                        <div style="font-weight: 600; color: #8ab4f8; margin-bottom: 6px; font-size: 13px;">
                             📍 POI Location
                         </div>
-                        <div style="color: #666; font-style: italic; font-size: 12px; line-height: 1.4;">
+                        <div style="color: #dfe5ec; font-style: italic; font-size: 12px; line-height: 1.4; font-weight: 300;">
                             "${
                               object.comment || "No specific comment provided"
                             }"
-                        </div>
-                    </div>
-                `,
-        style: baseStyle,
-      };
-    }
-
-    if (layer.id === "poi-clusters") {
-      return {
-        html: `
-                    <div style="font-family: Inter, sans-serif; padding: 10px; max-width: 200px;">
-                        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 13px;">
-                            📍 POI Cluster
-                        </div>
-                        <div style="color: #666; font-size: 12px;">
-                            ${object.points.length} POI points
-                        </div>
-                        <div style="color: #888; font-size: 10px; margin-top: 4px;">
-                            Click to zoom in
                         </div>
                     </div>
                 `,
@@ -577,10 +556,10 @@ class BGUMapController {
       return {
         html: `
                     <div style="font-family: Inter, sans-serif; padding: 10px; max-width: 200px;">
-                        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 13px;">
+                        <div style="font-weight: 600; color: #e8eaed; margin-bottom: 6px; font-size: 13px;">
                             🏛️ ${object.name}
                         </div>
-                        <div style="color: #666; font-size: 12px; margin-bottom: 4px;">
+                        <div style="color: #cfd8dc; font-size: 12px; margin-bottom: 4px;">
                             University Campus Gate
                         </div>
                         <div style="color: ${object.color}; font-weight: 600; font-size: 12px;">
@@ -599,9 +578,17 @@ class BGUMapController {
   createPOIIcon() {
     if (!this._poiIconCache) {
       const svg = `
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 18L12 22L16 18" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 2V22" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="24" height="24" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.35)"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#shadow)">
+                        <path d="M32 6c-8.8 0-16 7.2-16 16 0 11.046 16 30 16 30s16-18.954 16-30c0-8.8-7.2-16-16-16z" fill="#4CAF50" stroke="#1B5E20" stroke-width="2"/>
+                        <circle cx="32" cy="22" r="7" fill="#FFFFFF"/>
+                        <path d="M26 16c2-3 7-4 10-2" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    </g>
                 </svg>
             `;
       this._poiIconCache =
@@ -655,7 +642,7 @@ class BGUMapController {
         url: this.createPOIIcon(),
         width: 24,
         height: 24,
-        anchorY: 12,
+        anchorY: 24,
       }),
       getSize: 28,
       pickable: true,
@@ -664,55 +651,7 @@ class BGUMapController {
     });
   }
 
-  createPOIClusterLayer() {
-    const filteredPOIs = this.poisData.filter(
-      (poi) => this.currentFilters.showPOIs
-    );
-    const clusters = this.clusterPOIs(filteredPOIs);
-
-    return new deck.IconLayer({
-      id: "poi-clusters",
-      data: clusters.filter((cluster) => cluster.points.length > 1),
-      getPosition: (d) => [d.lng, d.lat],
-      getIcon: (d) => ({
-        url: this.createClusterIcon(d.points.length),
-        width: 32,
-        height: 32,
-        anchorY: 16,
-      }),
-      getSize: 36,
-      pickable: true,
-      sizeScale: 1,
-      billboard: true,
-      onClick: (info) => this.handleClusterClick(info),
-    });
-  }
-
-  createIndividualPOIsInClusterMode() {
-    const filteredPOIs = this.poisData.filter(
-      (poi) => this.currentFilters.showPOIs
-    );
-    const clusters = this.clusterPOIs(filteredPOIs);
-    const individualPOIs = clusters
-      .filter((cluster) => cluster.points.length === 1)
-      .map((cluster) => cluster.points[0]);
-
-    return new deck.IconLayer({
-      id: "poi-individuals-in-cluster-mode",
-      data: individualPOIs,
-      getPosition: (d) => [d.lng, d.lat],
-      getIcon: () => ({
-        url: this.createPOIIcon(),
-        width: 24,
-        height: 24,
-        anchorY: 12,
-      }),
-      getSize: 28,
-      pickable: true,
-      sizeScale: 1,
-      billboard: true,
-    });
-  }
+  // Clustered POI layers removed: all POIs use the same icon layer
 
   createGateIconLayer() {
     return new deck.IconLayer({
@@ -734,57 +673,7 @@ class BGUMapController {
     });
   }
 
-  // Optimized clustering algorithm
-  clusterPOIs(pois) {
-    const currentZoom = this.map.getZoom();
-    const clusterRadius = Math.max(30, 100 - currentZoom * 8);
-
-    const clusters = [];
-    const clustered = new Set();
-
-    pois.forEach((poi, index) => {
-      if (clustered.has(index)) return;
-
-      const cluster = {
-        lng: poi.lng,
-        lat: poi.lat,
-        points: [poi],
-      };
-
-      clustered.add(index);
-
-      // Find nearby POIs efficiently
-      pois.forEach((otherPoi, otherIndex) => {
-        if (clustered.has(otherIndex) || index === otherIndex) return;
-
-        const distance = this.getDistance(
-          poi.lat,
-          poi.lng,
-          otherPoi.lat,
-          otherPoi.lng
-        );
-
-        if (distance < clusterRadius) {
-          cluster.points.push(otherPoi);
-          clustered.add(otherIndex);
-        }
-      });
-
-      // Update cluster center to average position
-      if (cluster.points.length > 1) {
-        cluster.lng =
-          cluster.points.reduce((sum, p) => sum + p.lng, 0) /
-          cluster.points.length;
-        cluster.lat =
-          cluster.points.reduce((sum, p) => sum + p.lat, 0) /
-          cluster.points.length;
-      }
-
-      clusters.push(cluster);
-    });
-
-    return clusters;
-  }
+  // Clustering removed
 
   // Optimized distance calculation
   getDistance(lat1, lng1, lat2, lng2) {
@@ -801,35 +690,7 @@ class BGUMapController {
     return R * c;
   }
 
-  handleClusterClick(info) {
-    if (info.object && info.object.points.length > 1) {
-      const cluster = info.object;
-      const bounds = this.calculateClusterBounds(cluster.points);
-
-      this.map.fitBounds(
-        [
-          [bounds.minLng, bounds.minLat],
-          [bounds.maxLng, bounds.maxLat],
-        ],
-        {
-          padding: 100,
-          maxZoom: 17,
-        }
-      );
-    }
-  }
-
-  calculateClusterBounds(points) {
-    const lngs = points.map((p) => p.lng);
-    const lats = points.map((p) => p.lat);
-
-    return {
-      minLng: Math.min(...lngs),
-      maxLng: Math.max(...lngs),
-      minLat: Math.min(...lats),
-      maxLat: Math.max(...lats),
-    };
-  }
+  // Cluster interactions removed
 
   updateDeckGLLayers() {
     if (!this.deckOverlay) {
@@ -839,16 +700,9 @@ class BGUMapController {
 
     const layers = [];
 
-    // Add POI layers based on zoom level
+    // Always show individual POI icons (no clustering)
     if (this.currentFilters.showPOIs) {
-      const currentZoom = this.map.getZoom();
-
-      if (currentZoom < 15) {
-        layers.push(this.createPOIClusterLayer());
-        layers.push(this.createIndividualPOIsInClusterMode());
-      } else {
-        layers.push(this.createPOIIconLayer());
-      }
+      layers.push(this.createPOIIconLayer());
     }
 
     // Always show campus gates on top
@@ -956,12 +810,12 @@ class BGUMapController {
 
     // Build compact popup - show ALL routes now
     let popupContent = `
-            <div style="font-family: Inter, sans-serif; padding: 10px; min-width: 180px; max-width: 240px;">
+            <div style="font-family: Inter, sans-serif; padding: 10px; min-width: 180px; max-width: 240px; background: rgba(0,0,0,0.92); color: #e8eaed; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                    <span style="font-weight: 600; color: #2c3e50; font-size: 13px;">Routes Here</span>
-                    <span style="font-size: 11px; color: #666; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
+                    <span style="font-weight: 600; color: #e8eaed; font-size: 13px;">Routes Here</span>
+                    <span style="font-size: 11px; color: #cfd8dc; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
                 </div>
-                <div style="color: #9aa0a6; font-size: 9px; margin-bottom: 6px;">Thickness = trips</div>
+                <div style="color: #b0bec5; font-size: 9px; margin-bottom: 6px;">Thickness = trips</div>
         `;
 
     // Show ALL routes in compact format
@@ -981,7 +835,7 @@ class BGUMapController {
                       group.gateColor
                     }; display: inline-block;"></span>
                     <span style="font-size: 12px;">${modeIcon}</span>
-                    <span style="font-size: 11px; color: #333; flex: 1;">→ ${gateName}</span>
+                    <span style="font-size: 11px; color: #e8eaed; flex: 1;">→ ${gateName}</span>
                     <span style="font-size: 11px; font-weight: 700; color: #fff; background: ${
                       group.gateColor
                     }; padding: 1px 6px; border-radius: 10px;">${
