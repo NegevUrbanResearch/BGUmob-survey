@@ -50,7 +50,8 @@ def main():
         ("viz_gate_distribution.py", "Gate Distribution Pie Chart"),
         ("viz_transport_donut.py", "Transportation Modes Donut Chart"),
         ("viz_distance_comparison.py", "Distance Comparison Analysis"),
-        ("viz_route_choice.py", "Route Choice Factors (Spider & Bar Charts)")
+        ("viz_route_choice.py", "Route Choice Factors (Spider & Bar Charts)"),
+        ("viz_walking_distance.py", "Walking Distance Histogram & Stats")
     ]
     
     # Track success/failure
