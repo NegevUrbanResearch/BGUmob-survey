@@ -52,27 +52,29 @@
       }
 
       .info-btn {
-        width: 100%;
-        height: 40px;
+        height: 30px;
+        width: 30px;
+        padding: 0;
         background: linear-gradient(
           135deg,
           rgba(100, 255, 218, 0.2),
           rgba(0, 188, 212, 0.1)
         );
-        backdrop-filter: blur(15px);
-        border: 2px solid rgba(100, 255, 218, 0.3);
-        border-radius: 12px;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(100, 255, 218, 0.35);
+        border-radius: 50%;
         color: #64ffda;
-        font-size: 16px;
-        font-weight: 500;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        box-shadow: 0 4px 15px rgba(100, 255, 218, 0.2);
-        margin-top: 12px;
+        gap: 0;
+        box-shadow: 0 4px 12px rgba(100, 255, 218, 0.2);
+        line-height: 1;
+        white-space: nowrap;
       }
 
       .info-btn:hover {
@@ -179,9 +181,10 @@
       .logo-section {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-top: 12px;
+        gap: 10px;
+        margin-top: 10px;
         justify-content: center;
+        flex-wrap: wrap;
       }
 
       .logo-section .logo-item {
@@ -228,7 +231,7 @@
       }
 
       .info-section {
-        margin-bottom: 15px;
+        margin-bottom: 12px;
       }
 
       .info-grid {
@@ -289,10 +292,10 @@
         color: rgba(255, 255, 255, 0.9);
       }
 
-      /* Legend Section in Control Panel */
+      /* Legend Section (moved into modal) */
       .legend-section {
-        margin-bottom: 20px;
-        padding-bottom: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
         position: relative;
       }
 
@@ -305,17 +308,6 @@
         height: 2px;
         background: linear-gradient(90deg, transparent, #64ffda, transparent);
         border-radius: 1px;
-      }
-
-      .legend-section h3 {
-        font-size: 22px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: rgba(255, 255, 255, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
       }
 
       .legend-items {
@@ -343,6 +335,19 @@
 
       .legend-label {
         flex: 1;
+      }
+
+      /* Classic boxed legend style inside info modal */
+      .legend-classic .legend-item {
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #dcdcdc;
+        border-radius: 8px;
+        padding: 8px 10px;
+        color: #222;
+      }
+      .legend-classic .legend-color {
+        border: 1px solid #bdbdbd;
       }
 
       /* Map Controls - Improved Vertical Stack */
@@ -548,9 +553,9 @@
 
       /* Narrative style for Analysis section */
       .analysis-narrative {
-        font-size: 13px;
-        color: rgba(255, 255, 255, 0.92);
-        line-height: 1.6;
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.95);
+        line-height: 1.7;
       }
 
       .analysis-narrative a {
@@ -602,11 +607,13 @@
         backdrop-filter: blur(20px);
         border: 2px solid rgba(100, 255, 218, 0.3);
         border-radius: 20px;
-        padding: 40px;
-        max-width: 400px;
-        text-align: center;
+        padding: 28px;
+        max-width: 520px;
+        text-align: left;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         position: relative;
+        max-height: 80vh;
+        overflow: auto;
       }
 
       .info-modal-close {
@@ -660,6 +667,130 @@
         color: #333;
         font-family: "Inter", sans-serif;
         max-width: 250px;
+      }
+
+      /* Chart Modal */
+      .chart-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+      }
+
+      .chart-modal.show {
+        display: flex;
+      }
+
+      .chart-modal-content {
+        background: #0f1214;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 16px;
+        width: min(92vw, 1100px);
+        height: min(86vh, 800px);
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+      }
+
+      .chart-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .chart-modal-close {
+        background: rgba(100, 255, 218, 0.2);
+        border: none;
+        color: #fff;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .chart-frame {
+        width: 100%;
+        height: calc(100% - 50px);
+        border: 0;
+        background: #fff;
+      }
+
+      /* Info modal comment box */
+      .comment-box {
+        background: #ffffff;
+        border: 1px solid #dcdcdc;
+        border-radius: 10px;
+        padding: 12px;
+        margin-top: 10px;
+      }
+      .comment-box .comment-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #222;
+        margin-bottom: 6px;
+      }
+      .comment-email {
+        width: 100%;
+        border: 1px solid #cfcfcf;
+        border-radius: 8px;
+        padding: 8px;
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        color: #333;
+        background: #fafafa;
+        margin-bottom: 8px;
+      }
+      .comment-textarea {
+        width: 100%;
+        min-height: 80px;
+        border: 1px solid #cfcfcf;
+        border-radius: 8px;
+        padding: 8px;
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        color: #333;
+        resize: vertical;
+        background: #fafafa;
+      }
+      .comment-hint {
+        font-size: 12px;
+        color: #666;
+        margin-top: 6px;
+      }
+      .comment-send-btn {
+        margin-top: 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(100, 255, 218, 0.25),
+          rgba(0, 188, 212, 0.15)
+        );
+        border: 1px solid rgba(100, 255, 218, 0.4);
+        color: #0b3d3a;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: transform 0.15s ease, background 0.2s ease;
+      }
+      .comment-send-btn:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(100, 255, 218, 0.35),
+          rgba(0, 188, 212, 0.25)
+        );
+        transform: translateY(-1px);
       }
 
       .poi-popup h4,
@@ -814,11 +945,8 @@
           font-size: 9px;
         }
 
-        .analysis-links h3 {
-          font-size: 14px;
-        }
         .analysis-narrative {
-          font-size: 11px;
+          font-size: 12px;
         }
         .analysis-btn {
           font-size: 10px;
@@ -826,14 +954,14 @@
         }
 
         .info-btn {
-          height: 34px;
-          font-size: 12px;
-          border-radius: 10px;
-          margin-top: 8px;
+          height: 28px;
+          width: 28px;
+          font-size: 13px;
+          border-radius: 50%;
         }
 
         .logo-section {
-          margin-top: 12px;
+          margin-top: 10px;
           gap: 8px;
         }
         .logo-section .logo-item img {
@@ -958,7 +1086,7 @@
 
         .info-modal-content {
           padding: 20px;
-          max-width: 90vw;
+          max-width: 92vw;
         }
         .info-modal h2 {
           font-size: 20px;
@@ -994,154 +1122,46 @@
         <h1 class="project-title">BGU Mobility Survey</h1>
       </div>
 
-      <!-- Legend Section -->
-      <div class="legend-section">
-        <h3><i class="fas fa-layer-group"></i>Legend</h3>
-
-        <div class="legend-items">
-          <div class="legend-item">
-            <div class="legend-color" style="background: #22a7f0"></div>
-            <span class="legend-label">South Gate</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color" style="background: #9c5dc7"></div>
-            <span class="legend-label">North Gate</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color" style="background: #e14b31"></div>
-            <span class="legend-label">West Gate</span>
-          </div>
-          <div class="legend-item">
-            <div
-              style="
-                width: 16px;
-                height: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              "
-            >
-              <svg width="14" height="16" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.35)"/>
-                  </filter>
-                </defs>
-                <g filter="url(#shadow)">
-                  <path d="M32 6c-8.8 0-16 7.2-16 16 0 11.046 16 30 16 30s16-18.954 16-30c0-8.8-7.2-16-16-16z" fill="#4CAF50" stroke="#1B5E20" stroke-width="2"/>
-                  <circle cx="32" cy="22" r="7" fill="#FFFFFF"/>
-                  <path d="M26 16c2-3 7-4 10-2" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round" fill="none"/>
-                </g>
-              </svg>
-            </div>
-            <span class="legend-label">POI Points</span>
-          </div>
-          <div class="legend-item">
-            <div style="display: flex; gap: 4px; align-items: center">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="#22a7f0"
-                  stroke-width="2"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="6"
-                  stroke="#22a7f0"
-                  stroke-width="2"
-                />
-                <circle cx="12" cy="12" r="2" fill="#22a7f0" />
-              </svg>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="#9c5dc7"
-                  stroke-width="2"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="6"
-                  stroke="#9c5dc7"
-                  stroke-width="2"
-                />
-                <circle cx="12" cy="12" r="2" fill="#9c5dc7" />
-              </svg>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="#e14b31"
-                  stroke-width="2"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="6"
-                  stroke="#e14b31"
-                  stroke-width="2"
-                />
-                <circle cx="12" cy="12" r="2" fill="#e14b31" />
-              </svg>
-            </div>
-            <span class="legend-label">Gates</span>
-          </div>
-        </div>
-      </div>
+      <!-- Legend moved into Info Modal -->
 
       <!-- Analysis Links -->
       <div class="analysis-links">
-        <h3><i class="fas fa-chart-bar"></i>Findings</h3>
         <ul class="analysis-narrative">
           <li>
             For
-            <a href="outputs/transport_modes_donut.html" target="_blank"
+            <a href="#" data-chart="outputs/transport_modes_donut.html"
               >mode of travel</a
             >, almost two-thirds of students walk to BGU and only 5% drive
           </li>
           <li>
             Analysis of
-            <a href="outputs/gate_distribution.html" target="_blank"
+            <a href="#" data-chart="outputs/gate_distribution.html"
               >routes to the 3 gates</a
             >
             showed that half the students enter the northern Rager gate
           </li>
           <li>
             The most important
-            <a href="outputs/route_choice_spider.html" target="_blank"
+            <a href="#" data-chart="outputs/route_choice_spider.html"
               >factor in choosing</a
             >
             a walking route was distance followed by shade
           </li>
           <li>
-            <a href="outputs/walking_distance.html" target="_blank"
+            <a href="#" data-chart="outputs/walking_distance.html"
               >Route analysis</a
             >
             shows that on average, BGU students walk 0.95 KM on the way to
             campus
           </li>
           <li>
-            <a href="outputs/distance_comparison.html" target="_blank"
+            <a href="#" data-chart="outputs/distance_comparison.html"
               >Many students report</a
             >
             feeling far from campus even when living only a few hundred meters
             away!
           </li>
         </ul>
-
-        <button
-          class="info-btn"
-          onclick="toggleInfoModal()"
-          title="Information"
-        >
-          <i class="fas fa-info"></i> Information
-        </button>
       </div>
 
       <!-- Logo Section -->
@@ -1152,6 +1172,14 @@
         <div class="logo-item zencity">
           <img src="assets/media/zencity white.svg" alt="ZenCity Logo" />
         </div>
+        <button
+          class="info-btn"
+          onclick="toggleInfoModal()"
+          title="Information"
+          aria-label="Open information"
+        >
+          <i class="fas fa-info"></i>
+        </button>
       </div>
     </div>
 
@@ -1181,15 +1209,235 @@
         <button class="info-modal-close" onclick="toggleInfoModal()">
           <i class="fas fa-times"></i>
         </button>
-        <h2>Information</h2>
-        <p>TO BE WRITTEN</p>
+        <h2>About the BGU Mobility Survey</h2>
+        <p style="margin-bottom: 12px; color: #444">
+          Negev Urban Research conducted this mobility survey to understand the
+          BGU campus relationship with the city by examining how students get to
+          and from the campus, which routes they take, and what amenities they
+          engage with on the way.
+        </p>
+        <div
+          style="
+            text-align: left;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 auto 12px auto;
+            max-width: 52ch;
+          "
+        >
+          <p style="margin: 0 0 6px 0; font-weight: 600">
+            This information helps us to:
+          </p>
+          <ul style="margin-left: 16px; margin-bottom: 8px">
+            <li>Invest in streets that students use more often</li>
+            <li>
+              Design interventions based on the factors students care most about
+            </li>
+            <li>
+              Measure student interest in existing amenity clusters in the area
+            </li>
+          </ul>
+          <p style="margin: 0">
+            The survey data presented on this site was conducted in May of 2025
+            with the help of the ZenCity digital platform. In total, we surveyed
+            ~200 current undergraduate students from BGU (roughly 1.5% of the
+            undergraduate student body) and received full responses, including
+            point of origin, mode choice, and points of interest they stop at on
+            the way to campus, from 115 respondents. Routes were derived using a
+            shortest route algorithm generated by Open Trip Planner.
+          </p>
+        </div>
+
+        <div class="legend-section" style="margin-top: 8px">
+          <h3
+            style="
+              font-size: 16px;
+              color: #222;
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+              gap: 6px;
+              margin-bottom: 8px;
+            "
+          >
+            <i class="fas fa-layer-group" style="color: #00bcd4"></i> Legend
+          </h3>
+          <div
+            class="legend-items legend-classic"
+            style="
+              color: #222;
+              background: #fff;
+              border: 1px solid #dcdcdc;
+              border-radius: 10px;
+              padding: 10px;
+            "
+          >
+            <div style="font-size: 13px; color: #222; margin-bottom: 6px">
+              Routes are colored by the campus gate they end at:
+              <span style="display: inline-flex; align-items: center; gap: 6px">
+                <span
+                  style="
+                    width: 12px;
+                    height: 8px;
+                    background: #22a7f0;
+                    border: 1px solid #bdbdbd;
+                    display: inline-block;
+                  "
+                ></span>
+                <span>South</span>
+                <span
+                  style="
+                    width: 12px;
+                    height: 8px;
+                    background: #9c5dc7;
+                    border: 1px solid #bdbdbd;
+                    display: inline-block;
+                  "
+                ></span>
+                <span>North</span>
+                <span
+                  style="
+                    width: 12px;
+                    height: 8px;
+                    background: #e14b31;
+                    border: 1px solid #bdbdbd;
+                    display: inline-block;
+                  "
+                ></span>
+                <span>West</span>
+              </span>
+            </div>
+            <div style="font-size: 13px; color: #222; margin-bottom: 6px">
+              Line thickness reflects how many students use that segment.
+            </div>
+            <div style="font-size: 13px; color: #222">
+              On desktop: hover to preview route usage. On mobile: tap a route
+              to view usage; tap POIs or gate targets for details. Close any
+              popup with the × button.
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            text-align: left;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 12px auto 0 auto;
+            max-width: 52ch;
+          "
+        >
+          <p style="margin: 0 0 6px 0; font-weight: 600">Credits:</p>
+          <ul style="margin-left: 16px; margin-bottom: 8px">
+            <li>
+              Merav Ferziger - Survey Design, Communication, & Data Collection
+            </li>
+            <li>Noam Gal - Data Analysis, Visualization, & Web Application</li>
+            <li>Eran Ben Alia - Survey Design</li>
+            <li>Yonatan Cohen - Visual Design, Resources</li>
+            <li>Merav Battat - Leadership, Resources</li>
+          </ul>
+          <p style="margin: 0 0 6px 0; font-weight: 600">
+            Collaborating Organizations:
+          </p>
+          <p style="margin: 0">NUR, ZenCity</p>
+        </div>
+
+        <div class="comment-box">
+          <div class="comment-title">Comments</div>
+          <textarea
+            class="comment-textarea"
+            placeholder="Share feedback about the analysis or map experience..."
+          ></textarea>
+          <button class="comment-send-btn" onclick="submitFeedback()">
+            Send Feedback
+          </button>
+          <div class="comment-hint">
+            Your note is saved to our Supabase database. If saving fails or
+            Supabase is not configured, you'll see an error.
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- Chart Modal -->
+    <div id="chartModal" class="chart-modal" aria-hidden="true">
+      <div class="chart-modal-content">
+        <div class="chart-modal-header">
+          <span id="chartTitle">Chart</span>
+          <button
+            class="chart-modal-close"
+            onclick="closeChartModal()"
+            aria-label="Close chart"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <iframe
+          id="chartFrame"
+          class="chart-frame"
+          src="about:blank"
+          title="Chart"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- Config (Supabase URL & Key) -->
+    <script src="./config.js"></script>
     <!-- Map Controller Script -->
     <script src="assets/js/map-controller.js"></script>
+    <!-- Supabase JS (optional) -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 
     <script>
+      // Supabase configuration (replace with real values or leave empty for fallback)
+      const SUPABASE_URL = window.SUPABASE_URL || "";
+      const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "";
+      let supabaseClient = null;
+      try {
+        if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
+          supabaseClient = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+          );
+        }
+      } catch (e) {
+        console.warn("Supabase initialization failed", e);
+      }
+
+      async function submitFeedback() {
+        const textarea = document.querySelector(".comment-textarea");
+        const note = (textarea?.value || "").trim();
+
+        if (!note) {
+          alert("Please enter a comment.");
+          return;
+        }
+
+        if (!supabaseClient) {
+          alert("Feedback service is not configured. Please try again later.");
+          return;
+        }
+
+        try {
+          const { error } = await supabaseClient.from("feedback").insert([
+            {
+              note,
+              created_at: new Date().toISOString(),
+            },
+          ]);
+          if (error) throw error;
+          alert("Thanks for your feedback!");
+          if (textarea) textarea.value = "";
+        } catch (err) {
+          console.error("Failed to save feedback:", err);
+          alert(
+            "Sorry, we couldn't save your feedback. Please try again later."
+          );
+        }
+      }
       // Info modal functionality
       function toggleInfoModal() {
         const modal = document.getElementById("infoModal");
@@ -1236,6 +1484,47 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Give the map time to initialize
         setTimeout(moveMapLibreControls, 500);
+        // Chart modal handlers for analysis links
+        document.querySelectorAll("[data-chart]")?.forEach((el) => {
+          el.addEventListener("click", function (e) {
+            e.preventDefault();
+            const url = this.getAttribute("data-chart");
+            if (!url) return;
+            openChartModal(url, this.textContent?.trim() || "Chart");
+          });
+        });
+      });
+
+      function openChartModal(url, title) {
+        const modal = document.getElementById("chartModal");
+        const frame = document.getElementById("chartFrame");
+        const chartTitle = document.getElementById("chartTitle");
+        console.assert(!!modal && !!frame, "Chart modal elements must exist");
+        frame.src = url;
+        chartTitle.textContent = title;
+        modal.classList.add("show");
+      }
+
+      function closeChartModal() {
+        const modal = document.getElementById("chartModal");
+        const frame = document.getElementById("chartFrame");
+        if (modal && frame) {
+          frame.src = "about:blank";
+          modal.classList.remove("show");
+        }
+      }
+
+      // Close chart modal on overlay click and Escape
+      document.addEventListener("click", function (e) {
+        const modal = document.getElementById("chartModal");
+        if (e.target === modal) {
+          closeChartModal();
+        }
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          closeChartModal();
+        }
       });
     </script>
   </body>

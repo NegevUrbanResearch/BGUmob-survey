@@ -71,7 +71,7 @@ class BGUMapController {
 
       // Set the RTL text plugin with lazy loading
       await maplibregl.setRTLTextPlugin(
-        "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js",
+        "https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-rtl-text@1.0.1/dist/maplibre-gl-rtl-text.js",
         true // lazy load - only load when RTL text is encountered
       );
 
@@ -648,6 +648,10 @@ class BGUMapController {
       pickable: true,
       sizeScale: 1,
       billboard: true,
+      onClick: ({ object }) => {
+        if (!object) return;
+        this.showPOIPopup(object);
+      },
     });
   }
 
@@ -670,6 +674,10 @@ class BGUMapController {
       pickable: true,
       billboard: true,
       sizeScale: 1,
+      onClick: ({ object }) => {
+        if (!object) return;
+        this.showGatePopup(object);
+      },
     });
   }
 
@@ -741,6 +749,14 @@ class BGUMapController {
             .forEach((popup) => popup.remove());
         }
       });
+    });
+
+    // Mobile/tap support: show route usage on tap/click
+    this.map.on("click", "routes", (e) => {
+      this.showRoutePopup(e);
+    });
+    this.map.on("click", "routes-background", (e) => {
+      this.showRoutePopup(e);
     });
 
     this.map.on("mouseenter", "gates", () => {
@@ -852,6 +868,44 @@ class BGUMapController {
     })
       .setLngLat(e.lngLat)
       .setHTML(popupContent)
+      .addTo(this.map);
+  }
+
+  // Show POI popup on click/tap
+  showPOIPopup(poi) {
+    const comment = poi.comment || "No specific comment provided";
+    const html = `
+      <div style="font-family: Inter, sans-serif; padding: 10px; max-width: 240px;">
+        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 13px;">
+          POI Comment
+        </div>
+        <div style="color: #444; font-size: 12px; line-height: 1.4;">
+          "${comment}"
+        </div>
+      </div>`;
+    new maplibregl.Popup({ closeButton: true, maxWidth: "260px" })
+      .setLngLat([poi.lng, poi.lat])
+      .setHTML(html)
+      .addTo(this.map);
+  }
+
+  // Show Gate popup on click/tap
+  showGatePopup(gate) {
+    const tripsToGate = this.routesData.filter(
+      (route) => route.destination.name === gate.name
+    ).length;
+    const html = `
+      <div style="font-family: Inter, sans-serif; padding: 10px; max-width: 240px;">
+        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 6px; font-size: 13px;">
+          ${gate.name}
+        </div>
+        <div style="color: ${gate.color}; font-weight: 600; font-size: 12px;">
+          ${tripsToGate} trips end here
+        </div>
+      </div>`;
+    new maplibregl.Popup({ closeButton: true, maxWidth: "260px" })
+      .setLngLat([gate.lng, gate.lat])
+      .setHTML(html)
       .addTo(this.map);
   }
 
