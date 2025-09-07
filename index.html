@@ -1037,17 +1037,18 @@
 
       /* Analysis Module Popup Fixes */
       .maplibregl-popup-content {
-        background: rgba(255, 255, 255, 0.95) !important;
+        background: rgba(0, 0, 0, 0.95) !important;
         backdrop-filter: blur(20px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 12px !important;
-        color: #333 !important;
+        border: none !important;
+        border-radius: 8px !important;
+        color: #e8eaed !important;
         font-family: "Inter", sans-serif !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
       }
 
       .maplibregl-popup-tip {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        background: rgba(0, 0, 0, 0.95) !important;
+        border: none !important;
       }
 
       /* Deck.gl Tooltip Styling */
@@ -1574,10 +1575,10 @@
               </p>
 
               <p>
-                <strong>Start by exploring the map:</strong> Use your mouse
-                wheel to zoom in and out, or drag to pan around the area. You'll
-                see colored lines representing the routes students take to reach
-                BGU campus. These routes are color-coded by destination:
+                <strong>Start by exploring the map:</strong>
+                You'll see colored lines representing the routes students take
+                to reach BGU campus. These routes are color-coded by
+                destination:
                 <span style="color: #22a7f0; font-weight: 600"
                   >blue lines lead to the South Gate</span
                 >,
@@ -1591,12 +1592,22 @@
               </p>
 
               <p>
-                <strong>Discover student patterns:</strong> Click on any route
-                to see detailed statistics about how many students use it, what
-                transportation modes they prefer, and other interesting
-                insights. Hover over the small dots (points of interest)
-                scattered around the map to learn about amenities and locations
-                that students visit on their way to campus.
+                <strong>Understanding the icons:</strong> Look for the
+                <strong>📍</strong> emoji markers scattered around the map -
+                these are Points of Interest (POIs) where students stop or visit
+                on their way to campus. The <strong>🏛️</strong> emoji markers
+                represent the three campus gates (South, North, and West). When
+                you see transportation mode indicators,
+                <strong>🚶</strong> represents walking, <strong>🚗</strong> for
+                car, and <strong>🚌</strong> for bus routes.
+              </p>
+
+              <p>
+                <strong>Discover student patterns:</strong> Click/Hover on any
+                route to see how many students use it and what transportation
+                modes they prefer. Click/Hover over the points of interest
+                (POIs) to learn about locations that students visit on their way
+                to campus.
               </p>
 
               <p>
@@ -1604,25 +1615,7 @@
                 you'll find key findings from our research presented as
                 clickable links. Click on any highlighted text (like "mode of
                 travel" or "routes to the 3 gates") to open detailed charts and
-                visualizations that reveal the full story behind the data.
-              </p>
-
-              <p>
-                <strong>Navigate with ease:</strong> Use the controls in the
-                top-right corner to reset the map view to the default position
-                or toggle fullscreen mode for a more immersive experience. The
-                map automatically loads with the optimal view of the BGU campus
-                and surrounding areas.
-              </p>
-
-              <p>
-                <strong>What you're seeing:</strong> This map visualizes real
-                data from 115 BGU students who participated in our mobility
-                survey. Each route represents actual paths students take to
-                reach campus, helping us understand the relationship between the
-                university and the city of Beer Sheva. The data reveals not just
-                where students go, but how they get there and what factors
-                influence their choices.
+                visualizations that reveal the full story behind the findings.
               </p>
             </div>
           </div>

@@ -809,14 +809,14 @@ class BGUMapController {
     ];
     const blendedColor = this.blendColors(uniqueColors);
 
-    const modeIcons = {
-      walking: "🚶",
-      bicycle: "🚴",
-      ebike: "🛴",
-      car: "🚗",
-      bus: "🚌",
-      train: "🚆",
-      unknown: "❓",
+    const modeLabels = {
+      walking: "Walking",
+      bicycle: "Bicycle",
+      ebike: "E-bike",
+      car: "Driving",
+      bus: "Bus",
+      train: "Train",
+      unknown: "Mode N/A",
     };
 
     // Sort groups by count (highest first)
@@ -826,35 +826,32 @@ class BGUMapController {
 
     // Build compact popup - show ALL routes now
     let popupContent = `
-            <div style="font-family: Inter, sans-serif; padding: 10px; min-width: 180px; max-width: 240px; background: rgba(0,0,0,0.92); color: #e8eaed; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <div style="font-family: Inter, sans-serif; padding: 12px; min-width: 180px; max-width: 240px; background: rgba(0,0,0,0.95); color: #e8eaed; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                     <span style="font-weight: 600; color: #e8eaed; font-size: 13px;">Routes Here</span>
                     <span style="font-size: 11px; color: #cfd8dc; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
                 </div>
-                <div style="color: #b0bec5; font-size: 9px; margin-bottom: 6px;">Thickness = trips</div>
+                <div style="color: #b0bec5; font-size: 9px; margin-bottom: 8px;">Thickness = trips</div>
         `;
 
     // Show ALL routes in compact format
     sortedGroups.forEach((group) => {
-      const modeIcon = modeIcons[group.transportMode] || "❓";
+      const modeLabel = modeLabels[group.transportMode] || "Mode N/A";
       const gateName = group.destinationGate.replace(" Gate", "");
 
       popupContent += `
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; padding: 4px 8px; background: ${this.hexToRgba(
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; padding: 6px 8px; background: ${this.hexToRgba(
                   group.gateColor,
-                  0.15
-                )}; border: 1px solid ${this.hexToRgba(
-        group.gateColor,
-        0.35
-      )}; border-radius: 6px;">
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${
+                  0.1
+                )}; border-radius: 6px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: ${
                       group.gateColor
                     }; display: inline-block;"></span>
-                    <span style="font-size: 12px;">${modeIcon}</span>
-                    <span style="font-size: 11px; color: #e8eaed; flex: 1;">→ ${gateName}</span>
-                    <span style="font-size: 11px; font-weight: 700; color: #fff; background: ${
+                    <span style="font-size: 11px; color: #e8eaed; font-weight: 500;">${modeLabel}</span>
+                    <span style="font-size: 11px; color: #b0bec5; flex: 1;">→ ${gateName}</span>
+                    <span style="font-size: 11px; font-weight: 600; color: #fff; background: ${
                       group.gateColor
-                    }; padding: 1px 6px; border-radius: 10px;">${
+                    }; padding: 2px 6px; border-radius: 8px;">${
         group.count
       }</span>
                 </div>
