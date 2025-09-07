@@ -579,80 +579,338 @@
         margin-bottom: 0;
       }
 
-      /* Info Modal */
+      /* Enhanced Info Modal */
       .info-modal {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.85);
         display: none;
         align-items: center;
         justify-content: center;
         z-index: 9999;
-        backdrop-filter: blur(5px);
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .info-modal.show {
         display: flex;
+        opacity: 1;
       }
 
       .info-modal-content {
         background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.95),
-          rgba(240, 250, 255, 0.9)
+          145deg,
+          rgba(10, 15, 20, 0.98),
+          rgba(20, 25, 30, 0.95)
         );
-        backdrop-filter: blur(20px);
-        border: 2px solid rgba(100, 255, 218, 0.3);
-        border-radius: 20px;
-        padding: 28px;
-        max-width: 520px;
-        text-align: left;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(30px) saturate(120%);
+        -webkit-backdrop-filter: blur(30px) saturate(120%);
+        border: 2px solid rgba(100, 255, 218, 0.2);
+        border-radius: 24px;
+        padding: 0;
+        max-width: min(92vw, 800px);
+        max-height: min(90vh, 850px);
         position: relative;
-        max-height: 80vh;
-        overflow: auto;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6),
+          0 0 0 1px rgba(100, 255, 218, 0.1) inset,
+          0 5px 20px rgba(100, 255, 218, 0.15);
+        overflow: hidden;
+        transform: scale(0.9);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .info-modal.show .info-modal-content {
+        transform: scale(1);
+      }
+
+      /* Modal Header */
+      .info-modal-header {
+        background: linear-gradient(
+          135deg,
+          rgba(100, 255, 218, 0.15),
+          rgba(0, 188, 212, 0.1)
+        );
+        border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+        padding: 24px 32px;
+        position: relative;
       }
 
       .info-modal-close {
         position: absolute;
-        top: 15px;
-        right: 20px;
-        width: 30px;
-        height: 30px;
-        background: rgba(100, 255, 218, 0.2);
-        border: none;
+        top: 20px;
+        right: 24px;
+        width: 36px;
+        height: 36px;
+        background: rgba(100, 255, 218, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(100, 255, 218, 0.3);
         border-radius: 50%;
-        color: #333;
-        font-size: 18px;
+        color: #ffffff;
+        font-size: 16px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10;
       }
 
       .info-modal-close:hover {
-        background: rgba(100, 255, 218, 0.3);
-        transform: scale(1.1);
+        background: rgba(100, 255, 218, 0.25);
+        border-color: rgba(100, 255, 218, 0.5);
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(100, 255, 218, 0.3);
       }
 
-      .info-modal h2 {
-        color: #333;
-        margin-bottom: 20px;
-        font-size: 24px;
+      .info-modal-title {
         background: linear-gradient(135deg, #64ffda, #00bcd4);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.5px;
+        position: relative;
       }
 
-      .info-modal p {
-        color: #666;
+      .info-modal-subtitle {
+        color: rgba(255, 255, 255, 0.8);
         font-size: 16px;
+        font-weight: 500;
+        margin-top: 8px;
+        letter-spacing: 0.3px;
+      }
+
+      /* Modal Body with Custom Scrollbar */
+      .info-modal-body {
+        padding: 0;
+        max-height: calc(90vh - 120px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(100, 255, 218, 0.3) transparent;
+      }
+
+      .info-modal-body::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .info-modal-body::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .info-modal-body::-webkit-scrollbar-thumb {
+        background: rgba(100, 255, 218, 0.3);
+        border-radius: 3px;
+      }
+
+      .info-modal-body::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 255, 218, 0.5);
+      }
+
+      .info-content-section {
+        padding: 24px 32px;
+      }
+
+      /* How to Use Section Styling */
+      .how-to-use-section {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px 32px 20px 32px;
+        margin-bottom: 0;
+      }
+
+      .how-to-use-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #64ffda;
+        margin: 0 0 20px 0;
+      }
+
+      /* Usage Narrative Styling */
+      .usage-narrative {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .usage-narrative p {
+        margin: 0 0 20px 0;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .usage-narrative p:last-child {
+        margin-bottom: 0;
+      }
+
+      .usage-narrative strong {
+        color: #64ffda;
+        font-weight: 600;
+      }
+
+      .usage-narrative span {
+        display: inline;
+      }
+
+      /* Content Sections Styling */
+      .content-section {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px 32px;
+      }
+
+      .content-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #64ffda;
+        margin: 0 0 16px 0;
+      }
+
+      .content-section p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 15px;
         line-height: 1.6;
+        margin: 0 0 16px 0;
+      }
+
+      .content-section p:last-child {
+        margin-bottom: 0;
+      }
+
+      .content-section ul {
+        margin: 12px 0;
+        padding-left: 20px;
+      }
+
+      .content-section li {
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .content-section li:last-child {
+        margin-bottom: 0;
+      }
+
+      /* Credits Section Styling */
+      .credits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .credit-item {
+        padding: 8px 0;
+      }
+
+      .credit-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #64ffda;
+        margin-bottom: 4px;
+      }
+
+      .credit-role {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.4;
+      }
+
+      /* Comment Section */
+      .comment-section {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px 32px;
+      }
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .comment-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #64ffda;
+        margin: 0;
+      }
+
+      .comment-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .comment-textarea {
+        width: 100%;
+        min-height: 100px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 16px;
+        color: #ffffff;
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      .comment-textarea:focus {
+        outline: none;
+        border-color: rgba(100, 255, 218, 0.5);
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.15);
+      }
+
+      .comment-textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .comment-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .comment-hint {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .comment-send-btn {
+        background: linear-gradient(135deg, #64ffda, #00bcd4);
+        border: none;
+        color: #0a0e10;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(100, 255, 218, 0.3);
+      }
+
+      .comment-send-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(100, 255, 218, 0.4);
+        filter: brightness(1.1);
+      }
+
+      .comment-send-btn:active {
+        transform: translateY(0);
       }
 
       /* Popup Styling */
@@ -725,72 +983,6 @@
         height: calc(100% - 50px);
         border: 0;
         background: #fff;
-      }
-
-      /* Info modal comment box */
-      .comment-box {
-        background: #ffffff;
-        border: 1px solid #dcdcdc;
-        border-radius: 10px;
-        padding: 12px;
-        margin-top: 10px;
-      }
-      .comment-box .comment-title {
-        font-weight: 600;
-        font-size: 14px;
-        color: #222;
-        margin-bottom: 6px;
-      }
-      .comment-email {
-        width: 100%;
-        border: 1px solid #cfcfcf;
-        border-radius: 8px;
-        padding: 8px;
-        font-family: "Inter", sans-serif;
-        font-size: 13px;
-        color: #333;
-        background: #fafafa;
-        margin-bottom: 8px;
-      }
-      .comment-textarea {
-        width: 100%;
-        min-height: 80px;
-        border: 1px solid #cfcfcf;
-        border-radius: 8px;
-        padding: 8px;
-        font-family: "Inter", sans-serif;
-        font-size: 13px;
-        color: #333;
-        resize: vertical;
-        background: #fafafa;
-      }
-      .comment-hint {
-        font-size: 12px;
-        color: #666;
-        margin-top: 6px;
-      }
-      .comment-send-btn {
-        margin-top: 10px;
-        background: linear-gradient(
-          135deg,
-          rgba(100, 255, 218, 0.25),
-          rgba(0, 188, 212, 0.15)
-        );
-        border: 1px solid rgba(100, 255, 218, 0.4);
-        color: #0b3d3a;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 8px 12px;
-        cursor: pointer;
-        transition: transform 0.15s ease, background 0.2s ease;
-      }
-      .comment-send-btn:hover {
-        background: linear-gradient(
-          135deg,
-          rgba(100, 255, 218, 0.35),
-          rgba(0, 188, 212, 0.25)
-        );
-        transform: translateY(-1px);
       }
 
       .poi-popup h4,
@@ -1013,6 +1205,38 @@
           padding: 3px 6px !important;
         }
 
+        /* Modal Responsive */
+        .info-modal-content {
+          max-width: 95vw;
+          max-height: 95vh;
+          border-radius: 20px;
+        }
+
+        .info-modal-header {
+          padding: 20px 24px;
+        }
+
+        .info-modal-title {
+          font-size: 24px;
+        }
+
+        .info-content-section {
+          padding: 20px 24px;
+        }
+
+        .comment-section {
+          padding: 20px 24px;
+        }
+
+        .legend-gates {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .credits-grid {
+          grid-template-columns: 1fr;
+        }
+
         #map {
           height: 100vh;
           top: 0;
@@ -1042,8 +1266,6 @@
         .gradient-labels {
           font-size: 8px;
         }
-
-        /* Keep findings visible on all screens; rely on panel scroll */
 
         .info-btn {
           height: 30px;
@@ -1084,15 +1306,139 @@
           padding: 2px 5px !important;
         }
 
+        /* Modal Mobile */
         .info-modal-content {
-          padding: 20px;
-          max-width: 92vw;
+          max-width: 98vw;
+          max-height: 98vh;
+          border-radius: 16px;
         }
-        .info-modal h2 {
+
+        .info-modal-header {
+          padding: 16px 20px;
+        }
+
+        .info-modal-title {
           font-size: 20px;
         }
-        .info-modal p {
+
+        .info-modal-subtitle {
           font-size: 14px;
+        }
+
+        .info-content-section {
+          padding: 16px 20px;
+        }
+
+        .comment-section {
+          padding: 16px 20px;
+        }
+
+        .comment-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .comment-section h3 {
+          font-size: 16px;
+        }
+
+        .how-to-use-section {
+          padding: 20px 24px 16px 24px;
+        }
+
+        .how-to-use-section h3 {
+          font-size: 16px;
+          margin-bottom: 16px;
+        }
+
+        .usage-narrative {
+          font-size: 14px;
+          line-height: 1.6;
+        }
+
+        .usage-narrative p {
+          margin-bottom: 16px;
+        }
+
+        .content-section {
+          padding: 20px 24px;
+        }
+
+        .content-section h3 {
+          font-size: 16px;
+          margin-bottom: 12px;
+        }
+
+        .content-section p,
+        .content-section li {
+          font-size: 14px;
+        }
+
+        .credits-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .credit-item {
+          padding: 6px 0;
+        }
+
+        .credit-name {
+          font-size: 14px;
+        }
+
+        .credit-role {
+          font-size: 12px;
+        }
+
+        .how-to-use-section {
+          padding: 16px 20px 12px 20px;
+        }
+
+        .how-to-use-section h3 {
+          font-size: 14px;
+          margin-bottom: 12px;
+        }
+
+        .usage-narrative {
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .usage-narrative p {
+          margin-bottom: 14px;
+        }
+
+        .content-section {
+          padding: 16px 20px;
+        }
+
+        .content-section h3 {
+          font-size: 14px;
+          margin-bottom: 10px;
+        }
+
+        .content-section p,
+        .content-section li {
+          font-size: 13px;
+        }
+
+        .credits-grid {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .credit-item {
+          padding: 4px 0;
+        }
+
+        .credit-name {
+          font-size: 13px;
+        }
+
+        .credit-role {
+          font-size: 11px;
         }
 
         #map {
@@ -1121,8 +1467,6 @@
       <div class="title-section">
         <h1 class="project-title">BGU Mobility Survey</h1>
       </div>
-
-      <!-- Legend moved into Info Modal -->
 
       <!-- Analysis Links -->
       <div class="analysis-links">
@@ -1203,160 +1547,184 @@
       <div id="maplibre-controls-container"></div>
     </div>
 
-    <!-- Info Modal -->
+    <!-- Enhanced Info Modal -->
     <div id="infoModal" class="info-modal">
       <div class="info-modal-content">
-        <button class="info-modal-close" onclick="toggleInfoModal()">
-          <i class="fas fa-times"></i>
-        </button>
-        <h2>About the BGU Mobility Survey</h2>
-        <p style="margin-bottom: 12px; color: #444">
-          Negev Urban Research conducted this mobility survey to understand the
-          BGU campus relationship with the city by examining how students get to
-          and from the campus, which routes they take, and what amenities they
-          engage with on the way.
-        </p>
-        <div
-          style="
-            text-align: left;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.6;
-            margin: 0 auto 12px auto;
-            max-width: 52ch;
-          "
-        >
-          <p style="margin: 0 0 6px 0; font-weight: 600">
-            This information helps us to:
-          </p>
-          <ul style="margin-left: 16px; margin-bottom: 8px">
-            <li>Invest in streets that students use more often</li>
-            <li>
-              Design interventions based on the factors students care most about
-            </li>
-            <li>
-              Measure student interest in existing amenity clusters in the area
-            </li>
-          </ul>
-          <p style="margin: 0">
-            The survey data presented on this site was conducted in May of 2025
-            with the help of the ZenCity digital platform. In total, we surveyed
-            ~200 current undergraduate students from BGU (roughly 1.5% of the
-            undergraduate student body) and received full responses, including
-            point of origin, mode choice, and points of interest they stop at on
-            the way to campus, from 115 respondents. Routes were derived using a
-            shortest route algorithm generated by Open Trip Planner.
+        <!-- Modal Header -->
+        <div class="info-modal-header">
+          <button class="info-modal-close" onclick="toggleInfoModal()">
+            <i class="fas fa-times"></i>
+          </button>
+          <h2 class="info-modal-title">BGU Mobility Survey</h2>
+          <p class="info-modal-subtitle">
+            Understanding campus connectivity through student movement patterns
           </p>
         </div>
 
-        <div class="legend-section" style="margin-top: 8px">
-          <h3
-            style="
-              font-size: 16px;
-              color: #222;
-              display: flex;
-              align-items: center;
-              justify-content: flex-start;
-              gap: 6px;
-              margin-bottom: 8px;
-            "
-          >
-            <i class="fas fa-layer-group" style="color: #00bcd4"></i> Legend
-          </h3>
-          <div
-            class="legend-items legend-classic"
-            style="
-              color: #222;
-              background: #fff;
-              border: 1px solid #dcdcdc;
-              border-radius: 10px;
-              padding: 10px;
-            "
-          >
-            <div style="font-size: 13px; color: #222; margin-bottom: 6px">
-              Routes are colored by the campus gate they end at:
-              <span style="display: inline-flex; align-items: center; gap: 6px">
-                <span
-                  style="
-                    width: 12px;
-                    height: 8px;
-                    background: #22a7f0;
-                    border: 1px solid #bdbdbd;
-                    display: inline-block;
-                  "
-                ></span>
-                <span>South</span>
-                <span
-                  style="
-                    width: 12px;
-                    height: 8px;
-                    background: #9c5dc7;
-                    border: 1px solid #bdbdbd;
-                    display: inline-block;
-                  "
-                ></span>
-                <span>North</span>
-                <span
-                  style="
-                    width: 12px;
-                    height: 8px;
-                    background: #e14b31;
-                    border: 1px solid #bdbdbd;
-                    display: inline-block;
-                  "
-                ></span>
-                <span>West</span>
-              </span>
-            </div>
-            <div style="font-size: 13px; color: #222; margin-bottom: 6px">
-              Line thickness reflects how many students use that segment.
-            </div>
-            <div style="font-size: 13px; color: #222">
-              On desktop: hover to preview route usage. On mobile: tap a route
-              to view usage; tap POIs or gate targets for details. Close any
-              popup with the × button.
+        <!-- Modal Body -->
+        <div class="info-modal-body">
+          <!-- How to Use -->
+          <div class="how-to-use-section">
+            <h3>How to Use This Interactive Map</h3>
+            <div class="usage-narrative">
+              <p>
+                Welcome to the BGU Mobility Survey interactive map! This tool
+                lets you explore how students travel to campus through an
+                intuitive, story-driven interface.
+              </p>
+
+              <p>
+                <strong>Start by exploring the map:</strong> Use your mouse
+                wheel to zoom in and out, or drag to pan around the area. You'll
+                see colored lines representing the routes students take to reach
+                BGU campus. These routes are color-coded by destination:
+                <span style="color: #22a7f0; font-weight: 600"
+                  >blue lines lead to the South Gate</span
+                >,
+                <span style="color: #9c5dc7; font-weight: 600"
+                  >purple lines to the North Gate</span
+                >, and
+                <span style="color: #e14b31; font-weight: 600"
+                  >red lines to the West Gate</span
+                >. The thicker the line, the more students use that particular
+                route.
+              </p>
+
+              <p>
+                <strong>Discover student patterns:</strong> Click on any route
+                to see detailed statistics about how many students use it, what
+                transportation modes they prefer, and other interesting
+                insights. Hover over the small dots (points of interest)
+                scattered around the map to learn about amenities and locations
+                that students visit on their way to campus.
+              </p>
+
+              <p>
+                <strong>Dive deeper with analysis:</strong> In the left panel,
+                you'll find key findings from our research presented as
+                clickable links. Click on any highlighted text (like "mode of
+                travel" or "routes to the 3 gates") to open detailed charts and
+                visualizations that reveal the full story behind the data.
+              </p>
+
+              <p>
+                <strong>Navigate with ease:</strong> Use the controls in the
+                top-right corner to reset the map view to the default position
+                or toggle fullscreen mode for a more immersive experience. The
+                map automatically loads with the optimal view of the BGU campus
+                and surrounding areas.
+              </p>
+
+              <p>
+                <strong>What you're seeing:</strong> This map visualizes real
+                data from 115 BGU students who participated in our mobility
+                survey. Each route represents actual paths students take to
+                reach campus, helping us understand the relationship between the
+                university and the city of Beer Sheva. The data reveals not just
+                where students go, but how they get there and what factors
+                influence their choices.
+              </p>
             </div>
           </div>
-        </div>
 
-        <div
-          style="
-            text-align: left;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.6;
-            margin: 12px auto 0 auto;
-            max-width: 52ch;
-          "
-        >
-          <p style="margin: 0 0 6px 0; font-weight: 600">Credits:</p>
-          <ul style="margin-left: 16px; margin-bottom: 8px">
-            <li>
-              Merav Ferziger - Survey Design, Communication, & Data Collection
-            </li>
-            <li>Noam Gal - Data Analysis, Visualization, & Web Application</li>
-            <li>Eran Ben Alia - Survey Design</li>
-            <li>Yonatan Cohen - Visual Design, Resources</li>
-            <li>Merav Battat - Leadership, Resources</li>
-          </ul>
-          <p style="margin: 0 0 6px 0; font-weight: 600">
-            Collaborating Organizations:
-          </p>
-          <p style="margin: 0">NUR, ZenCity</p>
-        </div>
+          <!-- About This Research -->
+          <div class="content-section">
+            <h3>About This Research</h3>
+            <p>
+              Negev Urban Research conducted this mobility survey to understand
+              the BGU campus relationship with Beer Sheva by examining how
+              students get to and from campus, which routes they take, and what
+              amenities they engage with along the way.
+            </p>
+          </div>
 
-        <div class="comment-box">
-          <div class="comment-title">Comments</div>
-          <textarea
-            class="comment-textarea"
-            placeholder="Share feedback about the analysis or map experience..."
-          ></textarea>
-          <button class="comment-send-btn" onclick="submitFeedback()">
-            Send Feedback
-          </button>
-          <div class="comment-hint">
-            Your note is saved to our Supabase database. If saving fails or
-            Supabase is not configured, you'll see an error.
+          <!-- Research Goals -->
+          <div class="content-section">
+            <h3>Research Goals</h3>
+            <p>This information helps us to:</p>
+            <ul>
+              <li>
+                Invest in streets and infrastructure that students use more
+                often
+              </li>
+              <li>
+                Design urban interventions based on factors students care most
+                about
+              </li>
+              <li>
+                Measure student interest in existing amenity clusters in the
+                surrounding area
+              </li>
+              <li>
+                Inform policy decisions about campus accessibility and urban
+                planning
+              </li>
+            </ul>
+          </div>
+
+          <!-- Survey Methodology -->
+          <div class="content-section">
+            <h3>Survey Methodology</h3>
+            <p>
+              The survey data was conducted in May 2025 with the help of the
+              ZenCity digital platform. We surveyed approximately 200 current
+              undergraduate students from BGU (roughly 1.5% of the undergraduate
+              student body) and received complete responses from 115
+              respondents.
+            </p>
+            <p>
+              Data collected includes points of origin, transportation mode
+              choices, destination gates, and points of interest visited along
+              routes to campus. Walking routes were derived using a shortest
+              route algorithm generated by Open Trip Planner.
+            </p>
+          </div>
+
+          <!-- Research Team -->
+          <div class="content-section">
+            <h3>Research Team</h3>
+            <div class="credits-grid">
+              <div class="credit-item">
+                <div class="credit-name">Merav Ferziger</div>
+                <div class="credit-role">
+                  Survey Design, Communication & Data Collection
+                </div>
+              </div>
+              <div class="credit-item">
+                <div class="credit-name">Noam Gal</div>
+                <div class="credit-role">
+                  Data Analysis, Visualization & Web Application
+                </div>
+              </div>
+              <div class="credit-item">
+                <div class="credit-name">Eran Ben Alia</div>
+                <div class="credit-role">Survey Design</div>
+              </div>
+              <div class="credit-item">
+                <div class="credit-name">Yonatan Cohen</div>
+                <div class="credit-role">Visual Design & Resources</div>
+              </div>
+              <div class="credit-item">
+                <div class="credit-name">Merav Battat</div>
+                <div class="credit-role">Leadership & Resources</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comment Section -->
+          <div class="comment-section">
+            <div class="comment-header">
+              <h3>Share Your Feedback</h3>
+              <button class="comment-send-btn" onclick="submitFeedback()">
+                Send Feedback
+              </button>
+            </div>
+            <div class="comment-form">
+              <textarea
+                class="comment-textarea"
+                placeholder="Share your thoughts about the analysis, methodology, or your experience with this interactive map. Your feedback helps us improve future research."
+              ></textarea>
+            </div>
           </div>
         </div>
       </div>
