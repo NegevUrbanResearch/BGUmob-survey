@@ -831,7 +831,6 @@ class BGUMapController {
                     <span style="font-weight: 600; color: #e8eaed; font-size: 13px;">Routes Here</span>
                     <span style="font-size: 11px; color: #cfd8dc; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
                 </div>
-                <div style="color: #b0bec5; font-size: 9px; margin-bottom: 8px;">Thickness = trips</div>
         `;
 
     // Show ALL routes in compact format

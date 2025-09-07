@@ -1569,53 +1569,158 @@
             <h3>How to Use This Interactive Map</h3>
             <div class="usage-narrative">
               <p>
-                Welcome to the BGU Mobility Survey interactive map! This tool
-                lets you explore how students travel to campus through an
-                intuitive, story-driven interface.
+                <strong>What you see:</strong> Routes are colored by destination
+                gate —
+                <span
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-right: 8px;
+                  "
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 48 48"
+                    aria-label="South Gate"
+                    style="vertical-align: middle"
+                  >
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="20"
+                      stroke="#22a7f0"
+                      stroke-width="4"
+                      fill="rgba(255,255,255,0.95)"
+                    />
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="12"
+                      stroke="#22a7f0"
+                      stroke-width="4"
+                      fill="none"
+                    />
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="4"
+                      stroke="#22a7f0"
+                      stroke-width="4"
+                      fill="#22a7f0"
+                    />
+                  </svg>
+                  <span>South Gate</span>
+                </span>
+                <span
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-right: 8px;
+                  "
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 48 48"
+                    aria-label="North Gate"
+                    style="vertical-align: middle"
+                  >
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="20"
+                      stroke="#9c5dc7"
+                      stroke-width="4"
+                      fill="rgba(255,255,255,0.95)"
+                    />
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="12"
+                      stroke="#9c5dc7"
+                      stroke-width="4"
+                      fill="none"
+                    />
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="4"
+                      stroke="#9c5dc7"
+                      stroke-width="4"
+                      fill="#9c5dc7"
+                    />
+                  </svg>
+                  <span>North Gate</span>
+                </span>
+                <span
+                  style="display: inline-flex; align-items: center; gap: 6px"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 48 48"
+                    aria-label="West Gate"
+                    style="vertical-align: middle"
+                  >
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="20"
+                      stroke="#e14b31"
+                      stroke-width="4"
+                      fill="rgba(255,255,255,0.95)"
+                    />
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="12"
+                      stroke="#e14b31"
+                      stroke-width="4"
+                      fill="none"
+                    />
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="4"
+                      stroke="#e14b31"
+                      stroke-width="4"
+                      fill="#e14b31"
+                    />
+                  </svg>
+                  <span>West Gate</span>
+                </span>
               </p>
 
               <p>
-                <strong>Start by exploring the map:</strong>
-                You'll see colored lines representing the routes students take
-                to reach BGU campus. These routes are color-coded by
-                destination:
-                <span style="color: #22a7f0; font-weight: 600"
-                  >blue lines lead to the South Gate</span
-                >,
-                <span style="color: #9c5dc7; font-weight: 600"
-                  >purple lines to the North Gate</span
-                >, and
-                <span style="color: #e14b31; font-weight: 600"
-                  >red lines to the West Gate</span
-                >. The thicker the line, the more students use that particular
-                route.
+                <strong>Interact:</strong> Click/Hover over a route to see trip
+                counts and mode labels (e.g., Walking, Driving). Click/Hover
+                over a
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 64 64"
+                  aria-label="POI"
+                  style="vertical-align: middle"
+                >
+                  <path
+                    d="M32 6c-8.8 0-16 7.2-16 16 0 11.046 16 30 16 30s16-18.954 16-30c0-8.8-7.2-16-16-16z"
+                    fill="#4CAF50"
+                    stroke="#1B5E20"
+                    stroke-width="4"
+                  />
+                  <circle cx="32" cy="22" r="7" fill="#FFFFFF" />
+                </svg>
+                POI to read its note. Click/Hover over a gate to see how many
+                trips end there.
               </p>
 
               <p>
-                <strong>Understanding the icons:</strong> Look for the
-                <strong>📍</strong> emoji markers scattered around the map -
-                these are Points of Interest (POIs) where students stop or visit
-                on their way to campus. The <strong>🏛️</strong> emoji markers
-                represent the three campus gates (South, North, and West). When
-                you see transportation mode indicators,
-                <strong>🚶</strong> represents walking, <strong>🚗</strong> for
-                car, and <strong>🚌</strong> for bus routes.
-              </p>
-
-              <p>
-                <strong>Discover student patterns:</strong> Click/Hover on any
-                route to see how many students use it and what transportation
-                modes they prefer. Click/Hover over the points of interest
-                (POIs) to learn about locations that students visit on their way
-                to campus.
-              </p>
-
-              <p>
-                <strong>Dive deeper with analysis:</strong> In the left panel,
-                you'll find key findings from our research presented as
-                clickable links. Click on any highlighted text (like "mode of
-                travel" or "routes to the 3 gates") to open detailed charts and
-                visualizations that reveal the full story behind the findings.
+                <strong>Go deeper:</strong> Review the findings in the left
+                panel and use the links to open detailed charts that summarize
+                survey response data.
               </p>
             </div>
           </div>
@@ -1668,14 +1773,14 @@
             <p>
               Data collected includes points of origin, transportation mode
               choices, destination gates, and points of interest visited along
-              routes to campus. Walking routes were derived using a shortest
-              route algorithm generated by Open Trip Planner.
+              routes to campus. Routes were derived using a shortest route
+              algorithm generated by Open Trip Planner.
             </p>
           </div>
 
           <!-- Research Team -->
           <div class="content-section">
-            <h3>Research Team</h3>
+            <h3>Credits</h3>
             <div class="credits-grid">
               <div class="credit-item">
                 <div class="credit-name">Merav Ferziger</div>
@@ -1715,7 +1820,7 @@
             <div class="comment-form">
               <textarea
                 class="comment-textarea"
-                placeholder="Share your thoughts about the analysis, methodology, or your experience with this interactive map. Your feedback helps us improve future research."
+                placeholder="Share your experiences traveling to BGU, ideas about how to improve the streetscape, or questions about this map. Your feedback helps our research."
               ></textarea>
             </div>
           </div>
