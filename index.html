@@ -982,7 +982,7 @@
         width: 100%;
         height: calc(100% - 50px);
         border: 0;
-        background: #fff;
+        background: #0f1214;
       }
 
       .poi-popup h4,
@@ -1850,6 +1850,22 @@
       </div>
     </div>
 
+    <!-- Offscreen chart preloader host (keeps iframes alive) -->
+    <div
+      id="chartPreloadHost"
+      aria-hidden="true"
+      style="
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        left: -99999px;
+        top: -99999px;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+      "
+    ></div>
+
     <!-- Config (Supabase URL & Key) -->
     <script src="./config.js"></script>
     <!-- Map Controller Script -->
@@ -1950,6 +1966,42 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Give the map time to initialize
         setTimeout(moveMapLibreControls, 500);
+        // Preload chart iframes offscreen for instant display
+        try {
+          const preloadHost = document.getElementById("chartPreloadHost");
+          console.assert(!!preloadHost, "Preload host must exist");
+          const links = Array.from(document.querySelectorAll("[data-chart]"));
+          const uniqueUrls = Array.from(
+            new Set(
+              links.map((el) => el.getAttribute("data-chart")).filter(Boolean)
+            )
+          );
+          window.__preloadedCharts = new Map();
+          uniqueUrls.forEach((url) => {
+            const iframe = document.createElement("iframe");
+            iframe.className = "chart-frame";
+            iframe.setAttribute("title", `Preloaded ${url}`);
+            iframe.setAttribute("loading", "eager");
+            iframe.style.width = "1px";
+            iframe.style.height = "1px";
+            iframe.style.border = "0";
+            iframe.style.background = "#0f1214";
+            iframe.dataset.chartUrl = url;
+            iframe.src = url;
+            preloadHost.appendChild(iframe);
+            window.__preloadedCharts.set(url, { iframe, loaded: false });
+            iframe.addEventListener("load", () => {
+              const entry = window.__preloadedCharts.get(url);
+              if (entry) entry.loaded = true;
+            });
+          });
+          console.assert(
+            window.__preloadedCharts.size >= uniqueUrls.length,
+            "All charts should be registered in preloader"
+          );
+        } catch (err) {
+          console.warn("Chart preloading failed", err);
+        }
         // Chart modal handlers for analysis links
         document.querySelectorAll("[data-chart]")?.forEach((el) => {
           el.addEventListener("click", function (e) {
@@ -1966,7 +2018,39 @@
         const frame = document.getElementById("chartFrame");
         const chartTitle = document.getElementById("chartTitle");
         console.assert(!!modal && !!frame, "Chart modal elements must exist");
-        frame.src = url;
+        // Try to use preloaded iframe if available
+        const registry = window.__preloadedCharts;
+        let usedPreloaded = false;
+        if (registry && registry.has(url)) {
+          const { iframe } = registry.get(url);
+          try {
+            // Ensure iframe will fill the modal
+            iframe.style.width = "100%";
+            iframe.style.height = "calc(100% - 50px)";
+            iframe.style.border = "0";
+            iframe.style.background = "#0f1214";
+            // Hide placeholder frame and insert the preloaded one
+            frame.style.display = "none";
+            const container = modal.querySelector(".chart-modal-content");
+            console.assert(
+              !!container,
+              "Chart modal content container must exist"
+            );
+            // If not already inside modal, append it (moving node preserves load state)
+            if (iframe.parentElement !== container) {
+              container.appendChild(iframe);
+            }
+            usedPreloaded = true;
+            window.__currentChartUrl = url;
+          } catch (e) {
+            console.warn("Failed to attach preloaded iframe, falling back", e);
+          }
+        }
+        if (!usedPreloaded) {
+          frame.src = url;
+          frame.style.display = "block";
+          window.__currentChartUrl = null;
+        }
         chartTitle.textContent = title;
         modal.classList.add("show");
       }
@@ -1974,10 +2058,33 @@
       function closeChartModal() {
         const modal = document.getElementById("chartModal");
         const frame = document.getElementById("chartFrame");
-        if (modal && frame) {
-          frame.src = "about:blank";
-          modal.classList.remove("show");
+        if (!modal || !frame) return;
+        try {
+          const currentUrl = window.__currentChartUrl;
+          const registry = window.__preloadedCharts;
+          if (currentUrl && registry && registry.has(currentUrl)) {
+            // Move the preloaded iframe back to the offscreen host to keep it loaded
+            const entry = registry.get(currentUrl);
+            const iframe = entry?.iframe;
+            const preloadHost = document.getElementById("chartPreloadHost");
+            if (iframe && preloadHost) {
+              iframe.style.width = "1px";
+              iframe.style.height = "1px";
+              if (iframe.parentElement !== preloadHost) {
+                preloadHost.appendChild(iframe);
+              }
+            }
+            // Restore placeholder visibility
+            frame.style.display = "block";
+            // Do NOT reset iframe src to keep it alive
+          } else {
+            // Fallback: clear the placeholder frame only
+            frame.src = "about:blank";
+          }
+        } catch (e) {
+          console.warn("Error while closing chart modal", e);
         }
+        modal.classList.remove("show");
       }
 
       // Close chart modal on overlay click and Escape
