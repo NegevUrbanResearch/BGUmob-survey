@@ -22,8 +22,8 @@ OUTPUT_PNG = "outputs/walking_distance.png"
 OUTPUT_STATS = "outputs/walking_distance_stats.json"
 
 
-def load_walking_routes(csv_path: str) -> pd.DataFrame:
-    """Load route summary and return only walking trips.
+def load_walking_routes(csv_path: str) -> Tuple[pd.DataFrame, int]:
+    """Load route summary and return walking trips with total trip count.
 
     Assertions:
     - File exists and is non-empty
@@ -39,6 +39,9 @@ def load_walking_routes(csv_path: str) -> pd.DataFrame:
     missing = required_cols - set(df.columns)
     assert not missing, f"Missing required columns: {sorted(missing)}"
 
+    total_trips = len(df)
+    assert total_trips > 0, "No trips found in the dataset"
+
     walking_df = df[df["transportation_mode"] == WALKING_HEBREW].copy()
     # Coerce to numeric and drop invalid
     walking_df["total_distance_km"] = pd.to_numeric(
@@ -48,7 +51,7 @@ def load_walking_routes(csv_path: str) -> pd.DataFrame:
 
     assert len(walking_df) > 0, "No valid walking trips found in the dataset"
 
-    return walking_df
+    return walking_df, total_trips
 
 
 def compute_average_distance(walking_df: pd.DataFrame) -> float:
@@ -75,7 +78,10 @@ def compute_median_and_max_distance(walking_df: pd.DataFrame) -> Tuple[float, fl
 
 
 def create_histogram(
-    walking_df: pd.DataFrame, avg_km: float, median_km: float | None = None
+    walking_df: pd.DataFrame,
+    total_trips: int,
+    avg_km: float,
+    median_km: float | None = None,
 ) -> go.Figure:
     """Create histogram of walking distances with mean (and optional median) lines."""
     distances = walking_df["total_distance_km"]
@@ -91,7 +97,9 @@ def create_histogram(
                 line=dict(color="rgba(255,255,255,0.2)", width=1),
             ),
             name="Walking trip distances",
-            hovertemplate="<b>Distance</b>: %{x:.2f} km<br><b>Count</b>: %{y}<extra></extra>",
+            hovertemplate="<b>Distance</b>: %{x:.2f} km<br><b>Percentage</b>: %{y:.1f}%<extra></extra>",
+            histfunc="count",
+            histnorm="percent",
         )
     )
 
@@ -139,10 +147,12 @@ def create_histogram(
             ticktext=ticktext,
         ),
         yaxis=dict(
-            title="Number of trips",
+            title="% of all trips",
             titlefont=dict(size=18, color="white"),
             tickfont=dict(size=14, color="rgba(255,255,255,0.95)"),
             gridcolor="rgba(255,255,255,0.12)",
+            tickformat=".0f",
+            ticksuffix="%",
         ),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(15,15,30,0.3)",
@@ -216,17 +226,20 @@ def save_stats(avg_km: float, median_km: float, max_km: float) -> None:
 
 
 def main() -> Tuple[pd.DataFrame, float]:
-    walking_df = load_walking_routes(ROUTE_SUMMARY_PATH)
+    walking_df, total_trips = load_walking_routes(ROUTE_SUMMARY_PATH)
     avg_km = compute_average_distance(walking_df)
     median_km, max_km = compute_median_and_max_distance(walking_df)
 
-    fig = create_histogram(walking_df, avg_km, median_km)
+    fig = create_histogram(walking_df, total_trips, avg_km, median_km)
     export_figure(fig, "walking_distance", "Walking Distance to Campus")
     save_stats(avg_km, median_km, max_km)
 
     print(f"average_walking_distance_km={avg_km:.4f}")
     print(f"median_walking_distance_km={median_km:.4f}")
     print(f"max_walking_distance_km={max_km:.4f}")
+    print(f"total_trips={total_trips}")
+    print(f"walking_trips={len(walking_df)}")
+    print(f"walking_percentage={len(walking_df)/total_trips*100:.1f}%")
     print(f"✓ Saved: {OUTPUT_HTML}")
     return walking_df, avg_km
 
