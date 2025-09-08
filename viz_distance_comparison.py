@@ -103,10 +103,28 @@ def create_distance_comparison_chart(perceived_data: Dict, actual_data: Dict, li
     perceived_importance = [item['perceived_importance'] for item in linked_data]
     submission_ids = [item['submission_id'] for item in linked_data]
     
+    # Filter to trips under 10 km
+    filtered_points = [
+        (x, y, sid)
+        for x, y, sid in zip(actual_distances, perceived_importance, submission_ids)
+        if x is not None and y is not None and x < 10
+    ]
+    if not filtered_points:
+        fig.add_annotation(
+            text="No trips under 10 km",
+            xref="paper", yref="paper",
+            x=0.5, y=0.5,
+            showarrow=False,
+            font=dict(size=20, color='white')
+        )
+        return fig
+
+    xs, ys, texts = zip(*filtered_points)
+
     # Create scatter plot
     fig.add_trace(go.Scatter(
-        x=actual_distances,
-        y=perceived_importance,
+        x=xs,
+        y=ys,
         mode='markers',
         name='Individual Responses',
         marker=dict(
@@ -116,30 +134,10 @@ def create_distance_comparison_chart(perceived_data: Dict, actual_data: Dict, li
             opacity=0.8
         ),
         hovertemplate='<b>Student Response</b><br>Actual Distance: %{x:.2f} km<br>Perceived Importance: %{y:.1f}/5<br>ID: %{text}<extra></extra>',
-        text=submission_ids
+        text=texts
     ))
     
-    # Add trend line
-    if len(actual_distances) > 1:
-        # Calculate correlation and trend line
-        correlation = np.corrcoef(actual_distances, perceived_importance)[0, 1]
-        
-        # Simple linear regression
-        z = np.polyfit(actual_distances, perceived_importance, 1)
-        p = np.poly1d(z)
-        
-        x_trend = np.linspace(min(actual_distances), max(actual_distances), 50)
-        y_trend = p(x_trend)
-        
-        fig.add_trace(go.Scatter(
-            x=x_trend,
-            y=y_trend,
-            mode='lines',
-            name=f'Trend Line (r={correlation:.3f})',
-            line=dict(color='rgba(255, 107, 107, 0.8)', width=3, dash='dash'),
-            hovertemplate='<b>Trend Line</b><br>Correlation: %{text}<extra></extra>',
-            text=[f'{correlation:.3f}'] * len(x_trend)
-        ))
+    # Trend line removed per request
     
     fig.update_layout(
         title={
@@ -158,7 +156,8 @@ def create_distance_comparison_chart(perceived_data: Dict, actual_data: Dict, li
             zeroline=False,
             showline=True,
             linecolor='rgba(255,255,255,0.4)',
-            linewidth=2
+            linewidth=2,
+            range=[0, 10]
         ),
         yaxis=dict(
             title='Perceived Distance Importance (1-5 scale)',
@@ -177,20 +176,7 @@ def create_distance_comparison_chart(perceived_data: Dict, actual_data: Dict, li
         font={'color': 'white', 'size': 14, 'family': 'Inter, system-ui, sans-serif'},
         margin=dict(l=120, r=160, t=140, b=90),
         autosize=True,
-        legend=dict(
-            orientation="v",
-            yanchor="top",
-            y=0.98,
-            xanchor="left",
-            x=1.01,
-            font=dict(size=24, color='white', family='Inter, system-ui, sans-serif'),
-            bgcolor='rgba(255,255,255,0.1)',
-            bordercolor='rgba(255,255,255,0.3)',
-            borderwidth=2,
-            itemsizing='constant',
-            itemwidth=60,
-            tracegroupgap=15
-        ),
+        showlegend=False,
         hovermode='closest',
         hoverlabel=dict(
             bgcolor='rgba(15,15,15,0.98)',
