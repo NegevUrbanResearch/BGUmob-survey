@@ -828,8 +828,8 @@ class BGUMapController {
     let popupContent = `
             <div style="font-family: Inter, sans-serif; padding: 12px; min-width: 180px; max-width: 240px; background: rgba(0,0,0,0.95); color: #e8eaed; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <span style="font-weight: 600; color: #e8eaed; font-size: 13px;">Routes Here</span>
-                    <span style="font-size: 11px; color: #cfd8dc; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
+                    <span style="font-weight: 600; color: #e8eaed; font-size: 15px;">Routes Here</span>
+                    <span style="font-size: 14px; color: #cfd8dc; margin-left: auto; font-weight: 600;">${totalTrips} trips</span>
                 </div>
         `;
 
@@ -843,16 +843,13 @@ class BGUMapController {
                   group.gateColor,
                   0.1
                 )}; border-radius: 6px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: ${
+                    <span style="font-size: 13px; font-weight: 600; color: #fff; background: ${
                       group.gateColor
-                    }; display: inline-block;"></span>
-                    <span style="font-size: 11px; color: #e8eaed; font-weight: 500;">${modeLabel}</span>
-                    <span style="font-size: 11px; color: #b0bec5; flex: 1;">→ ${gateName}</span>
-                    <span style="font-size: 11px; font-weight: 600; color: #fff; background: ${
-                      group.gateColor
-                    }; padding: 2px 6px; border-radius: 8px;">${
+                    }; padding: 3px 7px; border-radius: 8px;">${
         group.count
       }</span>
+                    <span style="font-size: 13px; color: #e8eaed; font-weight: 500;">${modeLabel}</span>
+                    <span style="font-size: 13px; color: #b0bec5; flex: 1;">→ ${gateName}</span>
                 </div>
             `;
     });
