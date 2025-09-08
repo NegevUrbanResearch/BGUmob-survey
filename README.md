@@ -2,6 +2,8 @@
 
 Interactive visualization platform for analyzing student transportation patterns around Ben-Gurion University (BGU) campus collected via submissions through ZenCity Surveys.
 
+🌐 **Live Site**: [https://neveurbanresearch.github.io/BGUmob-survey/](https://neveurbanresearch.github.io/BGUmob-survey/)
+
 ## Project overview
 
 This site presents campus mobility insights collected from BGU students to understand the relationship between the university and the city:
