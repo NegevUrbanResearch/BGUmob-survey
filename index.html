@@ -1492,12 +1492,15 @@
             >
             a walking route was distance followed by shade
           </li>
-          <li>
+          <li id="walking-stats-bullet" style="display: none">
+            For
             <a href="#" data-chart="outputs/walking_distance.html"
-              >Route analysis</a
-            >
-            shows that on average, BGU students walk 0.95 KM on the way to
-            campus
+              >walking trips</a
+            >, the longest trip is
+            <span id="walking-max">—</span>
+            kilometers and 50% of walking trips are within
+            <span id="walking-median">—</span>
+            kilometers
           </li>
           <li>
             <a href="#" data-chart="outputs/distance_comparison.html"
@@ -2099,6 +2102,38 @@
           closeChartModal();
         }
       });
+
+      // Populate walking stats bullet dynamically from outputs/walking_distance_stats.json
+      (function () {
+        try {
+          fetch("outputs/walking_distance_stats.json")
+            .then(function (r) {
+              return r && r.ok ? r.json() : null;
+            })
+            .then(function (data) {
+              if (!data) return;
+              var maxKm =
+                typeof data.max_walking_distance_km === "number"
+                  ? data.max_walking_distance_km
+                  : null;
+              var medianKm =
+                typeof data.median_walking_distance_km === "number"
+                  ? data.median_walking_distance_km
+                  : null;
+              if (maxKm == null || medianKm == null) return;
+              var maxEl = document.getElementById("walking-max");
+              var medianEl = document.getElementById("walking-median");
+              var bullet = document.getElementById("walking-stats-bullet");
+              if (!maxEl || !medianEl || !bullet) return;
+              maxEl.textContent = maxKm.toFixed(2);
+              medianEl.textContent = medianKm.toFixed(2);
+              bullet.style.display = "";
+            })
+            .catch(function () {
+              /* silent */
+            });
+        } catch (e) {}
+      })();
     </script>
   </body>
 </html>
