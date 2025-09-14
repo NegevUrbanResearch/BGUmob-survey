@@ -4,7 +4,7 @@
   "description": "Interactive dashboard for BGU mobility survey analysis with visualizations of student transportation patterns and route choices",
   "main": "index.html",
   "scripts": {
-    "start": "python3 -m http.server 8000",
+    "start": "live-server --port=8000 --open=/index.html",
     "build": "echo 'Static site - no build required'",
     "serve": "python3 -m http.server 8000 --directory .",
     "validate": "echo 'Validating HTML structure...' && ls -la index.html assets/ outputs/",
@@ -46,7 +46,6 @@
     "http-server": "^14.1.1",
     "live-server": "^1.2.2"
   },
-  "dependencies": {},
   "browserslist": [
     "> 1%",
     "last 2 versions",
@@ -63,4 +62,4 @@
       "host": "localhost"
     }
   }
-} 
+}
