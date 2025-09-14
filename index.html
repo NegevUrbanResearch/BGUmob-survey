@@ -820,99 +820,6 @@
         line-height: 1.4;
       }
 
-      /* Comment Section */
-      .comment-section {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 24px 32px;
-      }
-
-      .comment-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-
-      .comment-section h3 {
-        font-size: 18px;
-        font-weight: 600;
-        color: #64ffda;
-        margin: 0;
-      }
-
-      .comment-form {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .comment-textarea {
-        width: 100%;
-        min-height: 100px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
-        padding: 16px;
-        color: #ffffff;
-        font-family: "Inter", sans-serif;
-        font-size: 14px;
-        line-height: 1.6;
-        resize: vertical;
-        transition: all 0.3s ease;
-      }
-
-      .comment-textarea:focus {
-        outline: none;
-        border-color: rgba(100, 255, 218, 0.5);
-        background: rgba(255, 255, 255, 0.12);
-        box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.15);
-      }
-
-      .comment-textarea::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-      }
-
-      .comment-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .comment-hint {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.6);
-        flex: 1;
-        min-width: 200px;
-      }
-
-      .comment-send-btn {
-        background: linear-gradient(135deg, #64ffda, #00bcd4);
-        border: none;
-        color: #0a0e10;
-        font-weight: 600;
-        font-size: 14px;
-        padding: 12px 24px;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 0 4px 15px rgba(100, 255, 218, 0.3);
-      }
-
-      .comment-send-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(100, 255, 218, 0.4);
-        filter: brightness(1.1);
-      }
-
-      .comment-send-btn:active {
-        transform: translateY(0);
-      }
-
       /* Popup Styling */
       .poi-popup,
       .gate-popup,
@@ -1225,10 +1132,6 @@
           padding: 20px 24px;
         }
 
-        .comment-section {
-          padding: 20px 24px;
-        }
-
         .legend-gates {
           flex-direction: column;
           align-items: center;
@@ -1328,20 +1231,6 @@
 
         .info-content-section {
           padding: 16px 20px;
-        }
-
-        .comment-section {
-          padding: 16px 20px;
-        }
-
-        .comment-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-        }
-
-        .comment-section h3 {
-          font-size: 16px;
         }
 
         .how-to-use-section {
@@ -1810,22 +1699,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Comment Section -->
-          <div class="comment-section">
-            <div class="comment-header">
-              <h3>Share Your Feedback</h3>
-              <button class="comment-send-btn" onclick="submitFeedback()">
-                Send Feedback
-              </button>
-            </div>
-            <div class="comment-form">
-              <textarea
-                class="comment-textarea"
-                placeholder="Share your experiences traveling to BGU, ideas about how to improve the streetscape, or questions about this map. Your feedback helps our research."
-              ></textarea>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -1868,60 +1741,10 @@
       "
     ></div>
 
-    <!-- Config (Supabase URL & Key) -->
-    <script src="./config.js"></script>
     <!-- Map Controller Script -->
     <script src="assets/js/map-controller.js"></script>
-    <!-- Supabase JS (optional) -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 
     <script>
-      // Supabase configuration (replace with real values or leave empty for fallback)
-      const SUPABASE_URL = window.SUPABASE_URL || "";
-      const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "";
-      let supabaseClient = null;
-      try {
-        if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
-          supabaseClient = supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-          );
-        }
-      } catch (e) {
-        console.warn("Supabase initialization failed", e);
-      }
-
-      async function submitFeedback() {
-        const textarea = document.querySelector(".comment-textarea");
-        const note = (textarea?.value || "").trim();
-
-        if (!note) {
-          alert("Please enter a comment.");
-          return;
-        }
-
-        if (!supabaseClient) {
-          alert("Feedback service is not configured. Please try again later.");
-          return;
-        }
-
-        try {
-          const { error } = await supabaseClient.from("feedback").insert([
-            {
-              note,
-              created_at: new Date().toISOString(),
-            },
-          ]);
-          if (error) throw error;
-          alert("Thanks for your feedback!");
-          if (textarea) textarea.value = "";
-        } catch (err) {
-          console.error("Failed to save feedback:", err);
-          alert(
-            "Sorry, we couldn't save your feedback. Please try again later."
-          );
-        }
-      }
       // Info modal functionality
       function toggleInfoModal() {
         const modal = document.getElementById("infoModal");
