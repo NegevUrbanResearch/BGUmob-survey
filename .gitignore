@@ -2,5 +2,8 @@ config.js
 .DS_Store
 node_modules/
 
-*data/*
+# Data files (but allow university polygon and shapefiles)
+data/mobility-data.csv
+data/processed_mobility_data.csv
+data/Mobility Response Data.xlsx
 *.pyc

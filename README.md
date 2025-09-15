@@ -55,15 +55,13 @@ The project requires several data files to function properly:
 **Input Data:**
 
 - `data/mobility-data.csv` — Original survey responses from ZenCity
-- `data/polygon-shp/` — University boundary shapefile (ESRI Shapefile format)
-  - Contains: `Polygon Notes.shp`, `.dbf`, `.prj`, `.shx`, etc.
-- `outputs/university_polygon.json` — University boundary in GeoJSON format (pre-converted)
+- `data/university_polygon.json` — University boundary in GeoJSON format (committed to repo)
 
 **University Gate Locations:**
 The following gate coordinates are hardcoded in the scripts (from BeerSheva Mobility project):
 
-- **South Gate 3**: 31.261222, 34.801138
-- **North Gate 3**: 31.263911, 34.799290
+- **South Gate**: 31.261222, 34.801138
+- **North Gate**: 31.263911, 34.799290
 - **West Gate**: 31.262500, 34.805528
 
 **External Dependencies:**
@@ -80,7 +78,7 @@ The preprocessing pipeline follows this sequence:
 2. **Preprocessing** (`preprocessing.py`) — Data validation, cleaning, and merging
    - Validates survey completion rates and data integrity
    - Merges split binary questions (Further-yes/Further-no → Further_Study_Interest)
-   - Translates Hebrew transportation modes to English
+   - Translates Hebrew modes to English
    - Parses coordinate data from JSON format
    - Outputs: `data/processed_mobility_data.csv`
 3. **Data Export** (`data_exporter.py`) — Exports clean JSON for web visualization
@@ -107,4 +105,4 @@ The preprocessing pipeline follows this sequence:
 - `assets/js/map-controller.js` — MapLibre/deck.gl logic
 - `src/` — Python scripts for data processing and visualization generation
 - `outputs/` — precomputed data and charts (HTML/JSON)
-- `data/` — raw survey data and shapefiles
+- `data/` — raw survey data and university boundary

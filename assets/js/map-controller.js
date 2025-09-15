@@ -933,7 +933,7 @@ class BGUMapController {
       // Load main data and university polygon in parallel
       const [dataResponse, universityResponse] = await Promise.all([
         fetch("outputs/bgu_mobility_data.json").catch(() => null),
-        fetch("outputs/university_polygon.json").catch(() => null),
+        fetch("data/university_polygon.json").catch(() => null),
       ]);
 
       // Process main mobility data
