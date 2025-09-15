@@ -46,7 +46,6 @@ def main():
 
     # Scripts to run in order
     scripts = [
-        "src/preprocessing.py",
         "src/data_exporter.py",
         "src/viz_transport_donut.py",
         "src/viz_transportation.py",
