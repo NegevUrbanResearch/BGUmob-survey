@@ -191,10 +191,13 @@
         display: flex;
         align-items: center;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        color: inherit;
       }
 
       .logo-section .logo-item:hover {
         transform: scale(1.05);
+        text-decoration: none;
       }
 
       .logo-section .logo-item img {
@@ -1403,12 +1406,24 @@
 
       <!-- Logo Section -->
       <div class="logo-section">
-        <div class="logo-item nur">
+        <a
+          href="https://www.nurlab.org/about"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="logo-item nur"
+          title="Visit NUR Lab"
+        >
           <img src="assets/media/Nur Logo white.svg" alt="NUR Logo" />
-        </div>
-        <div class="logo-item zencity">
+        </a>
+        <a
+          href="https://zencity.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="logo-item zencity"
+          title="Visit ZenCity"
+        >
           <img src="assets/media/zencity white.svg" alt="ZenCity Logo" />
-        </div>
+        </a>
         <button
           class="info-btn"
           onclick="toggleInfoModal()"
