@@ -61,6 +61,7 @@ def main():
     # Run each script
     for script in scripts:
         if os.path.exists(script):
+            print(f"🚀 Running {script}...")
             run_script(script)
         else:
             print(f"⚠️  Script not found: {script}")

@@ -30,13 +30,17 @@
             opacity: 1;
         }
         
-        /* Smooth hover transitions without overlap */
-        .js-plotly-plot .plotly .slice {
-            transition: opacity 0.2s ease;
+        ::-webkit-scrollbar {
+            width: 4px;
         }
         
-        .js-plotly-plot .plotly .slice:hover {
-            opacity: 0.9;
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -51,7 +55,6 @@
             displaylogo: false,
             modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
             responsive: true,
-            staticPlot: false,
             toImageButtonOptions: {
                 format: 'png',
                 filename: 'transportation_modes_donut',
@@ -62,14 +65,6 @@
         };
         
         Plotly.newPlot('plotly-div', figureJSON.data, figureJSON.layout, config);
-        
-        // Disable legend clicking to make it static
-        document.getElementById('plotly-div').on('plotly_legendclick', function() {
-            return false;
-        });
-        document.getElementById('plotly-div').on('plotly_legenddoubleclick', function() {
-            return false;
-        });
         
         window.addEventListener('resize', function() {
             Plotly.Plots.resize('plotly-div');

@@ -12,25 +12,14 @@ import os
 import json
 from typing import List, Dict, Tuple
 
-
-def load_processed_data() -> pd.DataFrame:
-    """Load the processed survey data."""
-    try:
-        df = pd.read_csv("data/processed_mobility_data.csv")
-        print(f"✓ Loaded processed data: {df.shape[0]} rows")
-        return df
-    except FileNotFoundError:
-        print("⚠️  Processed data not found, loading raw data...")
-        df = pd.read_csv("data/mobility-data.csv")
-        return df
+from viz_utils import data_loader, styling, exporter
 
 
 def get_route_distances() -> Dict:
     """Load actual route distances from OTP analysis."""
-    try:
-        with open("outputs/bgu_mobility_data.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
+    data = data_loader.load_exported_data("outputs/bgu_mobility_data.json")
 
+    if data and "routes" in data:
         routes = data["routes"]
         distances = [route["distance"] for route in routes if "distance" in route]
 
@@ -41,8 +30,7 @@ def get_route_distances() -> Dict:
             "median_distance": np.median(distances) if distances else 0,
             "std_distance": np.std(distances) if distances else 0,
         }
-
-    except FileNotFoundError:
+    else:
         print("⚠️  Route distance data not found")
         return {
             "distances": [],
@@ -364,7 +352,7 @@ def main():
     print("=" * 45)
 
     # Load data
-    df = load_processed_data()
+    df = data_loader.load_processed_data()
 
     # Analyze perceived distance importance
     perceived_data = analyze_perceived_distance_importance(df)
@@ -397,11 +385,6 @@ def main():
         print(f"   • Actual route distances analyzed: {len(actual_data['distances'])}")
         print(f"   • Average actual distance: {actual_data['avg_distance']:.2f} km")
         print(f"   • Median actual distance: {actual_data['median_distance']:.2f} km")
-
-    print(f"\n✨ Distance comparison analysis completed!")
-    print("   • Compares perceived importance vs actual distances")
-    print("   • Shows distribution patterns and averages")
-    print("   • Helps identify perception vs reality gaps")
 
     return fig
 

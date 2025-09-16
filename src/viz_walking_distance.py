@@ -14,6 +14,8 @@ import math
 import pandas as pd
 import plotly.graph_objects as go
 
+from viz_utils import styling, exporter
+
 
 WALKING_HEBREW = "ברגל"
 ROUTE_SUMMARY_PATH = "outputs/route_summary_filtered.csv"
@@ -135,7 +137,7 @@ def create_histogram(
             text="Walking Distance to Campus",
             x=0.5,
             xanchor="center",
-            font=dict(size=32, color="white", family="Inter, system-ui, sans-serif"),
+            font=dict(size=32, color="white", family=styling.FONT_FAMILY),
         ),
         xaxis=dict(
             title="Distance (km)",
@@ -156,7 +158,7 @@ def create_histogram(
         ),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(15,15,30,0.3)",
-        font=dict(color="white", size=14, family="Inter, system-ui, sans-serif"),
+        font=dict(color="white", size=14, family=styling.FONT_FAMILY),
         margin=dict(l=100, r=80, t=120, b=80),
         bargap=0.08,
         hoverlabel=dict(
@@ -165,54 +167,6 @@ def create_histogram(
     )
 
     return fig
-
-
-def create_iframe_optimized_html(fig: go.Figure, filename: str, title: str) -> None:
-    """Write a minimal iframe-optimized HTML wrapper for the figure."""
-    html = f"""<!DOCTYPE html>
-<html lang=\"en\">
-<head>
-  <meta charset=\"UTF-8\" />
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
-  <title>{title}</title>
-  <script src=\"https://cdn.plot.ly/plotly-2.26.0.min.js\"></script>
-  <style>
-    html, body {{ margin: 0; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }}
-    #plotly-div {{ width: 100%; height: 100vh; }}
-    .modebar {{ opacity: .3; }}
-    .modebar:hover {{ opacity: 1; }}
-  </style>
-  </head>
-<body>
-  <div id=\"plotly-div\"></div>
-  <script>
-    var figureJSON = {fig.to_json()};
-    Plotly.newPlot('plotly-div', figureJSON.data, figureJSON.layout, {{
-      displayModeBar: true, displaylogo: false, responsive: true,
-      modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d']
-    }});
-    window.addEventListener('resize', () => Plotly.Plots.resize('plotly-div'));
-  </script>
-</body>
-</html>"""
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(html)
-
-
-def export_figure(fig: go.Figure, filename_base: str, title: str) -> None:
-    os.makedirs("outputs", exist_ok=True)
-    create_iframe_optimized_html(fig, f"outputs/{filename_base}.html", title)
-    try:
-        fig.write_image(
-            f"outputs/{filename_base}.png",
-            width=1200,
-            height=800,
-            scale=2,
-            engine="kaleido",
-        )
-    except Exception:
-        # HTML is the primary output; PNG is optional
-        pass
 
 
 def save_stats(avg_km: float, median_km: float, max_km: float) -> None:
@@ -231,7 +185,12 @@ def main() -> Tuple[pd.DataFrame, float]:
     median_km, max_km = compute_median_and_max_distance(walking_df)
 
     fig = create_histogram(walking_df, total_trips, avg_km, median_km)
-    export_figure(fig, "walking_distance", "Walking Distance to Campus")
+    exporter.export_figure(
+        fig,
+        "walking_distance",
+        "Walking Distance to Campus",
+        background_gradient="linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+    )
     save_stats(avg_km, median_km, max_km)
 
     print(f"average_walking_distance_km={avg_km:.4f}")

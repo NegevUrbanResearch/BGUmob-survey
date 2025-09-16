@@ -12,8 +12,8 @@ from typing import List, Dict, Any
 import os
 import logging
 
-from .data_manager import data_manager, Coordinate, BGUGateData
-from .route_simulator import route_generator
+from data_manager import data_manager, Coordinate, BGUGateData
+from route_simulator import route_generator
 
 logger = logging.getLogger(__name__)
 
