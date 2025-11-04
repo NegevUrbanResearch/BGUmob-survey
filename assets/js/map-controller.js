@@ -84,11 +84,19 @@ class BGUMapController {
 
     await new Promise((resolve) => {
       this.map.on("load", () => {
-        // Ensure map fills container on load
+        // Force MapLibre to resize and fill container
         this.map.resize();
+        
         this.setupMapLayers();
         this.setupMapInteractions();
         this.initializeDeckGLOverlay();
+        
+        // Final sync after everything is loaded
+        setTimeout(() => {
+          this.map.resize();
+          this.syncDeckGLViewport();
+        }, 200);
+        
         resolve();
       });
     });
@@ -111,17 +119,11 @@ class BGUMapController {
       renderWorldCopies: false,
     });
 
-    // Force resize after map loads to ensure proper dimensions
-    this.map.on('load', () => {
-      setTimeout(() => {
-        this.map.resize();
-      }, 100);
-    });
-
-    // Handle window resize
+    // Handle window resize - MapLibre needs to be told to resize
     window.addEventListener('resize', () => {
       if (this.map) {
         this.map.resize();
+        // deck.gl will sync via the 'resize' event handler in initializeDeckGLOverlay
       }
     });
 
@@ -472,6 +474,7 @@ class BGUMapController {
   }
 
   initializeDeckGLOverlay() {
+    // Ensure deck.gl uses exact MapLibre dimensions and viewport
     this.deckOverlay = new deck.MapboxOverlay({
       interleaved: true,
       layers: [],
@@ -480,12 +483,37 @@ class BGUMapController {
 
     this.map.addControl(this.deckOverlay, "top-right");
 
-    // Style deck.gl controls after initialization
-    setTimeout(() => this.styleDeckGLControls(), 500);
+    // Force deck.gl to sync with MapLibre dimensions and viewport
+    setTimeout(() => {
+      this.syncDeckGLViewport();
+      this.styleDeckGLControls();
+    }, 500);
 
-    // Update layers on zoom
-    this.map.on("zoom", () => this.updateDeckGLLayers());
+    // Update deck.gl layers on zoom
+    this.map.on("zoom", () => {
+      this.updateDeckGLLayers();
+    });
 
+    // Sync deck.gl dimensions on map resize (viewport auto-syncs in interleaved mode)
+    this.map.on("resize", () => {
+      this.syncDeckGLViewport();
+    });
+
+  }
+
+  // Sync deck.gl dimensions to match MapLibre canvas exactly
+  // Note: In interleaved mode, deck.gl automatically syncs viewport from MapLibre
+  // We only need to ensure canvas dimensions match
+  syncDeckGLViewport() {
+    if (!this.deckOverlay || !this.deckOverlay.deck) return;
+    
+    const canvas = this.map.getCanvas();
+    
+    // Only set dimensions - let interleaved mode handle viewport/camera sync
+    this.deckOverlay.deck.setProps({
+      width: canvas.width,
+      height: canvas.height
+    });
   }
 
   styleDeckGLControls() {
