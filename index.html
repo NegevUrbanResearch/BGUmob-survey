@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>BGU Mobility Survey - Interactive POI Map</title>
     <link rel="icon" href="assets/media/favicon.ico" sizes="any" />
     <link
@@ -45,7 +45,12 @@
 
       html {
         height: 100%;
+        width: 100%;
         overflow: hidden;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
 
       body {
@@ -56,6 +61,12 @@
         height: 100%;
         width: 100%;
         position: fixed;
+        top: 0;
+        left: 0;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
 
       .info-btn {
