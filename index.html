@@ -43,12 +43,19 @@
         box-sizing: border-box;
       }
 
+      html {
+        height: 100%;
+        overflow: hidden;
+      }
+
       body {
         font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
         background: #f5f5f5;
         color: #333333;
         overflow: hidden;
-        height: 100vh;
+        height: 100%;
+        width: 100%;
+        position: fixed;
       }
 
       .info-btn {
@@ -92,8 +99,11 @@
       #map {
         width: 100vw;
         height: 100vh;
-        position: relative;
+        position: fixed;
         top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
       }
 
       /* Smooth transitions for map layers */

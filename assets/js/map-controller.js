@@ -67,31 +67,25 @@ class BGUMapController {
   // Setup RTL text plugin for Hebrew text support
   async setupRTLTextPlugin() {
     try {
-      console.log("🔤 Setting up RTL text plugin for Hebrew support...");
-
-      // Set the RTL text plugin with lazy loading
       await maplibregl.setRTLTextPlugin(
         "https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-rtl-text@1.0.1/dist/maplibre-gl-rtl-text.js",
-        true // lazy load - only load when RTL text is encountered
+        true
       );
-
-      console.log("✓ RTL text plugin configured successfully");
     } catch (error) {
-      console.warn("⚠️ Failed to load RTL text plugin:", error);
-      console.log("Hebrew text may not display correctly");
+      console.warn("RTL text plugin failed:", error);
     }
   }
 
   async initialize() {
-    console.log("🗺️ Initializing BGU Mobility Map...");
+    console.log("Initializing map...");
 
-    // Configure RTL text plugin for Hebrew support
     await this.setupRTLTextPlugin();
-
     this.initMap();
 
     await new Promise((resolve) => {
       this.map.on("load", () => {
+        // Ensure map fills container on load
+        this.map.resize();
         this.setupMapLayers();
         this.setupMapInteractions();
         this.initializeDeckGLOverlay();
@@ -108,11 +102,27 @@ class BGUMapController {
     this.map = new maplibregl.Map({
       container: "map",
       style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-      center: [34.7983, 31.2627], // BGU area
+      center: [34.7983, 31.2627],
       zoom: 14,
       pitch: 0,
       bearing: 0,
       antialias: true,
+      maxBounds: undefined, // No bounds constraints
+      renderWorldCopies: false,
+    });
+
+    // Force resize after map loads to ensure proper dimensions
+    this.map.on('load', () => {
+      setTimeout(() => {
+        this.map.resize();
+      }, 100);
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (this.map) {
+        this.map.resize();
+      }
     });
 
     // Add navigation controls
@@ -476,7 +486,6 @@ class BGUMapController {
     // Update layers on zoom
     this.map.on("zoom", () => this.updateDeckGLLayers());
 
-    console.log("✓ deck.gl overlay initialized");
   }
 
   styleDeckGLControls() {
@@ -701,30 +710,16 @@ class BGUMapController {
   // Cluster interactions removed
 
   updateDeckGLLayers() {
-    if (!this.deckOverlay) {
-      console.log("⚠️ Deck overlay not ready yet");
-      return;
-    }
+    if (!this.deckOverlay) return;
 
     const layers = [];
-
-    // Always show individual POI icons (no clustering)
     if (this.currentFilters.showPOIs) {
       layers.push(this.createPOIIconLayer());
     }
-
-    // Always show campus gates on top
     layers.push(this.createGateIconLayer());
 
     this.deckOverlay.setProps({ layers });
-
     setTimeout(() => this.styleDeckGLControls(), 100);
-
-    console.log(
-      `✓ Updated deck.gl with ${layers.length} layers at zoom ${this.map
-        .getZoom()
-        .toFixed(1)}`
-    );
   }
 
   setupMapInteractions() {
@@ -928,36 +923,25 @@ class BGUMapController {
 
   async loadData() {
     try {
-      console.log("📊 Loading mobility data...");
-
-      // Load main data and university polygon in parallel
       const [dataResponse, universityResponse] = await Promise.all([
         fetch("outputs/bgu_mobility_data.json").catch(() => null),
         fetch("data/university_polygon.json").catch(() => null),
       ]);
 
-      // Process main mobility data
       if (dataResponse && dataResponse.ok) {
         const data = await dataResponse.json();
         this.poisData = data.pois || [];
         this.routesData = data.routes || [];
         this.statistics = data.statistics || {};
-        console.log(
-          `✓ Loaded ${this.poisData.length} POIs and ${this.routesData.length} routes`
-        );
       } else {
-        console.log("⚠️ Main data file not found, using sample data");
         this.poisData = this.generateSamplePOIs();
         this.routesData = this.generateSampleRoutes();
         this.statistics = this.calculateStatistics();
       }
 
-      // Process University Polygon
       if (universityResponse && universityResponse.ok) {
         this.universityPolygon = await universityResponse.json();
-        console.log("✓ Loaded university polygon");
       } else {
-        console.log("⚠️ University polygon file not found");
         this.universityPolygon = null;
       }
 
@@ -968,13 +952,12 @@ class BGUMapController {
       }, 100);
       this.hideLoading();
     } catch (error) {
-      console.error("❌ Error loading data:", error);
+      console.error("Error loading data:", error);
       this.loadSampleData();
     }
   }
 
   loadSampleData() {
-    console.log("⚠️ Loading sample data as fallback...");
     this.poisData = this.generateSamplePOIs();
     this.routesData = this.generateSampleRoutes();
     this.statistics = this.calculateStatistics();
@@ -1076,10 +1059,7 @@ class BGUMapController {
   }
 
   updateMap() {
-    if (!this.map.getSource("routes")) {
-      console.log("⚠️ Map sources not ready yet, skipping update");
-      return;
-    }
+    if (!this.map.getSource("routes")) return;
 
     this.updateDeckGLLayers();
 
@@ -1088,11 +1068,6 @@ class BGUMapController {
     );
     const routeSegments = this.createRouteSegments(filteredRoutes);
 
-    console.log(
-      `📊 Processed ${filteredRoutes.length} routes into ${routeSegments.length} segments`
-    );
-
-    // Smooth transition when updating route data
     if (this.map.getLayer("routes")) {
       this.map.setPaintProperty("routes", "line-opacity", 0.3);
       this.map.setPaintProperty("routes-background", "line-opacity", 0.2);
@@ -1103,24 +1078,17 @@ class BGUMapController {
       features: routeSegments,
     });
 
-    // Update university polygon if available
     if (this.universityPolygon && this.map.getSource("university")) {
       if (this.currentFilters.showUniversity) {
         this.map.getSource("university").setData(this.universityPolygon);
-        this.map.setLayoutProperty(
-          "university-outline",
-          "visibility",
-          "visible"
-        );
+        this.map.setLayoutProperty("university-outline", "visibility", "visible");
         this.map.setLayoutProperty("university-label", "visibility", "visible");
-        console.log("✓ Updated university polygon on map");
       } else {
         this.map.setLayoutProperty("university-outline", "visibility", "none");
         this.map.setLayoutProperty("university-label", "visibility", "none");
       }
     }
 
-    // Fade lines back in smoothly
     setTimeout(() => {
       if (this.map.getLayer("routes")) {
         this.map.setPaintProperty("routes", "line-opacity", 0.85);
@@ -1156,15 +1124,12 @@ class BGUMapController {
     return smoothed;
   }
 
-  // Fixed route segment creation - each route = 1 trip
   createRouteSegments(routes) {
     const routeFeatures = [];
 
-    // Create individual segments for each route (each route = 1 trip)
     routes.forEach((route) => {
       const transportMode = route.transportMode || "unknown";
-      const destinationGate =
-        route.destination.name || route.destination.id || "Unknown";
+      const destinationGate = route.destination.name || route.destination.id || "Unknown";
       const destIdLc = (route.destination.id || "").toLowerCase();
       const destNameLc = (route.destination.name || "").toLowerCase();
       const gateKey =
@@ -1187,16 +1152,10 @@ class BGUMapController {
         ]
       );
 
-      // Check for overlapping segments at this location
-      const overlappingSegments = this.findOverlappingSegments(
-        coordinates,
-        routeFeatures
-      );
+      const overlappingSegments = this.findOverlappingSegments(coordinates, routeFeatures);
       const overlapCount = overlappingSegments.length;
-
-      // Calculate intensity based on how many routes will be at this location
-      const localDensity = 1 + overlapCount; // This route + overlapping ones
-      const intensity = Math.min(0.2 + localDensity * 0.15, 1.0); // kept for backwards compat, not used in styling
+      const localDensity = 1 + overlapCount;
+      const intensity = Math.min(0.2 + localDensity * 0.15, 1.0);
 
       let blendedColor = gateColor;
       if (overlapCount > 0) {
@@ -1220,33 +1179,23 @@ class BGUMapController {
           poiCount: route.poiCount,
           intensity: intensity,
           localDensity: localDensity,
-          usage: 1, // Each route represents exactly 1 trip
+          usage: 1,
           destinationGate: destinationGate,
           destinationId: route.destination.id,
           gateKey: gateKey,
           gateColor: gateColor,
           blendedColor: blendedColor,
           overlapCount: overlapCount,
-          renderOrder: localDensity, // Higher density routes render on top
-          // Store additional route info for popup
+          renderOrder: localDensity,
           routeInfo: {
-            startPoint: `${route.residence.lat.toFixed(
-              4
-            )}, ${route.residence.lng.toFixed(4)}`,
-            endPoint: `${route.destination.lat.toFixed(
-              4
-            )}, ${route.destination.lng.toFixed(4)}`,
-            distance: route.distance
-              ? `${route.distance.toFixed(1)}km`
-              : "Unknown",
+            startPoint: `${route.residence.lat.toFixed(4)}, ${route.residence.lng.toFixed(4)}`,
+            endPoint: `${route.destination.lat.toFixed(4)}, ${route.destination.lng.toFixed(4)}`,
+            distance: route.distance ? `${route.distance.toFixed(1)}km` : "Unknown",
           },
         },
       });
     });
 
-    console.log(
-      `📊 Created ${routeFeatures.length} individual route segments (1 trip each)`
-    );
     return routeFeatures;
   }
 
