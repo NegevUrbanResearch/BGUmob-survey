@@ -751,26 +751,16 @@ class BGUMapController {
   }
 
   setupMapInteractions() {
-    // Route hover handlers for both layers
+    // Route pointer handlers for both layers
     const routeLayers = ["routes", "routes-background"];
 
     routeLayers.forEach((layerId) => {
-      this.map.on("mouseenter", layerId, (e) => {
+      this.map.on("mouseenter", layerId, () => {
         this.map.getCanvas().style.cursor = "pointer";
-        if (layerId === "routes") {
-          // Only show popup for main routes layer
-          this.showRoutePopup(e);
-        }
       });
 
       this.map.on("mouseleave", layerId, () => {
         this.map.getCanvas().style.cursor = "";
-        if (layerId === "routes") {
-          // Only handle popup removal for main routes layer
-          document
-            .querySelectorAll(".maplibregl-popup")
-            .forEach((popup) => popup.remove());
-        }
       });
     });
 
@@ -879,8 +869,8 @@ class BGUMapController {
 
     new maplibregl.Popup({
       maxWidth: "280px",
-      closeButton: false,
-      closeOnClick: false,
+      closeButton: true,
+      closeOnClick: true,
     })
       .setLngLat(e.lngLat)
       .setHTML(popupContent)

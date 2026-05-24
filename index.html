@@ -178,7 +178,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-size: 28px;
+        font-size: clamp(18px, 1.5vw, 32px);
         text-align: center;
         font-weight: 700;
         letter-spacing: 0.5px;
@@ -241,11 +241,12 @@
       .info-controls-panel {
         top: 5px;
         left: 5px;
-        max-width: 360px;
+        width: clamp(320px, 22vw, 480px);
+        max-width: 90vw;
       }
 
       .panel-title {
-        font-size: 18px;
+        font-size: clamp(14px, 1vw, 20px);
         font-weight: 600;
         margin-bottom: 16px;
         color: #ffffff;
@@ -577,7 +578,7 @@
 
       /* Narrative style for Analysis section */
       .analysis-narrative {
-        font-size: 15px;
+        font-size: clamp(12px, 0.85vw, 18px);
         color: rgba(255, 255, 255, 0.95);
         line-height: 1.7;
       }
@@ -636,8 +637,8 @@
         border: 2px solid rgba(100, 255, 218, 0.2);
         border-radius: 24px;
         padding: 0;
-        max-width: min(92vw, 800px);
-        max-height: min(90vh, 850px);
+        width: clamp(600px, 60vw, 1400px);
+        max-height: 90vh;
         position: relative;
         box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6),
           0 0 0 1px rgba(100, 255, 218, 0.1) inset,
@@ -695,7 +696,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-size: 28px;
+        font-size: clamp(24px, 1.8vw, 40px);
         font-weight: 700;
         margin: 0;
         letter-spacing: -0.5px;
@@ -704,7 +705,7 @@
 
       .info-modal-subtitle {
         color: rgba(255, 255, 255, 0.8);
-        font-size: 16px;
+        font-size: clamp(14px, 1vw, 20px);
         font-weight: 500;
         margin-top: 8px;
         letter-spacing: 0.3px;
@@ -736,6 +737,43 @@
         background: rgba(100, 255, 218, 0.5);
       }
 
+      .info-modal-tabs {
+        display: flex;
+        gap: 10px;
+        padding: 20px 32px 0 32px;
+      }
+
+      .info-modal-tab {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: rgba(255, 255, 255, 0.85);
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .info-modal-tab:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+      }
+
+      .info-modal-tab.active {
+        background: rgba(100, 255, 218, 0.2);
+        border-color: rgba(100, 255, 218, 0.5);
+        color: #ffffff;
+      }
+
+      .info-modal-section {
+        display: none;
+      }
+
+      .info-modal-section.active {
+        display: block;
+      }
+
       .info-content-section {
         padding: 24px 32px;
       }
@@ -757,7 +795,7 @@
       /* Usage Narrative Styling */
       .usage-narrative {
         color: rgba(255, 255, 255, 0.9);
-        font-size: 15px;
+        font-size: clamp(13px, 0.9vw, 18px);
         line-height: 1.7;
       }
 
@@ -786,7 +824,7 @@
       }
 
       .content-section h3 {
-        font-size: 18px;
+        font-size: clamp(16px, 1.2vw, 24px);
         font-weight: 600;
         color: #ffffff;
         margin: 0 0 16px 0;
@@ -794,7 +832,7 @@
 
       .content-section p {
         color: rgba(255, 255, 255, 0.9);
-        font-size: 15px;
+        font-size: clamp(13px, 0.9vw, 18px);
         line-height: 1.6;
         margin: 0 0 16px 0;
       }
@@ -881,8 +919,8 @@
         background: #0f1214;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 16px;
-        width: min(92vw, 1100px);
-        height: min(86vh, 800px);
+        width: clamp(800px, 85vw, 2400px);
+        height: clamp(600px, 85vh, 1600px);
         position: relative;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         overflow: hidden;
@@ -1026,6 +1064,91 @@
       }
 
       /* Responsive Design */
+      
+      /* Large Screens (TVs, Ultrawides, 4K+) */
+      @media (min-width: 1920px) {
+        .info-controls-panel {
+          width: clamp(400px, 20vw, 600px);
+        }
+
+        .info-modal-content {
+          width: clamp(1000px, 50vw, 1800px);
+        }
+
+        .chart-modal-content {
+          width: 90vw;
+          height: 88vh;
+          max-width: 2800px;
+          max-height: 1800px;
+        }
+
+        .map-control-btn {
+          width: 48px;
+          height: 48px;
+          font-size: 20px;
+        }
+
+        .maplibregl-ctrl-group {
+          width: 48px !important;
+        }
+
+        .maplibregl-ctrl-group button {
+          width: 48px !important;
+          height: 48px !important;
+        }
+
+        .logo-section .logo-item img {
+          height: 50px;
+        }
+
+        .logo-section .logo-item.nur img {
+          height: 45px;
+        }
+
+        .logo-section .logo-item.zencity img {
+          height: 55px;
+        }
+      }
+
+      /* Extra Large Screens (8K TVs, Multi-monitor setups) */
+      @media (min-width: 2560px) {
+        .info-controls-panel {
+          width: clamp(500px, 18vw, 700px);
+        }
+
+        .info-modal-content {
+          width: clamp(1200px, 45vw, 2000px);
+        }
+
+        .map-control-btn {
+          width: 56px;
+          height: 56px;
+          font-size: 24px;
+        }
+
+        .maplibregl-ctrl-group {
+          width: 56px !important;
+        }
+
+        .maplibregl-ctrl-group button {
+          width: 56px !important;
+          height: 56px !important;
+        }
+
+        .logo-section .logo-item img {
+          height: 60px;
+        }
+
+        .logo-section .logo-item.nur img {
+          height: 50px;
+        }
+
+        .logo-section .logo-item.zencity img {
+          height: 65px;
+        }
+      }
+
+      /* Tablets and Small Screens */
       @media (max-width: 768px) {
         .project-title {
           font-size: 18px;
@@ -1492,246 +1615,268 @@
 
         <!-- Modal Body -->
         <div class="info-modal-body">
-          <!-- How to Use -->
-          <div class="how-to-use-section">
-            <h3>How to Use This Interactive Map</h3>
-            <div class="usage-narrative">
-              <p>
-                <strong>What you see:</strong> Routes are colored by destination
-                gate —
-                <span
-                  style="
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    margin-right: 8px;
-                  "
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 48 48"
-                    aria-label="South Gate"
-                    style="vertical-align: middle"
-                  >
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="20"
-                      stroke="#22a7f0"
-                      stroke-width="4"
-                      fill="rgba(255,255,255,0.95)"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="12"
-                      stroke="#22a7f0"
-                      stroke-width="4"
-                      fill="none"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="4"
-                      stroke="#22a7f0"
-                      stroke-width="4"
-                      fill="#22a7f0"
-                    />
-                  </svg>
-                  <span>South Gate</span>
-                </span>
-                <span
-                  style="
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    margin-right: 8px;
-                  "
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 48 48"
-                    aria-label="North Gate"
-                    style="vertical-align: middle"
-                  >
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="20"
-                      stroke="#9c5dc7"
-                      stroke-width="4"
-                      fill="rgba(255,255,255,0.95)"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="12"
-                      stroke="#9c5dc7"
-                      stroke-width="4"
-                      fill="none"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="4"
-                      stroke="#9c5dc7"
-                      stroke-width="4"
-                      fill="#9c5dc7"
-                    />
-                  </svg>
-                  <span>North Gate</span>
-                </span>
-                <span
-                  style="display: inline-flex; align-items: center; gap: 6px"
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 48 48"
-                    aria-label="West Gate"
-                    style="vertical-align: middle"
-                  >
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="20"
-                      stroke="#e14b31"
-                      stroke-width="4"
-                      fill="rgba(255,255,255,0.95)"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="12"
-                      stroke="#e14b31"
-                      stroke-width="4"
-                      fill="none"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="4"
-                      stroke="#e14b31"
-                      stroke-width="4"
-                      fill="#e14b31"
-                    />
-                  </svg>
-                  <span>West Gate</span>
-                </span>
-              </p>
+          <div class="info-modal-tabs">
+            <button
+              id="info-tab-how-to-use"
+              class="info-modal-tab active"
+              onclick="setInfoModalSection('how-to-use')"
+              aria-pressed="true"
+            >
+              How to Use
+            </button>
+            <button
+              id="info-tab-methods"
+              class="info-modal-tab"
+              onclick="setInfoModalSection('methods')"
+              aria-pressed="false"
+            >
+              Methods
+            </button>
+          </div>
 
-              <p>
-                <strong>Interact:</strong> Click/Hover over a route to see trip
-                counts and mode labels (e.g., Walking, Driving). Click/Hover
-                over a
-                <svg
-                  width="21"
-                  height="21"
-                  viewBox="0 0 64 64"
-                  aria-label="POI"
-                  style="vertical-align: middle"
-                >
-                  <path
-                    d="M32 6c-8.8 0-16 7.2-16 16 0 11.046 16 30 16 30s16-18.954 16-30c0-8.8-7.2-16-16-16z"
-                    fill="#4CAF50"
-                    stroke="#1B5E20"
-                    stroke-width="4"
-                  />
-                  <circle cx="32" cy="22" r="7" fill="#FFFFFF" />
-                </svg>
-                POI to read its note. Click/Hover over a gate to see how many
-                trips end there.
-              </p>
+          <div id="info-section-how-to-use" class="info-modal-section active">
+            <!-- How to Use -->
+            <div class="how-to-use-section">
+              <h3>How to Use This Interactive Map</h3>
+              <div class="usage-narrative">
+                <p>
+                  <strong>What you see:</strong> Routes are colored by
+                  destination gate —
+                  <span
+                    style="
+                      display: inline-flex;
+                      align-items: center;
+                      gap: 6px;
+                      margin-right: 8px;
+                    "
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 48 48"
+                      aria-label="South Gate"
+                      style="vertical-align: middle"
+                    >
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="20"
+                        stroke="#22a7f0"
+                        stroke-width="4"
+                        fill="rgba(255,255,255,0.95)"
+                      />
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="12"
+                        stroke="#22a7f0"
+                        stroke-width="4"
+                        fill="none"
+                      />
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="4"
+                        stroke="#22a7f0"
+                        stroke-width="4"
+                        fill="#22a7f0"
+                      />
+                    </svg>
+                    <span>South Gate</span>
+                  </span>
+                  <span
+                    style="
+                      display: inline-flex;
+                      align-items: center;
+                      gap: 6px;
+                      margin-right: 8px;
+                    "
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 48 48"
+                      aria-label="North Gate"
+                      style="vertical-align: middle"
+                    >
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="20"
+                        stroke="#9c5dc7"
+                        stroke-width="4"
+                        fill="rgba(255,255,255,0.95)"
+                      />
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="12"
+                        stroke="#9c5dc7"
+                        stroke-width="4"
+                        fill="none"
+                      />
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="4"
+                        stroke="#9c5dc7"
+                        stroke-width="4"
+                        fill="#9c5dc7"
+                      />
+                    </svg>
+                    <span>North Gate</span>
+                  </span>
+                  <span
+                    style="display: inline-flex; align-items: center; gap: 6px"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 48 48"
+                      aria-label="West Gate"
+                      style="vertical-align: middle"
+                    >
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="20"
+                        stroke="#e14b31"
+                        stroke-width="4"
+                        fill="rgba(255,255,255,0.95)"
+                      />
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="12"
+                        stroke="#e14b31"
+                        stroke-width="4"
+                        fill="none"
+                      />
+                      <circle
+                        cx="24"
+                        cy="24"
+                        r="4"
+                        stroke="#e14b31"
+                        stroke-width="4"
+                        fill="#e14b31"
+                      />
+                    </svg>
+                    <span>West Gate</span>
+                  </span>
+                </p>
 
-              <p>
-                <strong>Go deeper:</strong> Review the findings in the left
-                panel and use the links to open detailed charts that summarize
-                survey response data.
-              </p>
+                <p>
+                  <strong>Interact:</strong> Click a route to see trip counts
+                  and mode labels (e.g., Walking, Driving). Click a
+                  <svg
+                    width="21"
+                    height="21"
+                    viewBox="0 0 64 64"
+                    aria-label="POI"
+                    style="vertical-align: middle"
+                  >
+                    <path
+                      d="M32 6c-8.8 0-16 7.2-16 16 0 11.046 16 30 16 30s16-18.954 16-30c0-8.8-7.2-16-16-16z"
+                      fill="#4CAF50"
+                      stroke="#1B5E20"
+                      stroke-width="4"
+                    />
+                    <circle cx="32" cy="22" r="7" fill="#FFFFFF" />
+                  </svg>
+                  POI to read its note. Click a gate to see how many trips end
+                  there.
+                </p>
+
+                <p>
+                  <strong>Explore:</strong> Use the links in the left panel to
+                  open each analysis chart in a popup.
+                </p>
+              </div>
             </div>
           </div>
 
-          <!-- About This Research -->
-          <div class="content-section">
-            <h3>About This Research</h3>
-            <p>
-              Negev Urban Research conducted this mobility survey to understand
-              the BGU campus relationship with Beer Sheva by examining how
-              students get to and from campus, which routes they take, and what
-              amenities they engage with along the way.
-            </p>
-          </div>
+          <div id="info-section-methods" class="info-modal-section">
+            <!-- About This Research -->
+            <div class="content-section">
+              <h3>About This Research</h3>
+              <p>
+                Negev Urban Research conducted this mobility survey to
+                understand the BGU campus relationship with Beer Sheva by
+                examining how students get to and from campus, which routes they
+                take, and what amenities they engage with along the way.
+              </p>
+            </div>
 
-          <!-- Research Goals -->
-          <div class="content-section">
-            <h3>Research Goals</h3>
-            <p>This information helps us to:</p>
-            <ul>
-              <li>
-                Invest in streets and infrastructure that students use more
-                often
-              </li>
-              <li>
-                Design urban interventions based on factors students care most
-                about
-              </li>
-              <li>
-                Measure student interest in existing amenity clusters in the
-                surrounding area
-              </li>
-              <li>
-                Inform policy decisions about campus accessibility and urban
-                planning
-              </li>
-            </ul>
-          </div>
+            <!-- Research Goals -->
+            <div class="content-section">
+              <h3>Research Goals</h3>
+              <p>This information helps us to:</p>
+              <ul>
+                <li>
+                  Invest in streets and infrastructure that students use more
+                  often
+                </li>
+                <li>
+                  Design urban interventions based on factors students care most
+                  about
+                </li>
+                <li>
+                  Measure student interest in existing amenity clusters in the
+                  surrounding area
+                </li>
+                <li>
+                  Inform policy decisions about campus accessibility and urban
+                  planning
+                </li>
+              </ul>
+            </div>
 
-          <!-- Survey Methodology -->
-          <div class="content-section">
-            <h3>Survey Methodology</h3>
-            <p>
-              The survey data was conducted in May 2025 with the help of the
-              ZenCity digital platform. We surveyed approximately 200 current
-              undergraduate students from BGU (roughly 1.5% of the undergraduate
-              student body) and received complete responses from 115
-              respondents.
-            </p>
-            <p>
-              Data collected includes points of origin, transportation mode
-              choices, destination gates, and points of interest visited along
-              routes to campus. Routes were derived using a shortest route
-              algorithm generated by Open Trip Planner using OSM models. BGU
-              gate destination was derived from shortest route via OSM as well,
-              since we do not know what the final destination at BGU is for each
-              student.
-            </p>
-          </div>
+            <!-- Survey Methodology -->
+            <div class="content-section">
+              <h3>Survey Methodology</h3>
+              <p>
+                The survey data was conducted in May 2025 with the help of the
+                ZenCity digital platform. We surveyed approximately 200 current
+                undergraduate students from BGU (roughly 1.5% of the
+                undergraduate student body) and received complete responses from
+                115 respondents.
+              </p>
+              <p>
+                Data collected includes points of origin, transportation mode
+                choices, destination gates, and points of interest visited along
+                routes to campus. Routes were derived using a shortest route
+                algorithm generated by Open Trip Planner using OSM models. BGU
+                gate destination was derived from shortest route via OSM as
+                well, since we do not know what the final destination at BGU is
+                for each student.
+              </p>
+            </div>
 
-          <!-- Research Team -->
-          <div class="content-section">
-            <h3>Credits</h3>
-            <div class="credits-grid">
-              <div class="credit-item">
-                <div class="credit-name">Merav Ferziger (NUR)</div>
-                <div class="credit-role">
-                  Project Lead, Survey Design, Communication, & Data Collection
+            <!-- Research Team -->
+            <div class="content-section">
+              <h3>Credits</h3>
+              <div class="credits-grid">
+                <div class="credit-item">
+                  <div class="credit-name">Merav Ferziger (NUR)</div>
+                  <div class="credit-role">
+                    Project Lead, Survey Design, Communication, & Data
+                    Collection
+                  </div>
                 </div>
-              </div>
-              <div class="credit-item">
-                <div class="credit-name">Noam Gal (NUR)</div>
-                <div class="credit-role">
-                  Data Analysis, Visualization, & Web Application
+                <div class="credit-item">
+                  <div class="credit-name">Noam Gal (NUR)</div>
+                  <div class="credit-role">
+                    Data Analysis, Visualization, & Web Application
+                  </div>
                 </div>
-              </div>
-              <div class="credit-item">
-                <div class="credit-name">Professor Eran Ben Alia (BGU)</div>
-                <div class="credit-role">Survey Design</div>
-              </div>
-              <div class="credit-item">
-                <div class="credit-name">ZenCity</div>
-                <div class="credit-role">Provided Platform & Resources</div>
+                <div class="credit-item">
+                  <div class="credit-name">Professor Eran Ben Alia (BGU)</div>
+                  <div class="credit-role">Survey Design</div>
+                </div>
+                <div class="credit-item">
+                  <div class="credit-name">ZenCity</div>
+                  <div class="credit-role">Provided Platform & Resources</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1784,7 +1929,31 @@
       // Info modal functionality
       function toggleInfoModal() {
         const modal = document.getElementById("infoModal");
+        const isOpening = !modal.classList.contains("show");
         modal.classList.toggle("show");
+        if (isOpening) {
+          setInfoModalSection("how-to-use");
+        }
+      }
+
+      function setInfoModalSection(sectionId) {
+        const sections = {
+          "how-to-use": document.getElementById("info-section-how-to-use"),
+          methods: document.getElementById("info-section-methods"),
+        };
+        const tabs = {
+          "how-to-use": document.getElementById("info-tab-how-to-use"),
+          methods: document.getElementById("info-tab-methods"),
+        };
+
+        Object.keys(sections).forEach((key) => {
+          const section = sections[key];
+          const tab = tabs[key];
+          const isActive = key === sectionId;
+          section?.classList.toggle("active", isActive);
+          tab?.classList.toggle("active", isActive);
+          tab?.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
       }
 
       // Close modal when clicking outside
