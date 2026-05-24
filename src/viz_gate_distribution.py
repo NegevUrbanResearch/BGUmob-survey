@@ -53,13 +53,28 @@ def create_gate_pie_chart(gate_data: dict) -> go.Figure:
     values = list(gate_data.values())
     colors = [gate_colors.get(gate, "#9E9E9E") for gate in gates]
 
-    return chart_builder.create_pie_chart(
+    fig = chart_builder.create_pie_chart(
         labels=gates,
         values=values,
         title="Campus Gate Distribution",
         colors=colors,
         hole=0.0,  # Full pie (not donut)
     )
+
+    # Keep gate labels readable in embedded modal sizes.
+    fig.update_traces(
+        textposition="auto",
+        automargin=True,
+        textfont=dict(size=14, color="white", family=styling.FONT_FAMILY),
+    )
+
+    fig.update_layout(
+        margin=dict(l=60, r=60, t=120, b=60),
+        uniformtext=dict(minsize=11, mode="hide"),
+        showlegend=False,
+    )
+
+    return fig
 
 
 def main():
